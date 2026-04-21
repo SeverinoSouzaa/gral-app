@@ -1,69 +1,75 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { COLORS } from '../../constants/colors';
 import { globalStyles } from '../../styles/globalStyles';
 
 export default function LoginScreen() {
   return (
-    <View style={globalStyles.container}>
-      
-      <View style={styles.header}>
-        <View style={styles.logoPlaceholder} />
-        <Text style={globalStyles.title}>
-          Bem-vindo a <Text style={styles.highlightText}>GRAL</Text>
-        </Text>
-        <Text style={globalStyles.subtitle}>Faça login para continuar</Text>
-      </View>
-
-      <View style={styles.formContainer}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={globalStyles.container}>
         
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Código da Turma</Text>
-          <Text style={styles.subLabel}>Digite o código de 5 dígitos da sua turma</Text>
-          <View style={styles.inputWrapper}>
-            <TextInput
-              style={styles.input}
-              placeholder="12345"
-              placeholderTextColor={COLORS.textLight}
-              keyboardType="numeric"
-            />
-            <Feather name="check-circle" size={20} color={COLORS.primary} style={styles.icon} />
-          </View>
+        <View style={styles.header}>
+          <Image 
+            source={require('../../../assets/GRAL_logo.png')} 
+            style={styles.logo} 
+            resizeMode="contain"
+          />
+          <Text style={globalStyles.title}>
+            Bem-vindo a <Text style={styles.highlightText}>GRAL</Text>
+          </Text>
+          <Text style={globalStyles.subtitle}>Faça login para continuar</Text>
         </View>
 
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>CPF</Text>
-          <Text style={styles.subLabel}>Informe seu CPF no formato 000.000.000-00</Text>
-          <View style={styles.inputWrapper}>
-            <TextInput
-              style={styles.input}
-              placeholder="028.447.472-05"
-              placeholderTextColor={COLORS.textLight}
-              keyboardType="numeric"
-            />
-            <Feather name="check-circle" size={20} color={COLORS.primary} style={styles.icon} />
-            <Feather name="eye" size={20} color={COLORS.textLight} style={styles.icon} />
+        <View style={styles.formContainer}>
+          
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Código da Turma</Text>
+            <Text style={styles.subLabel}>Digite o código de 5 dígitos da sua turma</Text>
+            <View style={styles.inputWrapper}>
+              <TextInput
+                style={styles.input}
+                placeholder="12345"
+                placeholderTextColor={COLORS.textLight}
+                keyboardType="numeric"
+              />
+              <Feather name="check-circle" size={20} color={COLORS.primary} style={styles.icon} />
+            </View>
           </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>CPF</Text>
+            <Text style={styles.subLabel}>Informe seu CPF no formato 000.000.000-00</Text>
+            <View style={styles.inputWrapper}>
+              <TextInput
+                style={styles.input}
+                placeholder="028.447.472-05"
+                placeholderTextColor={COLORS.textLight}
+                keyboardType="numeric"
+              />
+              <Feather name="check-circle" size={20} color={COLORS.primary} style={styles.icon} />
+              <Feather name="eye" size={20} color={COLORS.textLight} style={styles.icon} />
+            </View>
+          </View>
+
+          <TouchableOpacity style={globalStyles.button}>
+            <Text style={globalStyles.buttonText}>CONFIRMAR LOGIN</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.forgotPassword}>
+            <Text style={styles.forgotPasswordText}>Esqueceu seu acesso?</Text>
+          </TouchableOpacity>
+
         </View>
 
-        <TouchableOpacity style={globalStyles.button}>
-          <Text style={globalStyles.buttonText}>CONFIRMAR LOGIN</Text>
-        </TouchableOpacity>
+        <Text style={styles.footerText}>Sistema seguro • Dados protegidos</Text>
 
-        <TouchableOpacity style={styles.forgotPassword}>
-          <Text style={styles.forgotPasswordText}>Esqueceu seu acesso?</Text>
+        <TouchableOpacity style={styles.accessibilityFab}>
+          <Feather name="user" size={24} color={COLORS.primary} />
         </TouchableOpacity>
 
       </View>
-
-      <Text style={styles.footerText}>Sistema seguro • Dados protegidos</Text>
-
-      <TouchableOpacity style={styles.accessibilityFab}>
-        <Feather name="user" size={24} color={COLORS.primary} />
-      </TouchableOpacity>
-
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -72,11 +78,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 32,
   },
-  logoPlaceholder: {
-    width: 80,
-    height: 80,
-    backgroundColor: COLORS.secondary,
-    borderRadius: 40,
+  logo: {
+    width: 100,
+    height: 100,
     marginBottom: 16,
   },
   highlightText: {

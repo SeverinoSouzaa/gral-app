@@ -1,5 +1,5 @@
 import React from 'react';
-import { StatusBar } from 'react-native';
+import { StatusBar, View } from 'react-native';
 import { useFonts, Inter_400Regular, Inter_700Bold } from '@expo-google-fonts/inter';
 import * as SplashScreen from 'expo-splash-screen';
 
@@ -14,9 +14,10 @@ export default function App() {
     Inter_700Bold,
   });
 
+  // Função que esconde a tela de carregamento quando a fonte carrega
   const onLayoutRootView = React.useCallback(async () => {
     if (fontsLoaded) {
-      await SplashScreen.hideAsync();
+      await SplashScreen.hideAsync(); // É aqui que a mágica de esconder acontece!
     }
   }, [fontsLoaded]);
 
@@ -25,9 +26,11 @@ export default function App() {
   }
 
   return (
-    <React.Fragment>
+    /* A View principal agora tem o onLayout acoplado. 
+       Assim que a View renderizar, ela avisa o celular para baixar a tela branca. */
+    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
       <StatusBar barStyle="light-content" backgroundColor="#0F2D2D" translucent={false} />
       <Routes />
-    </React.Fragment>
+    </View>
   );
 }
