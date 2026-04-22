@@ -2,42 +2,29 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
-  Keyboard,
-  TouchableWithoutFeedback,
-  SafeAreaView,
   ScrollView,
-  Dimensions,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { COLORS } from "../../constants/colors";
 import { useNavigation } from "@react-navigation/native";
-
-const { width } = Dimensions.get("window");
+import BackgroundLayout from "../../components/BackgroundLayout";
+import PrimaryButton from "../../components/PrimaryButton";
+import InputField from "../../components/InputField";
+import { globalStyles } from "../../styles/globalStyles";
 
 export default function RecuperarAcesso() {
   const [email, setEmail] = useState("");
   const navigation = useNavigation<any>();
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <LinearGradient
-        colors={[
-          COLORS.backgroundDark,
-          COLORS.background,
-          COLORS.backgroundDark,
-        ]}
-        style={{ flex: 1 }}
-      >
-        <SafeAreaView style={{ flex: 1 }}>
+    <BackgroundLayout>
           <ScrollView
             contentContainerStyle={styles.scrollContainer}
             showsVerticalScrollIndicator={false}
           >
-            <View style={[styles.card, { width: width * 0.9 }]}>
+            <View style={[styles.card, { width: '100%' }]}>
               
               {/* BOTÃO VOLTAR */}
               <TouchableOpacity
@@ -72,43 +59,29 @@ export default function RecuperarAcesso() {
                 </View>
               </View>
 
-              {/* INPUT */}
-              <Text style={styles.label}>Email cadastrado</Text>
-
-              <View style={styles.inputWrapper}>
-                <Feather name="mail" size={18} color={COLORS.primary} />
-                <TextInput
-                  style={styles.input}
-                  placeholder="seuemail@gmail.com"
-                  placeholderTextColor={COLORS.textLight}
-                  value={email}
-                  onChangeText={setEmail}
-                />
-              </View>
+              <InputField 
+                label="Email cadastrado"
+                placeholder="seuemail@gmail.com"
+                keyboardType="email-address"
+                iconName="mail"
+                value={email}
+                onChangeText={setEmail}
+              />
 
               {/* BOTÃO */}
-              <TouchableOpacity activeOpacity={0.8}>
-                <LinearGradient
-                  colors={COLORS.buttonGradient as [string, string]}
-                  style={styles.button}
-                >
-                  <Text style={styles.buttonText}>Enviar solicitação</Text>
-                </LinearGradient>
-              </TouchableOpacity>
+              <PrimaryButton title="Enviar solicitação" onPress={() => {}} />
             </View>
           </ScrollView>
 
           {/* FAB */}
-          <TouchableOpacity style={styles.accessibilityFab}>
+          <TouchableOpacity style={[styles.accessibilityFab, globalStyles.glowEffect, globalStyles.glassBorder]}>
             <MaterialIcons
               name="accessibility-new"
               size={26}
               color={COLORS.primary}
             />
           </TouchableOpacity>
-        </SafeAreaView>
-      </LinearGradient>
-    </TouchableWithoutFeedback>
+    </BackgroundLayout>
   );
 }
 
@@ -196,41 +169,6 @@ const styles = StyleSheet.create({
   infoText: {
     color: COLORS.textLight,
     fontSize: 12,
-  },
-
-  label: {
-    color: COLORS.textLight,
-    marginBottom: 8,
-    fontSize: 13,
-  },
-
-  inputWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: COLORS.backgroundDark,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: COLORS.primary,
-    paddingHorizontal: 12,
-    height: 50,
-    marginBottom: 20,
-  },
-
-  input: {
-    flex: 1,
-    marginLeft: 10,
-    color: COLORS.white,
-  },
-
-  button: {
-    padding: 16,
-    borderRadius: 14,
-    alignItems: "center",
-  },
-
-  buttonText: {
-    color: "#000",
-    fontWeight: "bold",
   },
 
   accessibilityFab: {

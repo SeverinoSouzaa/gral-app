@@ -73,7 +73,10 @@ export default function LoginScreen() {
             </LinearGradient>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.forgotPassword}>
+          <TouchableOpacity 
+            style={styles.forgotPassword}
+            onPress={() => navigation.navigate('RecuperarAcesso')} 
+          >
             <Text style={styles.forgotPasswordText}>Esqueceu seu acesso?</Text>
           </TouchableOpacity>
 
