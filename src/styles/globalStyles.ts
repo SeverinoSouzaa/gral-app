@@ -11,6 +11,26 @@ export const globalStyles = StyleSheet.create({
     // No iOS mantém os 60. No Android, calcula a altura exata da barra e adiciona um espaço proporcional
     paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + 20 : 60,
   },
+
+  // Efeito de Esfumaçado Laranja (Glow) reaproveitável para qualquer tela
+  glowEffect: Platform.select({
+    ios: {
+      shadowColor: COLORS.primary,
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.3,
+      shadowRadius: 30,
+    },
+    android: {
+      elevation: 16, // Um pouco mais alto para espalhar melhor
+      shadowColor: COLORS.primary, // Define a cor do esfumaçado no Android
+    }
+  }) as any,
+
+  // Efeito de borda de vidro (Glassmorphism) reaproveitável
+  glassBorder: {
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+  },
   
   // Padrões de Texto usando a fonte Inter
   title: {

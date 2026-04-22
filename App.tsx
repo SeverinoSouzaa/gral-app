@@ -29,7 +29,7 @@ export default function App() {
     /* A View principal agora tem o onLayout acoplado. 
        Assim que a View renderizar, ela avisa o celular para baixar a tela branca. */
     <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-      <StatusBar barStyle="light-content" backgroundColor="#0F2D2D" translucent={false} />
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent={true} />
       <Routes />
     </View>
   );

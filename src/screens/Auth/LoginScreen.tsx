@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Keyboard, TouchableWithoutFeedback, Platform } from 'react-native';
 import { Feather, MaterialIcons} from '@expo/vector-icons';
 import { COLORS } from '../../constants/colors';
 import { globalStyles } from '../../styles/globalStyles';
@@ -10,12 +10,12 @@ export default function LoginScreen() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <LinearGradient 
         colors={[COLORS.backgroundDark, COLORS.background, COLORS.backgroundDark]}
-        locations={[0.15, 0.5, 0.85]} 
+        locations={Platform.OS === 'android' ? [0.10, 0.45, 0.85] : [0.15, 0.5, 0.85]} // Alinha a cor clara exatamente com a caixa no Android
         style={[globalStyles.container, { backgroundColor: 'transparent' }]}
       >
 
         <View style={styles.header}>
-          <View style={styles.logoContainer}>
+          <View style={[styles.logoContainer, globalStyles.glowEffect, globalStyles.glassBorder]}>
             <Image 
               source={require('../../../assets/GRAL_logo.png')} 
               style={styles.logo} 
@@ -78,7 +78,7 @@ export default function LoginScreen() {
 
         <Text style={styles.footerText}>Sistema seguro • Dados protegidos</Text>
 
-        <TouchableOpacity style={styles.accessibilityFab}>
+        <TouchableOpacity style={[styles.accessibilityFab, globalStyles.glowEffect, globalStyles.glassBorder]}>
           <MaterialIcons name="accessibility-new" size={28} color={COLORS.primary} />
         </TouchableOpacity>
 
@@ -100,13 +100,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
-    shadowColor: COLORS.primary, // Cor laranja da paleta
-    shadowOffset: { width: 0, height: 0 }, // Sombra centralizada, criando o efeito de esfumaçado
-    shadowOpacity: 0.3, // Leve transparência
-    shadowRadius: 30, // Deixa o esfumaçado mais espalhado e suave (iOS)
-    elevation: 12, // Reduzido para o Android não "empurrar" o esfumaçado muito para baixo
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.06)', // Borda branca translúcida fina (efeito vidro)
   },
   logo: {
     width: 80,
@@ -183,14 +176,7 @@ const styles = StyleSheet.create({
     height: 56,
     borderRadius: 28,
     backgroundColor: '#0B2225',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.11)', // Borda branca translúcida fina (efeito vidro)
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: COLORS.primary, // Cor laranja da paleta
-    shadowOffset: { width: 0, height: 0 }, // Sombra centralizada, criando o efeito de esfumaçado
-    shadowOpacity: 0.3, // Leve transparência
-    shadowRadius: 30, // Deixa o esfumaçado mais espalhado e suave (iOS)
-    elevation: 12, // Reduzido para o Android não "empurrar" o esfumaçado muito para baixo
   },
 });
