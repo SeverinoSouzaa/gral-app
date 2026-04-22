@@ -15,11 +15,13 @@ export default function LoginScreen() {
       >
 
         <View style={styles.header}>
-          <Image 
-            source={require('../../../assets/GRAL_logo.png')} 
-            style={styles.logo} 
-            resizeMode="contain"
-          />
+          <View style={styles.logoContainer}>
+            <Image 
+              source={require('../../../assets/GRAL_logo.png')} 
+              style={styles.logo} 
+              resizeMode="contain"
+            />
+          </View>
           <Text style={globalStyles.title}>
             Bem-vindo a <Text style={styles.highlightText}>GRAL</Text>
           </Text>
@@ -90,10 +92,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 32,
   },
-  logo: {
-    width: 100,
-    height: 100,
+  logoContainer: {
+    backgroundColor: COLORS.backgroundDarklight, // Fundo mais escuro combinando com o topo
+    width: 120,
+    height: 120,
+    borderRadius: 60, // Deixa perfeitamente redondo
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 16,
+    shadowColor: COLORS.primary, // Cor laranja da paleta
+    shadowOffset: { width: 0, height: 0 }, // Sombra centralizada, criando o efeito de esfumaçado
+    shadowOpacity: 0.3, // Leve transparência
+    shadowRadius: 30, // Deixa o esfumaçado mais espalhado e suave (iOS)
+    elevation: 20, // Aumenta o espalhamento no Android
+  },
+  logo: {
+    width: 80,
+    height: 80,
   },
   highlightText: {
     color: COLORS.primary,

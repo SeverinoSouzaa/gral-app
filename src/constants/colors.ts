@@ -3,6 +3,7 @@
 export const COLORS = {
   background: '#0F2D2D', // Verde bem escuro (Fundo principal)
   backgroundDark: '#041212', // Verde ainda mais escuro para as bordas do gradiente de fundo
+  backgroundDarklight: '#061a1a',
   primary: '#C95F25',    // Laranja (Botões e destaques)
   secondary: '#0E536B',  // Azul escuro
   danger: '#B73020',     // Vermelho (Para erros ou alertas)
