@@ -69,7 +69,7 @@ export default function RecuperarAcesso() {
               />
 
               {/* BOTÃO */}
-              <PrimaryButton title="Enviar solicitação" onPress={() => {}} />
+              <PrimaryButton title="Enviar solicitação" onPress={() => navigation.navigate("solicitacaoEnviada")} />
             </View>
           </ScrollView>
 
@@ -89,15 +89,12 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     justifyContent: "center",
-    alignItems: "center",
-    padding: 30,
-    marginTop: -15,
   },
 
  backButton: {
   position: "absolute",
   top: 30,          
-  left: 25,
+  left: 28, // Alinhado com o padding interno da caixa para ficar harmônico
 
   width: 38,
   height: 38,
@@ -119,13 +116,17 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "#0B2225",
     borderRadius: 28,
-    padding: 50,
+    marginTop: -130, // Move toda a caixa um pouco mais para cima
+    paddingTop: 115, // Deixa a parte de cima ainda maior
+    paddingBottom: 50, // Mantém a altura da base como estava antes
+    paddingHorizontal: 28, // Faz o conteúdo respirar mais internamente
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.05)",
   },
 
   iconContainer: {
     alignSelf: "center",
+    marginTop: -35, // Puxa o ícone (e os textos que vêm abaixo dele) para mais perto do topo
     width: 70,
     height: 70,
     borderRadius: 35,

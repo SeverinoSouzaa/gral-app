@@ -12,6 +12,14 @@ export const globalStyles = StyleSheet.create({
     paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + 20 : 60,
   },
 
+  card: {
+    backgroundColor: '#0B2225',
+    padding: 24,
+    borderRadius: 24, // Bordas arredondadas estilo Apple
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.05)',
+    width: '100%',
+  },
   // Efeito de Esfumaçado Laranja (Glow) reaproveitável para qualquer tela
   glowEffect: Platform.select({
     ios: {
