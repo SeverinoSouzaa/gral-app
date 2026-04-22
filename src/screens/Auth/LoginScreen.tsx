@@ -5,6 +5,7 @@ import { COLORS } from '../../constants/colors';
 import { globalStyles } from '../../styles/globalStyles';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
+import AccessibilityMenu from '../../components/AccessibilityMenu';
 
 
 export default function LoginScreen() {
@@ -89,9 +90,7 @@ export default function LoginScreen() {
 
         <Text style={styles.footerText}>Sistema seguro • Dados protegidos</Text>
 
-        <TouchableOpacity style={styles.accessibilityFab}>
-          <MaterialIcons name="accessibility-new" size={28} color={COLORS.primary} />
-        </TouchableOpacity>
+        <AccessibilityMenu />
 
       </LinearGradient>
     </ScrollView>
@@ -185,23 +184,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 'auto',
     marginBottom: 24,
-  },
-  accessibilityFab: {
-    position: 'absolute',
-    bottom: 32,
-    right: 24,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#0B2225',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.11)', // Borda branca translúcida fina (efeito vidro)
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: COLORS.primary, // Cor laranja da paleta
-    shadowOffset: { width: 0, height: 0 }, // Sombra centralizada, criando o efeito de esfumaçado
-    shadowOpacity: 0.3, // Leve transparência
-    shadowRadius: 30, // Deixa o esfumaçado mais espalhado e suave (iOS)
-    elevation: 12, // Reduzido para o Android não "empurrar" o esfumaçado muito para baixo
   },
 });

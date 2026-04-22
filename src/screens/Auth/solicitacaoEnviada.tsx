@@ -38,10 +38,6 @@ export default function ConfirmacaoEnvioScreen() {
           />
         </View>
       </View>
-
-      <TouchableOpacity style={[styles.accessibilityFab, globalStyles.glowEffect, globalStyles.glassBorder]}>
-        <MaterialIcons name="accessibility-new" size={28} color={COLORS.primary} />
-      </TouchableOpacity>
     </BackgroundLayout>
   );
 }
@@ -96,16 +92,5 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
     color: COLORS.primary,
     fontSize: 14,
-  },
-  accessibilityFab: {
-    position: 'absolute',
-    bottom: 32,
-    right: 24,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#0B2225',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });

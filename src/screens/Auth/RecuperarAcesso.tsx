@@ -72,15 +72,6 @@ export default function RecuperarAcesso() {
               <PrimaryButton title="Enviar solicitação" onPress={() => navigation.navigate("solicitacaoEnviada")} />
             </View>
           </ScrollView>
-
-          {/* FAB */}
-          <TouchableOpacity style={[styles.accessibilityFab, globalStyles.glowEffect, globalStyles.glassBorder]}>
-            <MaterialIcons
-              name="accessibility-new"
-              size={26}
-              color={COLORS.primary}
-            />
-          </TouchableOpacity>
     </BackgroundLayout>
   );
 }
@@ -170,17 +161,5 @@ const styles = StyleSheet.create({
   infoText: {
     color: COLORS.textLight,
     fontSize: 12,
-  },
-
-  accessibilityFab: {
-    position: "absolute",
-    bottom: 24,
-    right: 20,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: "#0B2225",
-    justifyContent: "center",
-    alignItems: "center",
   },
 });

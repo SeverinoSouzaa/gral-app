@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS } from '../constants/colors';
 import { globalStyles } from '../styles/globalStyles';
+import AccessibilityMenu from './AccessibilityMenu';
 
 const { width, height } = Dimensions.get('window');
 
@@ -29,6 +30,7 @@ export default function BackgroundLayout({ children }: Props) {
         <SafeAreaView style={[globalStyles.container, { backgroundColor: 'transparent', flex: 1 }]}>
           {children}
         </SafeAreaView>
+        <AccessibilityMenu />
       </View>
     </ScrollView>
   );

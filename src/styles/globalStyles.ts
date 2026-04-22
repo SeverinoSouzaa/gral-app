@@ -25,11 +25,11 @@ export const globalStyles = StyleSheet.create({
     ios: {
       shadowColor: COLORS.primary,
       shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: 0.3,
-      shadowRadius: 30,
+      shadowOpacity: 0.4, // Um pouco mais opaco para dar presença
+      shadowRadius: 20,   // Menos espalhado para ficar em volta do botão
     },
     android: {
-      elevation: 16, // Um pouco mais alto para espalhar melhor
+      elevation: 10, // Ajustado para não criar uma sombra preta excessiva e focar no brilho
       shadowColor: COLORS.primary, // Define a cor do esfumaçado no Android
     }
   }) as any,
