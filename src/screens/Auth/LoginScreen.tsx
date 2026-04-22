@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Keyboard, TouchableWithoutFeedback } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { Feather, MaterialIcons} from '@expo/vector-icons';
 import { COLORS } from '../../constants/colors';
 import { globalStyles } from '../../styles/globalStyles';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -10,7 +10,7 @@ export default function LoginScreen() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <LinearGradient 
         colors={[COLORS.backgroundDark, COLORS.background, COLORS.backgroundDark]}
-        locations={[0.15, 0.5, 0.85]} // Controla onde as cores ficam: 15% (topo), 50% (meio), 85% (base)
+        locations={[0.15, 0.5, 0.85]} 
         style={[globalStyles.container, { backgroundColor: 'transparent' }]}
       >
 
@@ -55,7 +55,7 @@ export default function LoginScreen() {
                 keyboardType="numeric"
               />
               <Feather name="check-circle" size={20} color={COLORS.primary} style={styles.icon} />
-              <Feather name="eye" size={20} color={COLORS.textLight} style={styles.icon} />
+              <Feather name="eye" size={20} color={COLORS.primary} style={styles.icon} />
             </View>
           </View>
 
@@ -66,7 +66,7 @@ export default function LoginScreen() {
               end={{ x: 0, y: 1 }}   // Fim do gradiente (base)
               style={globalStyles.button}
             >
-              <Text style={globalStyles.buttonText}>CONFIRMAR LOGIN</Text>
+              <Text style={[globalStyles.buttonText, { color: COLORS.backgroundDark }]}>CONFIRMAR LOGIN</Text>
             </LinearGradient>
           </TouchableOpacity>
 
@@ -79,7 +79,7 @@ export default function LoginScreen() {
         <Text style={styles.footerText}>Sistema seguro • Dados protegidos</Text>
 
         <TouchableOpacity style={styles.accessibilityFab}>
-          <Feather name="user" size={24} color={COLORS.primary} />
+          <MaterialIcons name="accessibility-new" size={28} color={COLORS.primary} />
         </TouchableOpacity>
 
       </LinearGradient>
@@ -104,7 +104,9 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 }, // Sombra centralizada, criando o efeito de esfumaçado
     shadowOpacity: 0.3, // Leve transparência
     shadowRadius: 30, // Deixa o esfumaçado mais espalhado e suave (iOS)
-    elevation: 20, // Aumenta o espalhamento no Android
+    elevation: 12, // Reduzido para o Android não "empurrar" o esfumaçado muito para baixo
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.06)', // Borda branca translúcida fina (efeito vidro)
   },
   logo: {
     width: 80,
@@ -139,7 +141,7 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.inputBackground,
+    backgroundColor: COLORS.backgroundDark,
     borderWidth: 1,
     borderColor: COLORS.primary,
     borderRadius: 12,
@@ -182,8 +184,13 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     backgroundColor: '#0B2225',
     borderWidth: 1,
-    borderColor: COLORS.primary,
+    borderColor: 'rgba(255, 255, 255, 0.11)', // Borda branca translúcida fina (efeito vidro)
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: COLORS.primary, // Cor laranja da paleta
+    shadowOffset: { width: 0, height: 0 }, // Sombra centralizada, criando o efeito de esfumaçado
+    shadowOpacity: 0.3, // Leve transparência
+    shadowRadius: 30, // Deixa o esfumaçado mais espalhado e suave (iOS)
+    elevation: 12, // Reduzido para o Android não "empurrar" o esfumaçado muito para baixo
   },
 });

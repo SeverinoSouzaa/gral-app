@@ -1,5 +1,5 @@
 // src/styles/globalStyles.ts
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform, StatusBar } from 'react-native';
 import { COLORS } from '../constants/colors';
 
 export const globalStyles = StyleSheet.create({
@@ -8,7 +8,8 @@ export const globalStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
     paddingHorizontal: 24,
-    paddingTop: 60, // Espaçamento seguro para a barra de status do celular
+    // No iOS mantém os 60. No Android, calcula a altura exata da barra e adiciona um espaço proporcional
+    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + 20 : 60,
   },
   
   // Padrões de Texto usando a fonte Inter
