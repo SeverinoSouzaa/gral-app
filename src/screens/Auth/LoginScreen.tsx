@@ -8,8 +8,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 export default function LoginScreen() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={globalStyles.container}>
-        
+      <LinearGradient 
+        colors={[COLORS.backgroundDark, COLORS.background, COLORS.backgroundDark]}
+        locations={[0.15, 0.5, 0.85]} // Controla onde as cores ficam: 15% (topo), 50% (meio), 85% (base)
+        style={[globalStyles.container, { backgroundColor: 'transparent' }]}
+      >
+
         <View style={styles.header}>
           <Image 
             source={require('../../../assets/GRAL_logo.png')} 
@@ -56,8 +60,8 @@ export default function LoginScreen() {
           <TouchableOpacity>
             <LinearGradient
               colors={COLORS.buttonGradient as [string, string]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
+              start={{ x: 0, y: 0 }} // Início do gradiente (topo)
+              end={{ x: 0, y: 1 }}   // Fim do gradiente (base)
               style={globalStyles.button}
             >
               <Text style={globalStyles.buttonText}>CONFIRMAR LOGIN</Text>
@@ -76,7 +80,7 @@ export default function LoginScreen() {
           <Feather name="user" size={24} color={COLORS.primary} />
         </TouchableOpacity>
 
-      </View>
+      </LinearGradient>
     </TouchableWithoutFeedback>
   );
 }
