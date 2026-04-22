@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Keyboard, T
 import { Feather } from '@expo/vector-icons';
 import { COLORS } from '../../constants/colors';
 import { globalStyles } from '../../styles/globalStyles';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function LoginScreen() {
   return (
@@ -52,8 +53,15 @@ export default function LoginScreen() {
             </View>
           </View>
 
-          <TouchableOpacity style={globalStyles.button}>
-            <Text style={globalStyles.buttonText}>CONFIRMAR LOGIN</Text>
+          <TouchableOpacity>
+            <LinearGradient
+              colors={COLORS.buttonGradient as [string, string]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={globalStyles.button}
+            >
+              <Text style={globalStyles.buttonText}>CONFIRMAR LOGIN</Text>
+            </LinearGradient>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.forgotPassword}>

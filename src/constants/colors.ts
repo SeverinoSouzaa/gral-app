@@ -2,7 +2,7 @@
 
 export const COLORS = {
   background: '#0F2D2D', // Verde bem escuro (Fundo principal)
-  primary: '#DD8241',    // Laranja (Botões e destaques)
+  primary: '#C95F25',    // Laranja (Botões e destaques)
   secondary: '#0E536B',  // Azul escuro
   danger: '#B73020',     // Vermelho (Para erros ou alertas)
   textLight: '#CBCBCB',  // Cinza claro (Para textos secundários/subtítulos)
@@ -11,4 +11,7 @@ export const COLORS = {
   // Cores de apoio calculadas para a interface
   inputBackground: 'rgba(255, 255, 255, 0.05)', // Fundo translúcido para inputs
   inputBorder: '#DD8241', // Borda do input focada
+  
+  // Cores para o gradiente do botão
+  buttonGradient: ['#E65C00', '#8A2511'],
 };

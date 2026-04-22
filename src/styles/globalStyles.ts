@@ -27,12 +27,12 @@ export const globalStyles = StyleSheet.create({
   
   // Padronização do arredondamento (Estilo Clean/Minimalista)
   button: {
-    backgroundColor: COLORS.primary,
     height: 50,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
+    overflow: 'hidden',
   },
   buttonText: {
     fontFamily: 'Inter_700Bold',
