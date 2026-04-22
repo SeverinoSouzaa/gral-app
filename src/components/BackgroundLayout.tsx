@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { View, Dimensions, Keyboard, TouchableWithoutFeedback, Platform } from 'react-native';
+import { View, Dimensions, Platform, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS } from '../constants/colors';
@@ -13,7 +13,12 @@ interface Props {
 
 export default function BackgroundLayout({ children }: Props) {
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <ScrollView 
+      contentContainerStyle={{ flexGrow: 1 }} 
+      keyboardShouldPersistTaps="handled"
+      bounces={false}
+      overScrollMode="never"
+    >
       <View style={{ flex: 1 }}>
         {/* Fundo Descolado Travado (Exatamente o da sua LoginScreen) */}
         <LinearGradient 
@@ -25,6 +30,6 @@ export default function BackgroundLayout({ children }: Props) {
           {children}
         </SafeAreaView>
       </View>
-    </TouchableWithoutFeedback>
+    </ScrollView>
   );
 }

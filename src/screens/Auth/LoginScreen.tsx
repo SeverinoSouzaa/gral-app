@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import { Feather, MaterialIcons} from '@expo/vector-icons';
 import { COLORS } from '../../constants/colors';
 import { globalStyles } from '../../styles/globalStyles';
@@ -10,7 +10,12 @@ import { useNavigation } from '@react-navigation/native';
 export default function LoginScreen() {
   const navigation = useNavigation<any>();
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <ScrollView 
+      contentContainerStyle={{ flexGrow: 1 }} 
+      keyboardShouldPersistTaps="handled"
+      bounces={false}
+      overScrollMode="never"
+    >
       <LinearGradient 
         colors={[COLORS.backgroundDark, COLORS.background, COLORS.backgroundDark]}
         locations={[0.15, 0.5, 0.85]} 
@@ -89,7 +94,7 @@ export default function LoginScreen() {
         </TouchableOpacity>
 
       </LinearGradient>
-    </TouchableWithoutFeedback>
+    </ScrollView>
   );
 }
 

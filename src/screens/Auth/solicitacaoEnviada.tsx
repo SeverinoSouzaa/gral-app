@@ -13,13 +13,13 @@ export default function ConfirmacaoEnvioScreen() {
   return (
     <BackgroundLayout>
       <View style={styles.content}>
-        <View style={globalStyles.card}>
+        <View style={[globalStyles.card, styles.card]}>
           
           <View style={styles.iconContainer}>
             <Feather name="check-circle" size={50} color="#4CAF50" />
           </View>
 
-          <Text style={[globalStyles.title, { marginBottom: 24 }]}>Solicitação Enviada</Text>
+          <Text style={[globalStyles.title, { marginBottom: 26, textAlign: 'center', color: COLORS.textLight} ]}>Solicitação Enviada</Text>
 
           <View style={styles.messageBox}>
             <Text style={styles.messageText}>
@@ -39,7 +39,7 @@ export default function ConfirmacaoEnvioScreen() {
         </View>
       </View>
 
-      <TouchableOpacity style={styles.accessibilityFab}>
+      <TouchableOpacity style={[styles.accessibilityFab, globalStyles.glowEffect, globalStyles.glassBorder]}>
         <MaterialIcons name="accessibility-new" size={28} color={COLORS.primary} />
       </TouchableOpacity>
     </BackgroundLayout>
@@ -50,11 +50,18 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+  },
+  card: {
+    marginTop: -130, // Move toda a caixa para cima, igual ao Recuperar Acesso
+    paddingTop: 115, // Estica a parte de cima
+    paddingBottom: 50, // Mantém a altura da base
+    paddingHorizontal: 28, // Faz o conteúdo respirar
+    borderRadius: 28, // Bordas arredondadas consistentes
   },
   iconContainer: {
     alignItems: 'center',
-    marginBottom: 16,
+    marginTop: -35, // Puxa o ícone (e textos) para mais perto do topo, igual a outra tela
+    marginBottom: 25,
   },
   messageBox: {
     backgroundColor: 'rgba(76, 175, 80, 0.08)',
@@ -66,7 +73,7 @@ const styles = StyleSheet.create({
   },
   messageText: {
     fontFamily: 'Inter_400Regular',
-    color: COLORS.white,
+    color: COLORS.textLight,
     textAlign: 'center',
     fontSize: 14,
     lineHeight: 22,
@@ -98,8 +105,6 @@ const styles = StyleSheet.create({
     height: 56,
     borderRadius: 28,
     backgroundColor: '#0B2225',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.11)',
     justifyContent: 'center',
     alignItems: 'center',
   },
