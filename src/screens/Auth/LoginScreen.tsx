@@ -1,14 +1,3 @@
-<<<<<<< Updated upstream
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
-import { Feather, MaterialIcons} from '@expo/vector-icons';
-import { COLORS } from '../../constants/colors';
-import { globalStyles } from '../../styles/globalStyles';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
-import AccessibilityMenu from '../../components/AccessibilityMenu';
-
-=======
 import React from "react";
 import {
   View,
@@ -24,7 +13,7 @@ import { COLORS } from "../../constants/colors";
 import { globalStyles } from "../../styles/globalStyles";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
->>>>>>> Stashed changes
+import AccessibilityMenu from "../../components/AccessibilityMenu";
 
 export default function LoginScreen() {
   const navigation = useNavigation<any>();
@@ -135,9 +124,15 @@ export default function LoginScreen() {
 
         <Text style={styles.footerText}>Sistema seguro • Dados protegidos</Text>
 
-<<<<<<< Updated upstream
         <AccessibilityMenu />
 
+        {/* HACK DE TESTE: REMOVER DEPOIS */}
+        <TouchableOpacity 
+          style={{ marginTop: 10, alignSelf: 'center', padding: 10, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 8 }}
+          onPress={() => navigation.navigate('Documentos')}
+        >
+          <Text style={{ color: COLORS.white }}>Ir para Documentos (Teste)</Text>
+        </TouchableOpacity>
       </LinearGradient>
     </ScrollView>
   );
@@ -231,26 +226,4 @@ const styles = StyleSheet.create({
     marginTop: "auto",
     marginBottom: 24,
   },
-<<<<<<< Updated upstream
 });
-=======
-  accessibilityFab: {
-    position: "absolute",
-    bottom: 32,
-    right: 24,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: "#0B2225",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.11)", // Borda branca translúcida fina (efeito vidro)
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: COLORS.primary, // Cor laranja da paleta
-    shadowOffset: { width: 0, height: 0 }, // Sombra centralizada, criando o efeito de esfumaçado
-    shadowOpacity: 0.3, // Leve transparência
-    shadowRadius: 30, // Deixa o esfumaçado mais espalhado e suave (iOS)
-    elevation: 12, // Reduzido para o Android não "empurrar" o esfumaçado muito para baixo
-  },
-});
->>>>>>> Stashed changes
