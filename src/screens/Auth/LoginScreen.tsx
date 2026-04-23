@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import { Feather, MaterialIcons} from '@expo/vector-icons';
@@ -7,27 +8,47 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import AccessibilityMenu from '../../components/AccessibilityMenu';
 
+=======
+import React from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  ScrollView,
+} from "react-native";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
+import { COLORS } from "../../constants/colors";
+import { globalStyles } from "../../styles/globalStyles";
+import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation } from "@react-navigation/native";
+>>>>>>> Stashed changes
 
 export default function LoginScreen() {
   const navigation = useNavigation<any>();
   return (
-    <ScrollView 
-      contentContainerStyle={{ flexGrow: 1 }} 
+    <ScrollView
+      contentContainerStyle={{ flexGrow: 1 }}
       keyboardShouldPersistTaps="handled"
       bounces={false}
       overScrollMode="never"
     >
-      <LinearGradient 
-        colors={[COLORS.backgroundDark, COLORS.background, COLORS.backgroundDark]}
-        locations={[0.15, 0.5, 0.85]} 
-        style={[globalStyles.container, { backgroundColor: 'transparent' }]}
+      <LinearGradient
+        colors={[
+          COLORS.backgroundDark,
+          COLORS.background,
+          COLORS.backgroundDark,
+        ]}
+        locations={[0.15, 0.5, 0.85]}
+        style={[globalStyles.container, { backgroundColor: "transparent" }]}
       >
-
         <View style={styles.header}>
           <View style={styles.logoContainer}>
-            <Image 
-              source={require('../../../assets/GRAL_logo.png')} 
-              style={styles.logo} 
+            <Image
+              source={require("../../../assets/GRAL_logo.png")}
+              style={styles.logo}
               resizeMode="contain"
             />
           </View>
@@ -38,10 +59,11 @@ export default function LoginScreen() {
         </View>
 
         <View style={styles.formContainer}>
-          
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Código da Turma</Text>
-            <Text style={styles.subLabel}>Digite o código de 5 dígitos da sua turma</Text>
+            <Text style={styles.subLabel}>
+              Digite o código de 5 dígitos da sua turma
+            </Text>
             <View style={styles.inputWrapper}>
               <TextInput
                 style={styles.input}
@@ -49,13 +71,20 @@ export default function LoginScreen() {
                 placeholderTextColor={COLORS.textLight}
                 keyboardType="numeric"
               />
-              <Feather name="check-circle" size={20} color={COLORS.primary} style={styles.icon} />
+              <Feather
+                name="check-circle"
+                size={20}
+                color={COLORS.primary}
+                style={styles.icon}
+              />
             </View>
           </View>
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>CPF</Text>
-            <Text style={styles.subLabel}>Informe seu CPF no formato 000.000.000-00</Text>
+            <Text style={styles.subLabel}>
+              Informe seu CPF no formato 000.000.000-00
+            </Text>
             <View style={styles.inputWrapper}>
               <TextInput
                 style={styles.input}
@@ -63,35 +92,61 @@ export default function LoginScreen() {
                 placeholderTextColor={COLORS.textLight}
                 keyboardType="numeric"
               />
-              <Feather name="check-circle" size={20} color={COLORS.primary} style={styles.icon} />
-              <Feather name="eye" size={20} color={COLORS.primary} style={styles.icon} />
+              <Feather
+                name="check-circle"
+                size={20}
+                color={COLORS.primary}
+                style={styles.icon}
+              />
+              <Feather
+                name="eye"
+                size={20}
+                color={COLORS.primary}
+                style={styles.icon}
+              />
             </View>
           </View>
 
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.replace("TelaPrincipal")}>
             <LinearGradient
               colors={COLORS.buttonGradient as [string, string]}
-              start={{ x: 0, y: 0 }} // Início do gradiente (topo)
-              end={{ x: 0, y: 1 }}   // Fim do gradiente (base)
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
               style={globalStyles.button}
             >
-              <Text style={[globalStyles.buttonText, { color: COLORS.backgroundDark }]}>CONFIRMAR LOGIN</Text>
+              <Text
+                style={[
+                  globalStyles.buttonText,
+                  { color: COLORS.backgroundDark },
+                ]}
+              >
+                CONFIRMAR LOGIN
+              </Text>
             </LinearGradient>
           </TouchableOpacity>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.forgotPassword}
-            onPress={() => navigation.navigate('RecuperarAcesso')} 
+            onPress={() => navigation.navigate("RecuperarAcesso")}
           >
             <Text style={styles.forgotPasswordText}>Esqueceu seu acesso?</Text>
           </TouchableOpacity>
-
         </View>
 
         <Text style={styles.footerText}>Sistema seguro • Dados protegidos</Text>
 
+<<<<<<< Updated upstream
         <AccessibilityMenu />
 
+=======
+        <TouchableOpacity style={styles.accessibilityFab}>
+          <MaterialIcons
+            name="accessibility-new"
+            size={28}
+            color={COLORS.primary}
+          />
+        </TouchableOpacity>
+>>>>>>> Stashed changes
       </LinearGradient>
     </ScrollView>
   );
@@ -99,7 +154,7 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 32,
   },
   logoContainer: {
@@ -107,8 +162,8 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60, // Deixa perfeitamente redondo
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 16,
     shadowColor: COLORS.primary, // Cor laranja da paleta
     shadowOffset: { width: 0, height: 0 }, // Sombra centralizada, criando o efeito de esfumaçado
@@ -116,7 +171,7 @@ const styles = StyleSheet.create({
     shadowRadius: 30, // Deixa o esfumaçado mais espalhado e suave (iOS)
     elevation: 12, // Reduzido para o Android não "empurrar" o esfumaçado muito para baixo
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.06)', // Borda branca translúcida fina (efeito vidro)
+    borderColor: "rgba(255, 255, 255, 0.06)", // Borda branca translúcida fina (efeito vidro)
   },
   logo: {
     width: 80,
@@ -126,31 +181,31 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
   },
   formContainer: {
-    backgroundColor: '#0B2225',
+    backgroundColor: "#0B2225",
     padding: 24,
     borderRadius: 24,
-    width: '100%',
+    width: "100%",
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: "rgba(255, 255, 255, 0.05)",
   },
   inputGroup: {
     marginBottom: 24,
   },
   label: {
-    fontFamily: 'Inter_400Regular',
+    fontFamily: "Inter_400Regular",
     color: COLORS.white,
     fontSize: 14,
     marginBottom: 4,
   },
   subLabel: {
-    fontFamily: 'Inter_400Regular',
+    fontFamily: "Inter_400Regular",
     color: COLORS.textLight,
     fontSize: 12,
     marginBottom: 8,
   },
   inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: COLORS.backgroundDark,
     borderWidth: 1,
     borderColor: COLORS.primary,
@@ -161,7 +216,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     color: COLORS.white,
-    fontFamily: 'Inter_400Regular',
+    fontFamily: "Inter_400Regular",
     fontSize: 14,
   },
   icon: {
@@ -169,20 +224,42 @@ const styles = StyleSheet.create({
   },
   forgotPassword: {
     marginTop: 24,
-    alignItems: 'center',
+    alignItems: "center",
   },
   forgotPasswordText: {
-    fontFamily: 'Inter_400Regular',
+    fontFamily: "Inter_400Regular",
     color: COLORS.textLight,
     fontSize: 14,
-    textDecorationLine: 'underline',
+    textDecorationLine: "underline",
   },
   footerText: {
-    fontFamily: 'Inter_400Regular',
+    fontFamily: "Inter_400Regular",
     color: COLORS.textLight,
     fontSize: 12,
-    textAlign: 'center',
-    marginTop: 'auto',
+    textAlign: "center",
+    marginTop: "auto",
     marginBottom: 24,
   },
+<<<<<<< Updated upstream
 });
+=======
+  accessibilityFab: {
+    position: "absolute",
+    bottom: 32,
+    right: 24,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: "#0B2225",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.11)", // Borda branca translúcida fina (efeito vidro)
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: COLORS.primary, // Cor laranja da paleta
+    shadowOffset: { width: 0, height: 0 }, // Sombra centralizada, criando o efeito de esfumaçado
+    shadowOpacity: 0.3, // Leve transparência
+    shadowRadius: 30, // Deixa o esfumaçado mais espalhado e suave (iOS)
+    elevation: 12, // Reduzido para o Android não "empurrar" o esfumaçado muito para baixo
+  },
+});
+>>>>>>> Stashed changes
