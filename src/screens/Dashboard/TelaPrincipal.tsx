@@ -66,7 +66,10 @@ export default function TelaPrincipal() {
             <Text style={styles.pillText}>Avisos</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.actionPill}>
+          <TouchableOpacity 
+            style={styles.actionPill}
+            onPress={() => navigation.navigate('Pagamentos')}
+          >
             <Feather name="credit-card" size={16} color={COLORS.primary} style={styles.pillIcon} />
             <Text style={styles.pillText}>Pagamentos</Text>
           </TouchableOpacity>
@@ -125,7 +128,10 @@ export default function TelaPrincipal() {
             <View style={[styles.progressBarFill, { width: '58%' }]} />
           </View>
 
-          <TouchableOpacity style={styles.cardButtonOutline}>
+          <TouchableOpacity 
+            style={styles.cardButtonOutline}
+            onPress={() => navigation.navigate('Pagamentos')}
+          >
             <Text style={styles.cardButtonOutlineText}>Ver detalhes</Text>
           </TouchableOpacity>
         </View>

@@ -13,6 +13,8 @@ import TelaPrincipal from '../screens/Dashboard/TelaPrincipal';
 
 import CalendarioScreen from '../screens/Calendario/CalendarioScreen';
 
+import PagamentosScreen from '../screens/Financeiro/PagamentosScreen';
+
 const Stack = createNativeStackNavigator();
 
 export default function Routes() {
@@ -31,6 +33,8 @@ export default function Routes() {
         <Stack.Screen name="TelaPrincipal" component={TelaPrincipal} />
 
         <Stack.Screen name="Calendario" component={CalendarioScreen} />
+
+        <Stack.Screen name="Pagamentos" component={PagamentosScreen} />
 
 
       </Stack.Navigator>
