@@ -15,26 +15,28 @@ interface Props {
 
 export default function BackgroundLayout({ children, hideAccessibility = false }: Props) {
   return (
-    <ScrollView
-      contentContainerStyle={{ flexGrow: 1 }}
-      keyboardShouldPersistTaps="handled"
-      bounces={false}
-      overScrollMode="never"
-      showsVerticalScrollIndicator={false}
-    >
-      <View style={{ flex: 1, backgroundColor: COLORS.backgroundDark }}>
-        {/* Fundo Descolado Travado (Exatamente o da sua LoginScreen) */}
-        <LinearGradient
-          colors={[
-            COLORS.backgroundDark,
-            COLORS.background,
-            COLORS.backgroundDark,
-          ]}
-          locations={
-            Platform.OS === "android" ? [0.0, 0.48, 1.0] : [0.15, 0.5, 0.85]
-          }
-          style={{ position: "absolute", width, height, top: 0, left: 0 }}
-        />
+    <View style={{ flex: 1, backgroundColor: COLORS.backgroundDark }}>
+      {/* Fundo Descolado Travado (Exatamente o da sua LoginScreen) */}
+      <LinearGradient
+        colors={[
+          COLORS.backgroundDark,
+          COLORS.background,
+          COLORS.backgroundDark,
+        ]}
+        locations={
+          Platform.OS === "android" ? [0.0, 0.48, 1.0] : [0.15, 0.5, 0.85]
+        }
+        style={{ position: "absolute", width, height, top: 0, left: 0 }}
+      />
+      
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+        bounces={false}
+        overScrollMode="never"
+        showsVerticalScrollIndicator={false}
+      >
         <SafeAreaView
           style={[
             globalStyles.container,
@@ -43,8 +45,9 @@ export default function BackgroundLayout({ children, hideAccessibility = false }
         >
           {children}
         </SafeAreaView>
-        {!hideAccessibility && <AccessibilityMenu />}
-      </View>
-    </ScrollView>
+      </ScrollView>
+
+      {!hideAccessibility && <AccessibilityMenu />}
+    </View>
   );
 }

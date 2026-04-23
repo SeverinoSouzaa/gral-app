@@ -75,7 +75,11 @@ export default function TelaPrincipal() {
         {/* 4. CARDS DE INFORMAÇÃO */}
         
         {/* CARD: PRÓXIMOS EVENTOS */}
-        <View style={[globalStyles.card, styles.cardSpacing]}>
+        <TouchableOpacity 
+          style={[globalStyles.card, styles.cardSpacing]}
+          activeOpacity={0.8}
+          onPress={() => navigation.navigate('Calendario')}
+        >
           <View style={styles.cardHeader}>
             <Text style={styles.cardTitle}>Próximos Eventos</Text>
             <Feather name="chevron-right" size={20} color={COLORS.primary} />
@@ -94,7 +98,7 @@ export default function TelaPrincipal() {
               <Text style={styles.eventDetails}>Às 19h00 • Online</Text>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
 
         {/* CARD: PAGAMENTOS */}
         <View style={[globalStyles.card, styles.cardSpacing]}>

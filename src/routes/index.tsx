@@ -11,6 +11,8 @@ import DocumentosScreen from '../screens/Documentos/DocumentosScreen';
 
 import TelaPrincipal from '../screens/Dashboard/TelaPrincipal';
 
+import CalendarioScreen from '../screens/Calendario/CalendarioScreen';
+
 const Stack = createNativeStackNavigator();
 
 export default function Routes() {
@@ -27,6 +29,9 @@ export default function Routes() {
         <Stack.Screen name="Documentos" component={DocumentosScreen} />
 
         <Stack.Screen name="TelaPrincipal" component={TelaPrincipal} />
+
+        <Stack.Screen name="Calendario" component={CalendarioScreen} />
+
 
       </Stack.Navigator>
     </NavigationContainer>
