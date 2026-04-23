@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { COLORS } from '../../constants/colors';
@@ -7,9 +7,12 @@ import BackgroundLayout from '../../components/BackgroundLayout';
 import { LinearGradient } from 'expo-linear-gradient';
 import AccessibilityMenu from '../../components/AccessibilityMenu';
 import { useNavigation } from '@react-navigation/native';
+import SidebarMenu from './SidebarMenu';
+
 
 export default function TelaPrincipal() {
   const navigation = useNavigation<any>();
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
 
   return (
     <BackgroundLayout hideAccessibility={true}>
@@ -17,7 +20,10 @@ export default function TelaPrincipal() {
         
         {/* 1. TOP BAR */}
         <View style={styles.topBar}>
-          <TouchableOpacity style={styles.iconButton}>
+          <TouchableOpacity 
+            style={styles.iconButton}
+            onPress={() => setIsSidebarVisible(true)}
+          >
             <Feather name="menu" size={24} color={COLORS.primary} />
           </TouchableOpacity>
           
@@ -200,6 +206,12 @@ export default function TelaPrincipal() {
         </View>
 
       </View>
+
+      {/* SIDEBAR MENU */}
+      <SidebarMenu 
+        visible={isSidebarVisible} 
+        onClose={() => setIsSidebarVisible(false)} 
+      />
     </BackgroundLayout>
   );
 }
