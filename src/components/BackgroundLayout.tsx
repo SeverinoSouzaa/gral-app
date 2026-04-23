@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 import React, { ReactNode } from 'react';
 import { View, Dimensions, Platform, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -6,14 +5,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS } from '../constants/colors';
 import { globalStyles } from '../styles/globalStyles';
 import AccessibilityMenu from './AccessibilityMenu';
-=======
-import React, { ReactNode } from "react";
-import { View, Dimensions, Platform, ScrollView } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { COLORS } from "../constants/colors";
-import { globalStyles } from "../styles/globalStyles";
->>>>>>> Stashed changes
 
 const { width, height } = Dimensions.get("window");
 

@@ -7,6 +7,10 @@ import LoginScreen from '../screens/Auth/LoginScreen';
 import RecuperarAcesso from '../screens/Auth/RecuperarAcesso';
 import solicitacaoEnviadaScreen from '../screens/Auth/solicitacaoEnviada';
 
+import DocumentosScreen from '../screens/Documentos/DocumentosScreen';
+
+import TelaPrincipal from '../screens/Dashboard/TelaPrincipal';
+
 const Stack = createNativeStackNavigator();
 
 export default function Routes() {
