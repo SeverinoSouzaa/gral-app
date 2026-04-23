@@ -1,24 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { COLORS } from '../constants/colors';
 import { globalStyles } from '../styles/globalStyles';
 
-export default function AccessibilityMenu() {
+interface Props {
+  position?: 'top' | 'bottom';
+  renderTrigger?: (onPress: () => void) => React.ReactNode;
+}
+
+export default function AccessibilityMenu({ position = 'bottom', renderTrigger }: Props) {
   const [modalVisible, setModalVisible] = useState(false);
+  const [triggerLayout, setTriggerLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
+  const triggerRef = useRef<View>(null);
   
   const [highContrast, setHighContrast] = useState(false);
   const [largeText, setLargeText] = useState(false);
   const [mediaAccess, setMediaAccess] = useState(false);
 
+  const handleOpen = () => {
+    if (renderTrigger) {
+      // Mede a posição exata (pixel) do botão na tela atual antes de abrir o modal
+      triggerRef.current?.measureInWindow((x, y, width, height) => {
+        setTriggerLayout({ x, y, width, height });
+        setModalVisible(true);
+      });
+    } else {
+      setModalVisible(true);
+    }
+  };
+
   return (
     <>
-      <TouchableOpacity 
-        style={[styles.fab, globalStyles.glowEffect, globalStyles.glassBorder]} 
-        onPress={() => setModalVisible(true)}
-      >
-        <MaterialIcons name="accessibility-new" size={28} color={COLORS.primary} />
-      </TouchableOpacity>
+      {renderTrigger ? (
+        <View ref={triggerRef} collapsable={false}>
+          {renderTrigger(handleOpen)}
+        </View>
+      ) : (
+        <TouchableOpacity 
+          style={[styles.fab, globalStyles.glowEffect, globalStyles.glassBorder]} 
+          onPress={() => setModalVisible(true)}
+        >
+          <MaterialIcons name="accessibility-new" size={28} color={COLORS.primary} />
+        </TouchableOpacity>
+      )}
 
       <Modal
         animationType="fade"
@@ -31,7 +56,12 @@ export default function AccessibilityMenu() {
           {/* Fundo clicável invisível que fecha o modal ao clicar fora */}
           <TouchableOpacity style={StyleSheet.absoluteFill} activeOpacity={1} onPress={() => setModalVisible(false)} />
 
-          <View style={styles.modalContent}>
+          <View style={[
+            styles.modalContent, 
+            position === 'top' && triggerLayout.height > 0
+              ? { top: triggerLayout.y + triggerLayout.height + 16 } // Dinâmico logo abaixo do botão (16 de margem)
+              : position === 'top' ? styles.contentTop : styles.contentBottom
+          ]}>
             
             <View style={styles.header}>
               <Text style={styles.title}>Acessibilidade</Text>
@@ -87,14 +117,23 @@ export default function AccessibilityMenu() {
 
           </View>
 
-          {/* Clone do botão de acessibilidade que ficará acima do fundo escurecido */}
-          <TouchableOpacity 
-            style={[styles.fab, globalStyles.glowEffect, globalStyles.glassBorder]} 
-            onPress={() => setModalVisible(false)}
-            activeOpacity={0.8}
-          >
-            <MaterialIcons name="accessibility-new" size={28} color={COLORS.primary} />
-          </TouchableOpacity>
+          {renderTrigger && triggerLayout.height > 0 && (
+            /* Clone dinâmico do botão do topo posicionado perfeitamente acima do fundo escurecido */
+            <View style={{ position: 'absolute', top: triggerLayout.y, left: triggerLayout.x }} pointerEvents="box-none">
+              {renderTrigger(() => setModalVisible(false))}
+            </View>
+          )}
+
+          {!renderTrigger && (
+            /* Clone do botão de acessibilidade que ficará acima do fundo escurecido */
+            <TouchableOpacity 
+              style={[styles.fab, globalStyles.glowEffect, globalStyles.glassBorder]} 
+              onPress={() => setModalVisible(false)}
+              activeOpacity={0.8}
+            >
+              <MaterialIcons name="accessibility-new" size={28} color={COLORS.primary} />
+            </TouchableOpacity>
+          )}
 
         </View>
       </Modal>
@@ -120,7 +159,6 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     position: 'absolute',
-    bottom: 104, // 32 (espaçamento do botão) + 56 (altura do botão) + 16 de respiro
     right: 24, // Alinha à direita com o botão perfeitamente
     width: 310, // Limita a largura para parecer um balãozinho
     backgroundColor: '#071A1C',
@@ -128,6 +166,12 @@ const styles = StyleSheet.create({
     padding: 24,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.05)',
+  },
+  contentBottom: {
+    bottom: 104, // 32 (espaçamento do botão) + 56 (altura do botão) + 16 de respiro
+  },
+  contentTop: {
+    top: 70, // Ajuste compensando a subida da Tela Principal (100 - 30)
   },
   header: {
     flexDirection: 'row',

@@ -10,9 +10,10 @@ const { width, height } = Dimensions.get("window");
 
 interface Props {
   children: ReactNode;
+  hideAccessibility?: boolean;
 }
 
-export default function BackgroundLayout({ children }: Props) {
+export default function BackgroundLayout({ children, hideAccessibility = false }: Props) {
   return (
     <ScrollView
       contentContainerStyle={{ flexGrow: 1 }}
@@ -42,7 +43,7 @@ export default function BackgroundLayout({ children }: Props) {
         >
           {children}
         </SafeAreaView>
-        <AccessibilityMenu />
+        {!hideAccessibility && <AccessibilityMenu />}
       </View>
     </ScrollView>
   );

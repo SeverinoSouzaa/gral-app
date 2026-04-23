@@ -5,10 +5,11 @@ import { COLORS } from '../../constants/colors';
 import { globalStyles } from '../../styles/globalStyles';
 import BackgroundLayout from '../../components/BackgroundLayout';
 import { LinearGradient } from 'expo-linear-gradient';
+import AccessibilityMenu from '../../components/AccessibilityMenu';
 
 export default function TelaPrincipal() {
   return (
-    <BackgroundLayout>
+    <BackgroundLayout hideAccessibility={true}>
       <View style={styles.container}>
         
         {/* 1. TOP BAR */}
@@ -18,9 +19,14 @@ export default function TelaPrincipal() {
           </TouchableOpacity>
           
           <View style={styles.rightIcons}>
-            <TouchableOpacity style={styles.accessibilityButton}>
-              <MaterialIcons name="accessibility-new" size={24} color={COLORS.primary} />
-            </TouchableOpacity>
+            <AccessibilityMenu 
+              position="top"
+              renderTrigger={(onPress) => (
+                <TouchableOpacity style={styles.accessibilityButton} onPress={onPress}>
+                  <MaterialIcons name="accessibility-new" size={24} color={COLORS.primary} />
+                </TouchableOpacity>
+              )}
+            />
             <TouchableOpacity style={styles.iconButton}>
               <Feather name="bell" size={24} color={COLORS.primary} />
             </TouchableOpacity>
@@ -182,6 +188,7 @@ export default function TelaPrincipal() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: -30, // Puxa todo o conteúdo da tela mais para cima
   },
   topBar: {
     flexDirection: 'row',
