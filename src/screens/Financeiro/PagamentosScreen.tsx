@@ -142,7 +142,7 @@ export default function PagamentosScreen() {
                 </View>
 
                 <View style={styles.actionRow}>
-                  <TouchableOpacity style={{ flex: 1, marginRight: 12 }} activeOpacity={0.8}>
+                  <TouchableOpacity style={{ flex: 1, marginRight: 12 }} activeOpacity={0.8}onPress={() => navigation.navigate('Checkout', { parcela })}>
                     <LinearGradient colors={COLORS.buttonGradient as [string, string]} style={styles.payButton}>
                       <Text style={styles.payButtonText}>Pagar agora</Text>
                     </LinearGradient>
@@ -397,3 +397,4 @@ const styles = StyleSheet.create({
     color: COLORS.primary, // Laranja
   }
 });
+

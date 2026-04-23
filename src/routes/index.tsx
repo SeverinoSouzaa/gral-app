@@ -15,19 +15,21 @@ import CalendarioScreen from '../screens/Calendario/CalendarioScreen';
 
 import PagamentosScreen from '../screens/Financeiro/PagamentosScreen';
 
+import CheckoutScreen from '../screens/Financeiro/CheckoutScreen';
+
 const Stack = createNativeStackNavigator();
 
 export default function Routes() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        
+
         <Stack.Screen name="Login" component={LoginScreen} />
-        
+
         <Stack.Screen name="RecuperarAcesso" component={RecuperarAcesso} />
 
         <Stack.Screen name="solicitacaoEnviada" component={solicitacaoEnviadaScreen} />
-        
+
         <Stack.Screen name="Documentos" component={DocumentosScreen} />
 
         <Stack.Screen name="TelaPrincipal" component={TelaPrincipal} />
@@ -35,6 +37,16 @@ export default function Routes() {
         <Stack.Screen name="Calendario" component={CalendarioScreen} />
 
         <Stack.Screen name="Pagamentos" component={PagamentosScreen} />
+
+        <Stack.Screen
+          name="Checkout"
+          component={CheckoutScreen}
+          options={{
+            presentation: 'transparentModal',
+            animation: 'fade',
+            headerShown: false
+          }}
+        />
 
 
       </Stack.Navigator>
