@@ -125,14 +125,6 @@ export default function LoginScreen() {
         <Text style={styles.footerText}>Sistema seguro • Dados protegidos</Text>
 
         <AccessibilityMenu />
-
-        {/* HACK DE TESTE: REMOVER DEPOIS */}
-        <TouchableOpacity 
-          style={{ marginTop: 10, alignSelf: 'center', padding: 10, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 8 }}
-          onPress={() => navigation.navigate('Documentos')}
-        >
-          <Text style={{ color: COLORS.white }}>Ir para Documentos (Teste)</Text>
-        </TouchableOpacity>
       </LinearGradient>
     </ScrollView>
   );

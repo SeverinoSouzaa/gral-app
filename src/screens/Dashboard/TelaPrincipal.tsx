@@ -6,8 +6,11 @@ import { globalStyles } from '../../styles/globalStyles';
 import BackgroundLayout from '../../components/BackgroundLayout';
 import { LinearGradient } from 'expo-linear-gradient';
 import AccessibilityMenu from '../../components/AccessibilityMenu';
+import { useNavigation } from '@react-navigation/native';
 
 export default function TelaPrincipal() {
+  const navigation = useNavigation<any>();
+
   return (
     <BackgroundLayout hideAccessibility={true}>
       <View style={styles.container}>
@@ -50,7 +53,10 @@ export default function TelaPrincipal() {
           style={styles.quickActionsContainer}
           contentContainerStyle={{ paddingRight: 24 }}
         >
-          <TouchableOpacity style={styles.actionPill}>
+          <TouchableOpacity 
+            style={styles.actionPill} 
+            onPress={() => navigation.navigate('Documentos')}
+          >
             <Feather name="file-text" size={16} color={COLORS.primary} style={styles.pillIcon} />
             <Text style={styles.pillText}>Documentos</Text>
           </TouchableOpacity>
