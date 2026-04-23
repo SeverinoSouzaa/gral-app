@@ -17,6 +17,8 @@ import PagamentosScreen from '../screens/Financeiro/PagamentosScreen';
 
 import CheckoutScreen from '../screens/Financeiro/CheckoutScreen';
 
+import MidiasScreen from '../screens/Midias/MidiasScreen';
+
 const Stack = createNativeStackNavigator();
 
 export default function Routes() {
@@ -37,6 +39,8 @@ export default function Routes() {
         <Stack.Screen name="Calendario" component={CalendarioScreen} />
 
         <Stack.Screen name="Pagamentos" component={PagamentosScreen} />
+
+        <Stack.Screen name="Midias" component={MidiasScreen} />
 
         <Stack.Screen
           name="Checkout"

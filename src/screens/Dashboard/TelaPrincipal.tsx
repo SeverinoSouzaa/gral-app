@@ -190,7 +190,10 @@ export default function TelaPrincipal() {
             </View>
           </View>
 
-          <TouchableOpacity style={styles.textButton}>
+          <TouchableOpacity 
+            style={styles.textButton}
+            onPress={() => navigation.navigate('Midias')}
+          >
             <Text style={styles.textButtonLabel}>Ver todas</Text>
             <Feather name="chevron-right" size={16} color={COLORS.primary} style={{ marginLeft: 4 }} />
           </TouchableOpacity>
