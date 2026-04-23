@@ -138,15 +138,6 @@ export default function LoginScreen() {
 <<<<<<< Updated upstream
         <AccessibilityMenu />
 
-=======
-        <TouchableOpacity style={styles.accessibilityFab}>
-          <MaterialIcons
-            name="accessibility-new"
-            size={28}
-            color={COLORS.primary}
-          />
-        </TouchableOpacity>
->>>>>>> Stashed changes
       </LinearGradient>
     </ScrollView>
   );

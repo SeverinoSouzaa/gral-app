@@ -6,7 +6,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from '../screens/Auth/LoginScreen';
 import RecuperarAcesso from '../screens/Auth/RecuperarAcesso';
 import solicitacaoEnviadaScreen from '../screens/Auth/solicitacaoEnviada';
-import TelaPrincipal from '../screens/Auth/TelaPrincipal'; 
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +19,8 @@ export default function Routes() {
         <Stack.Screen name="RecuperarAcesso" component={RecuperarAcesso} />
 
         <Stack.Screen name="solicitacaoEnviada" component={solicitacaoEnviadaScreen} />
+        
+        <Stack.Screen name="Documentos" component={DocumentosScreen} />
 
         <Stack.Screen name="TelaPrincipal" component={TelaPrincipal} />
 
