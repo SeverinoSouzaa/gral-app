@@ -62,5 +62,18 @@ Conforme exigências teóricas de construção de API REST:
 - **Branching e Commits**: Fluxo entre `main` (produção) e `develop`. Adotar nomes de branch por features (`feat/`, `fix/`) e marcação padronizada de commits (Conventional Commits).
 - **Testes**: Foco em Testes Unitários nas camadas de `Services` (Regras de negócio isoladas) e Testes E2E via Supertest/Jest em endpoints na API. No front-end, focar em renderização de fluxos.
 
+## 8. Escalabilidade para Painel Administrativo Futuro
+
+Embora o foco atual do projeto seja o aplicativo mobile do formando (frontend-app), toda a arquitetura do backend deve ser pensada de forma desacoplada e reutilizável para suportar futuramente um painel administrativo web separado (admin-web).
+
+O backend deve funcionar como núcleo central da aplicação, atendendo múltiplos clientes (mobile e web) através da mesma API REST.
+
+As regras de negócio, permissões, autenticação e validações NÃO devem depender exclusivamente do frontend mobile atual.
+
+Rotas administrativas, permissões da Equipe Interna, upload de mídias, gerenciamento de eventos, documentos e notificações devem permanecer centralizados no backend e preparados para consumo futuro por um painel web administrativo.
+
+Evite qualquer lógica acoplada especificamente ao aplicativo mobile. Priorize APIs reutilizáveis, modulares e escaláveis.
+
+
 ## 8. Regra de Ouro
 **NUNCA modifique grandes partes do projeto ou a estrutura principal sem explicar a decisão e obter aprovação prévia.** Mantenha a API limpa, com DTOs validados e segurança em primeiro lugar.
