@@ -1,0 +1,453 @@
+Universidade Federal do Amazonas - UFAM
+Instituto de Ciências Exatas e Tecnologia - ICET
+Sistemas de Informação
+
+
+
+
+Projeto: GRAL.
+
+
+
+
+
+
+
+
+
+Itacoatiara/AM
+2026
+
+
+Ficha Técnica
+Equipe Responsável pela Elaboração
+	Amanda Silva
+Felipe Aliel
+Francisco Martins
+Severino Souza
+Valdecir Reis
+
+	
+Público Alvo
+Este manual destina-se a todos os colaboradores que estejam inseridos na execução do projeto bem como ao cliente que receberá o produto final.
+
+
+REGISTRO DE ALTERAÇÕES
+  
+Sumário
+
+
+
+Introdução
+
+1.1. Estrutura/Visão Geral do Documento
+Esta introdução fornece as informações necessárias para fazer um bom uso deste documento, explicitando seus objetivos e as convenções que foram adotadas no texto. As demais seções apresentam a especificação do sistema GRAL e estão organizadas como descrito abaixo:
+Introdução: Apresenta a descrição geral do sistema, os objetivos do software e a caracterização dos usuários envolvidos, como formandos, responsáveis financeiros e a equipe interna da empresa .
+Requisitos Gerais do Sistema: Enumera as funcionalidades do software (Requisitos Funcionais), as restrições técnicas e de qualidade (Requisitos Não-Funcionais) e as diretrizes operacionais (Regras de Negócio).
+Diagramas UML: Demonstra o comportamento e a estrutura do sistema por meio de modelos visuais, incluindo Diagramas de Casos de Uso, Sequência,  Atividades, classes e objeto. Que detalham fluxos como login, gestão financeira e upload de mídias.
+Arquitetura do Sistema: Descreve a organização técnica do software baseada no padrão MVC (Model-View-Controller), detalhando os fluxos transacionais, de mídias e de comunicação.
+Prototipação das Telas: Apresenta o design de interface do aplicativo, ilustrando a jornada do usuário desde o acesso inicial até as funções de dashboard e pagamentos.
+Análise de Riscos: Identifica possíveis ameaças ao sucesso do projeto, como falhas de infraestrutura ou limitações de mão de obra, propondo uma visão crítica sobre a execução.
+
+1.2. Audiência do Documento
+
+ Tabela de Audiência
+
+
+1.3. Convenções, Termos e Abreviações
+Para garantir a compreensão uniforme deste documento, são adotadas as seguintes definições e siglas:
+
+A. Introdução, Engenharia de Requisitos e Regras 
+Sistema GRAL: Aplicativo desenvolvido para gestão e organização de formaturas.
+Usuário: Qualquer pessoa que utiliza o sistema (formando, responsável financeiro ou equipe interna). 
+RF (Requisito Funcional): Descrição de uma funcionalidade ou serviço que o sistema deve fornecer.
+RNF (Requisito Não-Funcional): Critério que restringe a forma como o sistema opera, como segurança, desempenho ou acessibilidade.
+RN (Regra de Negócio): Premissas e restrições que definem o funcionamento operacional do negócio no software.
+Identificadores (Ex: RF01, RNF01, RN01): Códigos numéricos usados para facilitar a rastreabilidade de cada requisito ou regra ao longo do documento.
+
+B. Modelagem e Diagramas (UML)
+UML (Unified Modeling Language): Linguagem padrão para visualização, especificação e documentação de sistemas de software.
+UC (Use Case / Caso de Uso): Representação das interações entre os atores (usuários) e o sistema.
+Ator: Papel desempenhado por um usuário ou outro sistema que interage com o software
+
+C. Arquitetura e Tecnologia
+MVC (Model-View-Controller): Padrão de arquitetura de software que separa a lógica de dados (Model), a interface (View) e o controle de fluxo (Controller).
+Cloud Storage (AWS S3): Serviço de armazenamento na nuvem utilizado para guardar as mídias (fotos e vídeos) de forma segura.
+
+D. Interface e Negócio (GRAL)
+Dashboard: Painel visual que centraliza as principais métricas e avisos para o usuário.
+Alt Text: Texto alternativo usado para descrever imagens, garantindo acessibilidade para leitores de tela.
+
+1.4. Descrição Geral do Sistema
+GRAL é um aplicativo voltado para a gestão e organização de formaturas, desenvolvido para centralizar e facilitar o acesso às informações e atividades relacionadas ao processo de graduação. A plataforma permite que formandos acompanhem eventos, realizem pagamentos, acessem mídias e documentos, além de interagir com a comissão organizadora.
+O sistema também contempla o uso por membros da equipe interna, responsáveis pela administração de conteúdos, controle financeiro e gerenciamento das informações da turma. Dessa forma, o GRAL atua como um ambiente integrado que conecta formandos e organizadores, promovendo maior organização, transparência e praticidade durante toda a jornada da formatura. 
+
+1.5. Descrição dos Usuários
+Os usuários desse sistema podem ser classificados:
+Formandos do Ensino Médio e Superior: São os principais usuários do sistema. Representam estudantes que estão em fase de conclusão de seus cursos e participam do processo de organização da formatura. Utilizam o aplicativo para acompanhar eventos, acessar documentos, visualizar e baixar mídias, realizar pagamentos e se manter informados sobre todas as etapas da formatura.
+Pais e responsáveis financeiros: Correspondem aos usuários que, em muitos casos, são responsáveis pelo pagamento dos serviços relacionados à formatura. Utilizam o sistema para acompanhar o status financeiro, verificar parcelas, prazos e garantir que as obrigações estejam em dia, podendo também acessar informações relevantes sobre o andamento do processo.
+Equipe Interna da GRAL: São os usuários responsáveis pela administração do sistema e pela gestão da formatura. Incluem colaboradores da empresa que realizam o controle financeiro, cadastro de turmas, envio de comunicados, organização de eventos e disponibilização de conteúdos. Possuem acesso a funcionalidades mais avançadas, voltadas à gestão e manutenção das informações da plataforma.
+Requisitos Gerais do Sistema
+
+2.1. Requisitos Funcionais
+Módulo 1: Acesso e Perfil
+RF01: O sistema deve permitir o login e a recuperação de senha para Formandos e Equipe Interna, com credenciais específicas para cada perfil.
+RF02: O sistema deve exibir um painel do usuário (Formando) contendo o status geral de sua jornada e as pendências importantes.
+RF03: O sistema deve exibir um painel administrativo para a Equipe Interna com os indicadores gerais de cada turma, incluindo status, pendências e pagamentos.
+Módulo 2: Gestão de Documentos
+RF04: O sistema deve permitir que os Formandos enviem documentos obrigatórios (ex: foto do quadro, nome do canudo).
+RF05: O sistema deve permitir que a Equipe Interna receba, organize por turma/aluno e valide (aprove ou recuse) os documentos enviados.
+Módulo 3: Mídias (Fotos e Vídeos)
+RF07: O sistema deve permitir que a Equipe Interna publique, atualize e remova mídias, organizando-as em eventos e pastas.
+RF08: O sistema deve permitir que os Formandos visualizem e façam download das fotos e vídeos de sua turma.
+Módulo 4: Financeiro
+RF09: O sistema deve permitir que os Formandos acompanhem sua situação financeira, visualizem o histórico de pagamentos e gerem comprovantes/notas.
+RF10: O sistema deve permitir que a Equipe Interna visualize pendências financeiras, registre pagamentos recebidos manualmente e exporte dados financeiros.
+Módulo 5: Comunicação e Administração
+RF11: O sistema deve permitir que a Equipe Interna gerencie e crie novas turmas.
+RF12: O sistema deve exibir um calendário oficial de ensaios, eventos e prazos, gerenciável pela Equipe Interna e visível para os Formandos.
+RF13: O sistema deve enviar notificações e avisos oficiais aos Formandos sobre prazos, pagamentos e documentos.
+
+2.2. Requisitos Não-Funcionais
+RNF01 (Acessibilidade/Usabilidade): O sistema deve possuir uma interface com suporte nativo a leitores de tela e descrições alternativas (alt text) em 100% das mídias essenciais para garantir a navegação de usuários com baixa visão.
+RNF02 (Acessibilidade/Usabilidade): As notificações e o painel devem utilizar elementos de leitura facilitada e alto contraste, garantindo que usuários com acessibilidade compreendam os avisos sem barreiras cognitivas.
+RNF03 (Segurança): O sistema deve garantir que o painel administrativo da Equipe Interna seja isolado e possua acesso seguro exclusivo, impossibilitando que formandos acessem dados gerenciais ou de outras turmas.
+RNF04 (Desempenho - Sugestão Teórica): O download e a renderização de galerias de fotos/vídeos devem ocorrer em um tempo máximo de resposta aceitável (ex: carregamento inicial da galeria em até 3 segundos) para evitar a frustração mapeada nas jornadas.
+RNF05 (Confiabilidade): O sistema deve garantir a integridade dos dados, certificando-se de que nenhum documento enviado pelo formando seja perdido após o upload (Probabilidade de perda de dados próxima a zero).
+2.3. Regras de Negócio
+RN01: O status de um documento obrigatório só transita de "Pendente/Enviado" para "Aprovado" após a validação explícita por um membro da Equipe Interna.
+RN02: Um Formando só tem permissão para visualizar e interagir com mídias, calendários e relatórios financeiros que pertençam exclusivamente à sua turma registrada.
+RN03: Ações de criação, exclusão ou edição global de conteúdos (avisos, mídias, novos produtos, turmas) são exclusivas de usuários autenticados com perfil de "Equipe Interna".
+
+
+
+Diagramas UML 
+
+3.1. Diagramas de Casos de uso
+3.1.1. Módulo de acesso
+
+
+
+3.1.2. Módulo financeiro
+
+
+3.1.3. Módulo de mídias
+
+
+
+3.1.4. Módulo de gestão documentos
+
+3.1.5. Módulo de Comunicação e Administração
+
+3.2. Especificação de Casos de uso
+
+Tabela 1 – Especificação do caso de uso Cadastrar.
+
+
+Tabela 2 – Especificação do caso de uso Logar.
+
+
+Tabela 3 – Especificação do caso de uso Encerrar Sessão.
+
+
+Tabela 4 – Especificação do caso de uso Recuperar Senha.
+
+
+Tabela 5 – Especificação do caso de uso Consultar Situação Financeira
+
+
+Tabela 6 – Especificação do caso de uso Visualizar Histórico de Pagamentos
+
+
+Tabela 7 – Especificação do caso de uso Gerar Comprovante
+
+
+Tabela 8 – Especificação do caso de uso Visualizar Pendências
+
+
+Tabela 9 – Especificação do caso de uso Registrar Pagamento Manual
+
+
+Tabela 10 – Especificação do caso de uso Exportar Dados
+
+
+Tabela 11 – Especificação do caso de uso Gerenciar Mídias
+
+
+Tabela 12 – Especificação do caso de uso Organizar Mídias
+
+
+Tabela 13 – Especificação do caso de uso Visualizar Mídias
+
+
+Tabela 14 – Especificação do caso de uso Download de Mídias
+
+
+Tabela 15 – Especificação do caso de uso Enviar Documento
+
+
+Tabela 16 – Especificação do caso de uso Consultar Documento
+
+
+Tabela 17 – Especificação do caso de uso Gerenciar Documentos
+
+
+Tabela 18 – Especificação do caso de uso Validar Documentos
+
+
+Tabela 19 – Especificação do caso de uso Gerenciar Turmas
+
+
+Tabela 20 – Especificação do caso de uso Gerenciar Calendário
+
+
+Tabela 21 – Especificação do caso de uso Visualizar Calendário
+
+
+Tabela 22 – Especificação do caso de uso Enviar Notificações
+
+
+Tabela 23 – Especificação do caso de uso Enviar Notificações
+
+
+
+
+3.3. Diagrama de Sequência 
+ Módulo de Acesso (Login e Recuperação)
+
+Ator (Usuário) digita e-mail e senha na Interface e clica em entrar.
+Interface (Visão) envia as credenciais para o Controle através do método validarAcesso.
+Controle (Controller) solicita ao Banco de Dados a busca do usuário pelo e-mail.
+Banco de Dados (Modelo) retorna as informações encontradas para o Controle.
+Controle libera o acesso com base no perfil e notifica a Interface.
+Interface redireciona o usuário para a tela inicial (Home) correspondente.
+No fluxo de recuperação, o Usuário clica em "Esqueci minha senha".
+Interface solicita a recuperação ao Controle, que gera um token no Banco de Dados.
+Após o token ser gerado, o Controle dispara o e-mail de recuperação.
+Interface exibe ao usuário a confirmação de que o link foi enviado.
+
+ Módulo de Gestão de Documentos
+
+Ator (Formando) seleciona o arquivo obrigatório na Interface.
+Interface (Telas) aciona o método enviarDocumento no Controle.
+Controle (Regras) solicita ao Banco de Dados que salve o status do arquivo como "Pendente".
+Banco de Dados confirma que o envio foi bem-sucedido para a Interface.
+Posteriormente, a Equipe Interna acessa a lista de documentos pendentes na Interface.
+Interface solicita a busca ao Controle, que realiza um SELECT no Banco de Dados.
+A Equipe Interna analisa o documento e clica no botão "Aprovar".
+Controle aciona validarDocumento e solicita o UPDATE do status no Banco de Dados.
+Banco de Dados confirma a atualização e o sistema exibe a mensagem de sucesso na Interface.
+
+Módulo de Mídias (Fotos e Vídeos)
+
+Ator (Equipe Interna) seleciona as mídias do evento na Interface.
+Interface (Galeria) envia os arquivos para o Controle processar o upload.
+Controle (Mídias) salva os arquivos no Armazenamento.
+Armazenamento retorna a URL pública dos arquivos para o Controle.
+Controle registra a URL e o ID do evento no Banco de Dados.
+Em paralelo, o Formando acessa a galeria da sua turma na Interface.
+Interface solicita a busca das mídias ao Controle com base na turma .
+Controle recupera as URLs do Banco de Dados e as entrega para a Interface.
+Interface exibe as fotos e disponibiliza o botão "Download" para o formando.
+
+Módulo Financeiro
+
+Ator (Formando) clica na opção "Minha Situação Financeira" na Interface.
+Interface (Financeiro) solicita a consulta do extrato ao Controle passando o ID do usuário.
+Controle (Financeiro) busca no Banco de Dados os pagamentos vinculados ao formando.
+Banco de Dados retorna a lista detalhada de parcelas e comprovantes.
+Controle aciona o método renderizarTabelaFinanceira para a Interface.
+Interface exibe o histórico financeiro completo e disponibiliza o botão "Gerar Comprovante".
+
+Módulo de Calendário / Eventos
+
+Ator (Equipe Interna) preenche os dados do novo evento (ex: Ensaio Geral) na Interface.
+Interface (Calendário) aciona o método cadastrarEvento no Controle.
+Controle (Eventos) solicita a inserção dos dados (data, local, descrição) no Banco de Dados.
+Banco de Dados confirma a gravação bem-sucedida da informação.
+Controle aciona a notificação para as turmas envolvidas.
+Interface atualiza a agenda dos formandos com o novo evento publicado.
+
+3.4. Diagrama de Atividades
+
+3.5. Diagrama de Classes
+
+ 
+
+
+3.6. Diagrama de Objetos
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Arquitetura do Sistema
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Padrões de Projeto
+Nesta seção, descrevemos os padrões de projeto aplicados ao desenvolvimento do sistema GRAL. O uso desses padrões visa fornecer soluções reutilizáveis para problemas recorrentes, aumentando a qualidade, a manutenção e a clareza da comunicação entre a equipe de desenvolvimento.
+
+5.1. Padrão Criacional: Singleton
+O padrão Singleton é utilizado para garantir que uma classe tenha apenas uma única instância em todo o ciclo de vida da aplicação, fornecendo um ponto de acesso global a ela.
+
+Contexto de Aplicação no GRAL: Este padrão é aplicado no Backend Core para gerenciar a conexão com o banco de dados PostgreSQL e o serviço de armazenamento AWS S3.
+Justificativa: Como o sistema lida com múltiplos acessos simultâneos de formandos, não é eficiente abrir uma nova conexão para cada requisição. O Singleton garante o uso racional de recursos do servidor, mantendo uma conexão única e estável para persistência de dados e upload de mídias.
+
+5.2. Padrão Comportamental: Observer
+O padrão Observer define uma dependência um-para-muitos entre objetos, de modo que, quando um objeto muda de estado, todos os seus dependentes são notificados e atualizados automaticamente.
+
+Contexto de Aplicação no GRAL: É utilizado no Módulo de Comunicação e Administração (RF13). Quando a Equipe Interna publica um novo evento no calendário ou um novo aviso, o objeto "Evento" notifica o "Serviço de Notificações".
+Justificativa: Este padrão permite que diferentes canais (push no celular, e-mail e alertas no dashboard) reajam à criação de um conteúdo sem que a lógica de criação do evento precise conhecer os detalhes técnicos de cada canal de envio, mantendo o código desacoplado.
+
+5.3. Padrão Comportamental: Strategy
+O padrão Strategy permite definir uma família de algoritmos, encapsular cada um deles e torná-los intercambiáveis, permitindo que o algoritmo varie independentemente dos clientes que o utilizam.
+Contexto de Aplicação no GRAL: Aplicado no Módulo Financeiro para o processamento de pagamentos. O sistema oferece suporte a diferentes estratégias de cobrança, como Pix e Cartão de Crédito/Débito.
+Justificativa: O uso do Strategy evita o excesso de condicionais (if/else) no código financeiro. Cada método de pagamento possui sua própria lógica de validação e comunicação com a API externa, facilitando a inclusão de novas formas de pagamento (como boleto) no futuro sem impactar as regras de negócio já existentes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Prototipação das telas
+
+Fluxo de Login e Recuperação de Acesso
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Dashboard e Menu de Acessibilidade
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Fluxo de Envio de Documentos e Calendário
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gestão Financeira e Pagamentos
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Checklist e Galeria de Mídias
+
+
+
+
+
+
+Análise de Risco 
+
+
+
+
+
+
+
+
+
+
+Apêndice
+
+Esta seção reúne materiais complementares e registros administrativos que fundamentam o processo de desenvolvimento do sistema GRAL.
+Relato de Experiência:
+O desenvolvimento da documentação do projeto GRAL proporcionou à equipe uma imersão prática nos conceitos de Engenharia de Software e Sistemas de Informação. Durante o processo, enfrentamos o desafio de traduzir as necessidades complexas de uma comissão de formatura em requisitos técnicos viáveis (RFs e RNFs).
+A aplicação da arquitetura MVC e a modelagem UML foram fundamentais para organizar o pensamento lógico antes da codificação, permitindo uma visão clara de como os dados financeiros e as mídias dos formandos seriam processados com segurança. Esta experiência consolidou o aprendizado sobre o ciclo de vida de um software, desde a concepção até a análise de riscos associados à produção.
+
+Atas de Reuniões e Registros de Atividades:

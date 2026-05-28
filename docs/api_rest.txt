@@ -1,0 +1,254 @@
+API REST e Integração com 
+Banco de Dados
+Docente: Walter Viana
+API REST
+➢Padrão decomunicação entre sistemas viaHTTP, usando URLs emétodos como
+GET, POST, PUT eDELETE para acessar emanipular dados .
+➢Normalmente troca informações noformato JSON .
+API REST
+➢🌐HTTP
+➢POST :Envio dedados docliente para oservidor, geralmente para criar
+umnovo recurso .
+➢GET:Recuperação/exibição de dados do servidor para ocliente
+(navegador), sem alterar oestado dosistema .
+➢PUT:Envio dedados para oservidor com oobjetivo deatualizar um
+recurso existente .
+➢DELETE :Requisição para remover umrecurso existente noservidor .
+API REST
+➢🔌API, REST e JSON
+➢API: permite a comunicação entre 
+sistemas
+➢REST: padrão de APIs baseado em URLs
+e métodos HTTP
+➢JSON: formato leve para troca de dados
+
+API REST
+➢🔌API, REST e JSON
+➢API: permite a comunicação entre 
+sistemas
+➢API do exemplo : 
+http://localhost: 3000 /api/v 1
+➢Tudo que vem depois disso são 
+funcionalidades da API.
+
+API REST
+➢🔌API, REST e JSON
+➢REST: padrão de APIs baseado em URLs e 
+métodos HTTP
+➢REST do exemplo : Método HTTP (POST)
+➢Isso caracteriza uma API REST .
+
+API REST
+➢🔌API, REST e JSON
+➢JSON: formato leve para troca de dados
+➢JSON do exemplo : 
+{
+"email": "jonas 1@gmail.com",
+"password": " 123456 "
+}
+
+Arquitetura Genérica (Cliente -Servidor)
+Fonte: https://jesielviana.gitbook.io/guiaweb/2. -fundamentos -da-web
+Arquitetura Genérica (Cliente -Servidor)
+➢Sugestões para implementar oservidor :
+➢Próprio
++
+ + OU
+Arquitetura Genérica (Cliente -Servidor)
+➢Sugestões para implementar oservidor :
+➢Externo
+OU
+
+Arquitetura Genérica (Cliente -Servidor)
+➢Sugestões para implementar ocliente :
+➢Outras opções :
+➢React Native Puro
+➢Java/ Kotlin noAndroid Studio ->Aqui você faztanto Cliente quanto Servidor+
+
+Arquitetura MVC
+➢Model : Responsável pelos 
+dados e regras de negócio 
+(acesso ao banco, 
+validações).
+➢View : Interface com o 
+usuário (telas, formulários, 
+respostas visuais).
+➢Controller : Recebe as 
+requisições, processa a 
+lógica e conecta View e 
+Model.
+
+Arquitetura MVC
+➢O Model e o Controller são 
+implementados no backend
+➢O View é implementado no 
+frontend
+
+Arquitetura MVC
+➢Conseguimos implementar Model e 
+Controller com algumas tecnologias 
+e frameworks de backend :
+➢Linguagem Python com seus 
+frameworks: Flask , FastAPI , 
+Django.
+➢Linguagem Javascript com seus 
+frameworks: Next.js, Node.js, 
+...
+➢Etc...
+
+Arquitetura MVC
+➢Estrutura em python com Flask :
+
+Arquitetura MVC
+➢Model : Responsável pelos dados e regras 
+de negócio (ORM, acesso ao banco, 
+validações).
+➢Controllers : Processam as requisições, 
+aplicam a lógica e retornam respostas.
+
+Arquitetura MVC
+➢Routes : Definem as URLs /endpoints e 
+direcionam para os controllers .
+➢Config : Configurações da aplicação (banco de 
+dados, variáveis de ambiente, chaves, portas, 
+etc.).
+
+Arquitetura MVC
+➢Estrutura em Javascrit com Next:
+
+Arquitetura MVC
+➢Estrutura em Javascrit com Next:
+➢Pages tem a mesma função que o routes no 
+flask .
+
+Arquitetura MVC
+➢Estrutura doframework ≠Arquitetura dosistema
+➢Frameworks como Flask eNext organizam pastas earquivos deformas diferentes .
+Mesmo assim, ainda épossível aplicar padrões arquiteturais como MVC .
+➢Isso porque, independentemente daestrutura :
+➢existe interface (View )
+➢existem rotas/controladores (Controller )
+➢existe lógica denegócio eacesso adados (Model/Service)
+➢Ouseja, aorganização muda, mas oconceito arquitetural permanece .
+Arquitetura MVC
+➢Integração com o banco de 
+dados
+➢Flask :
+
+Arquitetura MVC
+➢Integração com o banco de 
+dados
+➢Next.js:
+
+Documentação da API
+➢Para que serve :Facilitar oentendimento,
+uso, testes eintegração entre sistemas .
+➢Ferramentas :
+➢Postman → testar eorganizar
+requisições
+➢Insomnia →similar aoPostman
+➢Swagger (OpenAPI )→documentar e
+visualizar endpoints daAPI
+➢Etc...
+👉Swagger éomais popular eamplamente
+usado nomercado .<<Imagem do Swagger>>
+
+Documentação da API
+➢Roda naporta dobackend (ex.:
+localhost :3000 ,localhost :3001 ,...).
+➢Permite testar operações deCRUD
+diretamente naAPI, sem depender
+dofrontend .<<Imagem do Swagger>>
+
+Status HTTP: respostas de sucesso e erro em APIs
+➢200 –OK -> Requisição realizada com sucesso.
+➢400 –Bad Request -> Erro na requisição (dados inválidos ou incompletos).
+Ex.: enviar cadastro sem email ou senha.
+➢401 –Unauthorized -> Usuário não autenticado.
+Ex.: acessar rota protegida sem login/token.
+Status HTTP: respostas de sucesso e erro em APIs
+➢404 –Not Found -> Recurso ou rota não encontrada.
+Ex.: acessar / users /99 quando esse usuário não existe.
+➢405 –Method Not Allowed -> Método HTTP não permitido para a rota.
+Ex.: usar DELETE em uma rota que aceita apenas GET.
+➢409 –Conflict -> Conflito de dados (registro já existente).
+Ex.: tentar cadastrar um email que já está no banco.
+Ferramentas para consumo de APIs ( Fetch VsAxios )
+➢Fetch eAxios são ferramentas usadas nofrontend para fazer requisições HTTP aAPIs
+(buscar, enviar, atualizar ouremover dados) .
+➢Oque são/para que servem
+➢Fetch :APInativa doJavaScript para requisições HTTP nonavegador .
+➢Axios :biblioteca externa que fazrequisições HTTP com mais recursos prontos .
+➢Servem para consumir APIs :GET, POST, PUT, DELETE, etc.
+Noções de Segurança em Servidores
+➢JWT (JSON Web Token)
+Usado para autenticação e autorização de usuários via tokens.
+➢CORS (Cross -Origin Resource Sharing )
+Controla quais origens podem acessar a API, evitando acessos não autorizados.
+➢SQL Injection
+Ataque que insere comandos SQL maliciosos em formulários ou requisições para acessar 
+ou alterar dados.
+➢Cripitografia
+Técnica de proteção de dados sensíveis por meio de codificação
+Noções de Segurança em Servidores
+➢JWT (JSON Web Token)
+
+Noções de Segurança em Servidores
+➢CORS (Cross -Origin Resource Sharing )
+
+Noções de Segurança em Servidores
+➢CORS (Cross -Origin Resource Sharing )
+
+Noções de Segurança em Servidores
+➢SQL Injection
+Ex.:
+➢Query vulnerável (concatenação de string ):SELECT * FROM users WHERE email = '" + email
++ "' AND password = '" + password + “’”; 
+➡️Permite inserir SQL malicioso.
+➢Exemplo de SQL malicioso: ' OR ' 1'=‘1 
+➢Isso pode autenticar sem senha válida .
+Noções de Segurança em Servidores
+➢Query segura (parametrizada): SELECT * FROM users WHERE email = ? AND password = ?;
+➢➡️Usa parâmetros preparados, evitando injeção de SQL.
+Noções de Segurança em Servidores
+➢Se alguém enviar: OR 1=1
+➢O banco NÃO executa isso como lógica SQL. Ele interpreta literalmente como string : email
+= "OR 1=1" 
+➢Ou seja:
+➢vira apenas um valor de campo
+➢não altera a estrutura da query
+➢não “quebra” o WHERE
+➢Já na versão vulnerável (concatenação ): WHERE email = '" + email + “’  . O conteúdo entra 
+direto no SQL e passa a fazer parte do comando.
+Noções de Segurança em Servidores
+➢SQL Injection
+
+Noções de Segurança em Servidores
+➢SQL Injection
+➢Resumo do SqlInjetion : ? e %s separam código SQL de dados do usuário. O banco 
+executa o SQL primeiro e só depois encaixa os valores, impedindo que comandos 
+maliciosos sejam interpretados como instruções SQL.
+Noções de Segurança em Servidores
+➢Cripitografia
+Python JavaScript
+
+Linguagem Pura VsCom Frameworks
+Python puro  VsPython com Flask ,   JavaScript Puro  VsJavaScript com Next
+Puro Com Frameworks
+Organização manual Estrutura pré -definida e padronizada
+Mais código e configuração Acelera o desenvolvimento com recursos 
+prontos
+Implementação do zero Rotas e endpoints já estruturados
+Depende totalmente da organização do 
+desenvolvedorFavorece boas práticas e organização
+Precisa integrar tudo manualmente Autenticação, middleware, templates , etc. já 
+disponíveis
+Referências
+QUEIRÓS, Ricardo; PORTELA, Filipe. Introdução ao Desenvolvimento Moderno Para a Web. Do Front -End
+ao Back -End. Uma Visão Global. FCA. 1a edição. 2018.
+MUELLER, John Paul; KINOSHITA, Lúcia. Segurança Para Desenvolvedores Web: Usando JavaScript , HTML e 
+CSS. ISBN -10: 8575224840. ISBN -13: 978 -8575224847. Editora: Novatec ; Edição: 1a (21 de março de 
+2016).
+PRESSMAN, R. S. Engenharia de Software: uma abordagem profissional. 7.ed. São Paulo: McGraw -Hill, 
+2011.
+SOMMERVILLE, I. Engenharia de Software. 9.ed. São Paulo: Pearson Prentice Hall, 2011.
