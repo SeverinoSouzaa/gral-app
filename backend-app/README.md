@@ -1,46 +1,75 @@
-# GRAL Backend Application
+# GRAL Backend - Gestão de Formaturas
 
-Este é o backend do sistema GRAL (Gestão de Formaturas), desenvolvido com **Node.js** e **NestJS**. A arquitetura foi desenhada rigorosamente para seguir as diretrizes do documento de requisitos oficiais, implementando o padrão MVC adaptado para o NestJS.
+Este é o repositório do backend do projeto GRAL, construído com [NestJS](https://nestjs.com/), [Prisma ORM](https://www.prisma.io/) e [PostgreSQL](https://www.postgresql.org/).
 
-## Stack Tecnológica
-- **Framework Core**: Node.js + NestJS
-- **Linguagem**: TypeScript
-- **Banco de Dados**: PostgreSQL + Prisma ORM
-- **Segurança**: JWT (JSON Web Tokens) e Bcrypt para senhas
-- **Armazenamento de Mídias**: AWS S3
-- **Documentação de API**: Swagger (OpenAPI)
+A arquitetura foi desenhada para ser modular, escalável e seguir fielmente os padrões MVC e API REST, suportando os diferentes perfis do sistema: Formandos, Pais/Responsáveis e Equipe Interna.
 
-## Estrutura e Arquitetura
+## 🚀 Tecnologias e Padrões
+- **NestJS**: Framework Node.js progressivo para construção de aplicações eficientes e escaláveis.
+- **Prisma ORM**: Tipagem forte e segurança contra SQL Injection, atuando como camada de persistência.
+- **PostgreSQL**: Banco de dados relacional oficial do projeto.
+- **Segurança**: Autenticação via JWT, proteção de rotas com Guards e Helmet para proteção de cabeçalhos HTTP.
+- **Documentação**: Swagger / OpenAPI integrado.
+- **Padrões**: Singleton (Conexões de BD), Observer (Eventos e Notificações) e Strategy (Lógica Financeira).
 
-O backend foi separado de acordo com os módulos propostos e padrões arquiteturais documentados.
+## 📁 Estrutura de Diretórios
 
-```
+O projeto segue uma arquitetura modular por domínios, isolando as regras de negócio:
+
+```text
 src/
-├── modules/
-│   ├── auth/          # Módulo de Acesso (Login, Recuperação)
-│   ├── users/         # Módulo de Gestão de Usuários e Perfis
-│   ├── turmas/        # Módulo de Gestão de Turmas
-│   ├── financeiro/    # Módulo Financeiro (Strategy Padrão)
-│   ├── documentos/    # Módulo de Gestão de Documentos
-│   ├── midias/        # Módulo de Mídias
-│   ├── notificacoes/  # Módulo de Notificações (Observer Padrão)
-│   ├── calendario/    # Módulo de Calendário Oficial
-│   └── eventos/       # Módulo de Eventos
-├── common/            # Camada comum (Guards, Middlewares, Filters, Interceptors)
-├── config/            # Configurações globais e variáveis de ambiente
-├── prisma/            # Serviço Singleton de acesso ao banco Prisma
-└── main.ts            # Entrypoint configurado (CORS, ValidationPipe global e Swagger)
+ ├── common/          # Recursos globais (Guards, Filters, Interceptors, Decorators)
+ ├── config/          # Validação e exportação de variáveis de ambiente
+ ├── prisma/          # Módulo global do Prisma ORM (Singleton)
+ ├── modules/         # Módulos de domínio de negócio:
+ │    ├── auth/       # Autenticação, login e recuperação de acesso
+ │    ├── users/      # Gestão de perfis (Formandos, Pais, Equipe)
+ │    ├── documents/  # Gestão de contratos e aprovações
+ │    ├── media/      # Galeria de fotos e vídeos (AWS S3)
+ │    ├── finance/    # Pagamentos, boletos, pix e extrato
+ │    ├── events/     # Calendário e eventos da turma
+ │    └── notifications/ # Avisos sistêmicos
+ ├── app.module.ts    # Módulo raiz
+ └── main.ts          # Arquivo de bootstrap (Pipes globais, Swagger, CORS, Helmet)
 ```
 
-## Padrões de Projeto Utilizados
-- **Singleton**: Conexão única garantida para Banco de Dados (`PrismaService`) e Storage (`S3Service`).
-- **Observer**: Usado no Módulo de Comunicação para disparar notificações desacopladas (`@nestjs/event-emitter`).
-- **Strategy**: Usado no Módulo Financeiro para isolar a lógica de cobrança e pagamento.
+## 🛠️ Configuração e Execução
 
-## Próximos Passos
-1. Execute `npm run start:dev` para iniciar a aplicação localmente.
-2. Inicie a configuração do banco de dados alterando o arquivo `.env` com base no `.env.example`.
-3. Rode `npx prisma migrate dev` para as migrações (assim que o schema for definido).
+### 1. Preparação do Ambiente
+Copie o arquivo de exemplo das variáveis de ambiente e preencha as chaves necessárias (especialmente o `DATABASE_URL`):
+```bash
+cp .env.example .env
+```
 
-## Versionamento
-A API é versionada por padrão e responderá na raiz `/api/v1/`.
+### 2. Instalação das Dependências
+```bash
+npm install
+```
+
+### 3. Banco de Dados (Prisma)
+Gere os artefatos do Prisma baseados no `schema.prisma` e rode as migrations:
+```bash
+npx prisma generate
+npx prisma migrate dev --name init
+```
+
+### 4. Executando a Aplicação
+```bash
+# Desenvolvimento local (watch mode)
+npm run start:dev
+
+# Produção
+npm run build
+npm run start:prod
+```
+
+Acesse a documentação da API gerada pelo Swagger:
+`http://localhost:3000/api/v1/docs`
+
+## 🛡️ Regras da Arquitetura
+1. **Controllers**: Apenas recebem a requisição, passam pelo DTO e delegam para o Service. Sem regras de negócio aqui!
+2. **Services**: Toda a lógica de negócio, validações profundas e comunicação com o PrismaService reside aqui.
+3. **DTOs (Data Transfer Objects)**: Todas as entradas devem ser validadas usando `class-validator`. Nenhuma requisição entra no backend sem validação prévia.
+
+---
+*Documentação gerada para orientar a equipe de desenvolvimento durante o ciclo de vida do projeto GRAL.*
