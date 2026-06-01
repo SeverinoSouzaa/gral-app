@@ -74,11 +74,17 @@ model Turma {
   @@map("turmas")
 }
 
+enum DocumentType {
+  FRAME_PHOTO
+  CAP_NAME
+  OTHER
+}
+
 model Documento {
-  id            Int      @id @default(autoincrement())
-  nomeArquivo   String   @map("nome_arquivo")
-  tipoDocumento String   @map("tipo_documento")
-  dataEnvio     DateTime @default(now()) @map("data_envio")
+  id            Int          @id @default(autoincrement())
+  nomeArquivo   String       @map("nome_arquivo")
+  tipoDocumento DocumentType @map("tipo_documento")
+  dataEnvio     DateTime     @default(now()) @map("data_envio")
   status        String
 
   formandoId Int      @map("formando_id")
@@ -100,12 +106,19 @@ model Pagamento {
   @@map("pagamentos")
 }
 
+enum EventType {
+  EVENT
+  REHEARSAL
+  DEADLINE
+}
+
 model Evento {
-  id          Int      @id @default(autoincrement())
-  nomeEvento  String   @map("nome_evento")
-  dataEvento  DateTime @map("data_evento")
+  id          Int       @id @default(autoincrement())
+  nomeEvento  String    @map("nome_evento")
+  dataEvento  DateTime  @map("data_evento")
   local       String
   descricao   String
+  eventType   EventType @map("event_type")
 
   turmaId         Int           @map("turma_id")
   turma           Turma         @relation(fields: [turmaId], references: [id])
@@ -149,4 +162,13 @@ model Notificacao {
   turma      Turma    @relation(fields: [turmaId], references: [id], onDelete: Cascade)
 
   @@map("notificacoes")
+}
+
+model Announcement {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("announcements")
 }
