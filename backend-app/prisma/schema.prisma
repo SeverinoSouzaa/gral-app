@@ -16,7 +16,7 @@ model Usuario {
   email       String   @unique
   senha       String
   tipoUsuario String   @map("tipo_usuario")
-  telefone    Int      @map("telefone")
+  telefone    String   @map("telefone") // Correção Técnica: alterado de Int para String
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
@@ -39,7 +39,6 @@ model Formando {
 
   documentos   Documento[]
   pagamentos   Pagamento[]
-  notificacoes Notificacao[]
 
   @@map("formandos")
 }
@@ -53,7 +52,6 @@ model EquipeInterna {
 
   eventos      Evento[]
   midias       Midia[]
-  notificacoes Notificacao[]
 
   @@map("equipe_interna")
 }
@@ -68,9 +66,10 @@ model Turma {
   curso        String
   anoFormatura Int    @map("ano_formatura")
 
-  formandos Formando[]
-  eventos   Evento[]
-  midias    Midia[]
+  formandos    Formando[]
+  eventos      Evento[]
+  midias       Midia[]
+  notificacoes Notificacao[]
 
   @@map("turmas")
 }
@@ -79,7 +78,7 @@ model Documento {
   id            Int      @id @default(autoincrement())
   nomeArquivo   String   @map("nome_arquivo")
   tipoDocumento String   @map("tipo_documento")
-  dataEnvio     DateTime @map("data_envio")
+  dataEnvio     DateTime @default(now()) @map("data_envio")
   status        String
 
   formandoId Int      @map("formando_id")
@@ -113,20 +112,27 @@ model Evento {
   equipeInternaId Int           @map("equipe_interna_id")
   equipeInterna   EquipeInterna @relation(fields: [equipeInternaId], references: [id])
 
+  midias          Midia[]
+
   @@map("eventos")
 }
 
 model Midia {
   id             Int      @id @default(autoincrement())
-  titulo         String
+  titulo         String?
   tipo           String
   arquivo        String   // URL/caminho do arquivo
   dataPublicacao DateTime @map("data_publicacao")
+  altText        String?  @map("alt_text") // Requisito RNF01 e RNF02 (Acessibilidade)
 
   equipeInternaId Int           @map("equipe_interna_id")
   equipeInterna   EquipeInterna @relation(fields: [equipeInternaId], references: [id])
   
-  // Relação opcional com Turma para garantir a RN02 (Formando visualiza mídias de sua turma)
+  // Relacionamento com Evento (conforme Diagrama de Sequência de Mídias)
+  eventoId        Int           @map("evento_id")
+  evento          Evento        @relation(fields: [eventoId], references: [id], onDelete: Cascade)
+  
+  // Relação opcional com Turma para garantir a RN02
   turmaId         Int?          @map("turma_id")
   turma           Turma?        @relation(fields: [turmaId], references: [id], onDelete: SetNull)
 
@@ -137,12 +143,10 @@ model Notificacao {
   id         Int      @id @default(autoincrement())
   titulo     String
   mensagem   String
-  dataEnvio  DateTime @map("data_envio")
+  dataEnvio  DateTime @default(now()) @map("data_envio")
 
-  formandoId      Int?           @map("formando_id")
-  formando        Formando?      @relation(fields: [formandoId], references: [id], onDelete: Cascade)
-  equipeInternaId Int?           @map("equipe_interna_id")
-  equipeInterna   EquipeInterna? @relation(fields: [equipeInternaId], references: [id], onDelete: SetNull)
+  turmaId    Int      @map("turma_id")
+  turma      Turma    @relation(fields: [turmaId], references: [id], onDelete: Cascade)
 
   @@map("notificacoes")
 }
