@@ -74,6 +74,41 @@ Rotas administrativas, permissões da Equipe Interna, upload de mídias, gerenci
 
 Evite qualquer lógica acoplada especificamente ao aplicativo mobile. Priorize APIs reutilizáveis, modulares e escaláveis.
 
+## 9. Validação de etapas backend (DIRETRIZ PERMANENTE)
+OBJETIVO:
+O frontend React Native do projeto GRAL já possui telas, componentes visuais, navegação e diversos dados simulados (mockados) utilizados apenas para validação visual da interface. Esses dados temporários NÃO representam a implementação final do sistema.
 
-## 8. Regra de Ouro
+REGRA PRINCIPAL:
+Durante a implementação do backend, NÃO substituir automaticamente dados mockados do frontend por chamadas reais da API. A integração Frontend ↔ Backend deve ocorrer somente quando o usuário der "ok".
+
+FLUXO OBRIGATÓRIO PARA CADA MÓDULO:
+1. Implementar o backend do módulo solicitado.
+2. Validar arquitetura, regras de negócio e banco de dados.
+3. Criar DTOs, Services, Controllers e validações necessárias.
+4. Expor endpoints documentados via Swagger.
+5. Permitir testes completos via Swagger antes de qualquer integração com o frontend.
+6. Aguardar aprovação do usuário.
+7. Somente após solicitação explícita realizar a integração do frontend com a API.
+
+REGRAS DE SEGURANÇA:
+- Nunca remover componentes visuais existentes do frontend.
+- Nunca alterar layout, estilos, navegação ou experiência visual sem solicitação explícita.
+- Nunca substituir dados mockados automaticamente.
+- Nunca presumir que uma tela deve ser conectada apenas porque existe um endpoint correspondente.
+
+PRESERVAÇÃO DOS MOCKS:
+Os dados simulados existentes devem permanecer funcionando até que a integração real seja solicitada. (Ex: Valores financeiros fictícios, parcelas de exemplo, galerias com imagens placeholder, notificações simuladas, eventos de exemplo, documentos fictícios).
+
+SWAGGER:
+Todo endpoint implementado deve ser documentado adequadamente no Swagger. O Swagger será utilizado como ferramenta principal de validação funcional antes da integração com o frontend.
+
+PROCESSO DE ENTREGA:
+1. Implementar backend.
+2. Testar via Swagger.
+3. Apresentar o que foi criado.
+4. Aguardar aprovação.
+5. Somente depois integrar ao frontend caso solicitado.
+Nenhuma integração automática deve ser realizada sem autorização explícita do usuário.
+
+## 10. Regra de Ouro
 **NUNCA modifique grandes partes do projeto ou a estrutura principal sem explicar a decisão e obter aprovação prévia.** Mantenha a API limpa, com DTOs validados e segurança em primeiro lugar.
