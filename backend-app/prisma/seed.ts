@@ -22,6 +22,7 @@ async function main() {
   // 2. Criar uma Turma de Teste
   const turmaTeste = await prisma.turma.create({
     data: {
+      codigoAcesso: '12345',
       nomeTurma: 'Turma Pioneiros (Eng. Software)',
       curso: 'Engenharia de Software',
       anoFormatura: 2026,
@@ -36,6 +37,7 @@ async function main() {
   const admin = await prisma.usuario.create({
     data: {
       nome: 'Administrador GRAL',
+      cpf: '00000000000',
       email: 'admin@gral.com.br',
       senha: passwordHash,
       tipoUsuario: 'ADMIN',
@@ -54,6 +56,7 @@ async function main() {
   const formando = await prisma.usuario.create({
     data: {
       nome: 'João Formando',
+      cpf: '02844747205',
       email: 'joao@estudante.com',
       senha: passwordHash,
       tipoUsuario: 'STUDENT',

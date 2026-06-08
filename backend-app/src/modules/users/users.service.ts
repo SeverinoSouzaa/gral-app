@@ -16,6 +16,20 @@ export class UsersService {
     });
   }
 
+  async findByCpf(cpf: string) {
+    return this.prisma.usuario.findUnique({
+      where: { cpf },
+      include: {
+        formando: {
+          include: {
+            turma: true,
+          },
+        },
+        equipeInterna: true,
+      },
+    });
+  }
+
   async findById(id: number) {
     return this.prisma.usuario.findUnique({
       where: { id },

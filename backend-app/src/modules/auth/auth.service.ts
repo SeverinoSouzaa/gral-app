@@ -12,24 +12,23 @@ export class AuthService {
   ) {}
 
   async login(loginDto: LoginDto) {
-    const usuario = await this.usersService.findByEmail(loginDto.email);
+    const cpfLimpo = loginDto.cpf.replace(/\D/g, '');
+    const usuario = await this.usersService.findByCpf(cpfLimpo);
 
-    if (!usuario) {
-      throw new UnauthorizedException('Credenciais inválidas');
+    if (!usuario || !usuario.formando) {
+      throw new UnauthorizedException('Credenciais inválidas ou usuário não é formando');
     }
 
-    const isPasswordValid = await bcrypt.compare(loginDto.senha, usuario.senha);
-
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Credenciais inválidas');
+    if (usuario.formando.turma.codigoAcesso !== loginDto.codigoTurma) {
+      throw new UnauthorizedException('Credenciais inválidas (Código da turma incorreto)');
     }
 
     const payload = {
       sub: usuario.id,
       email: usuario.email,
       tipoUsuario: usuario.tipoUsuario,
-      turmaId: usuario.formando ? usuario.formando.turmaId : null,
-      nivelAcesso: usuario.equipeInterna ? usuario.equipeInterna.nivelAcesso : null,
+      turmaId: usuario.formando.turmaId,
+      nivelAcesso: null,
     };
 
     return {
@@ -37,7 +36,7 @@ export class AuthService {
       usuario: {
         id: usuario.id,
         nome: usuario.nome,
-        email: usuario.email,
+        cpf: usuario.cpf,
         tipoUsuario: usuario.tipoUsuario,
       },
     };

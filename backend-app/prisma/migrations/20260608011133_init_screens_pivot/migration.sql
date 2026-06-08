@@ -1,11 +1,18 @@
+-- CreateEnum
+CREATE TYPE "DocumentType" AS ENUM ('FRAME_PHOTO', 'CAP_NAME', 'IDENTITY_DOC', 'INVITATION_PHOTO', 'OTHER');
+
+-- CreateEnum
+CREATE TYPE "EventType" AS ENUM ('EVENT', 'REHEARSAL', 'DEADLINE');
+
 -- CreateTable
 CREATE TABLE "usuarios" (
     "id" SERIAL NOT NULL,
     "nome" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
-    "senha" TEXT NOT NULL,
+    "cpf" TEXT NOT NULL,
+    "email" TEXT,
+    "senha" TEXT,
     "tipo_usuario" TEXT NOT NULL,
-    "telefone" TEXT NOT NULL,
+    "telefone" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -35,6 +42,7 @@ CREATE TABLE "equipe_interna" (
 -- CreateTable
 CREATE TABLE "turmas" (
     "id" SERIAL NOT NULL,
+    "codigo_acesso" TEXT NOT NULL,
     "nome_turma" TEXT NOT NULL,
     "curso" TEXT NOT NULL,
     "ano_formatura" INTEGER NOT NULL,
@@ -46,7 +54,8 @@ CREATE TABLE "turmas" (
 CREATE TABLE "documentos" (
     "id" SERIAL NOT NULL,
     "nome_arquivo" TEXT NOT NULL,
-    "tipo_documento" TEXT NOT NULL,
+    "valor_conteudo" TEXT,
+    "tipo_documento" "DocumentType" NOT NULL,
     "data_envio" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "status" TEXT NOT NULL,
     "formando_id" INTEGER NOT NULL,
@@ -59,7 +68,10 @@ CREATE TABLE "pagamentos" (
     "id" SERIAL NOT NULL,
     "valor" DOUBLE PRECISION NOT NULL,
     "forma_pagamento" TEXT NOT NULL,
-    "data_pagamento" TIMESTAMP(3) NOT NULL,
+    "data_vencimento" TIMESTAMP(3) NOT NULL,
+    "numero_parcela" INTEGER,
+    "total_parcelas" INTEGER,
+    "data_pagamento" TIMESTAMP(3),
     "status" TEXT NOT NULL,
     "formando_id" INTEGER NOT NULL,
 
@@ -73,10 +85,20 @@ CREATE TABLE "eventos" (
     "data_evento" TIMESTAMP(3) NOT NULL,
     "local" TEXT NOT NULL,
     "descricao" TEXT NOT NULL,
+    "event_type" "EventType" NOT NULL,
     "turma_id" INTEGER NOT NULL,
     "equipe_interna_id" INTEGER NOT NULL,
 
     CONSTRAINT "eventos_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "presencas_evento" (
+    "formando_id" INTEGER NOT NULL,
+    "evento_id" INTEGER NOT NULL,
+    "status" TEXT NOT NULL,
+
+    CONSTRAINT "presencas_evento_pkey" PRIMARY KEY ("formando_id","evento_id")
 );
 
 -- CreateTable
@@ -105,8 +127,24 @@ CREATE TABLE "notificacoes" (
     CONSTRAINT "notificacoes_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "announcements" (
+    "id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "content" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "announcements_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "usuarios_cpf_key" ON "usuarios"("cpf");
+
 -- CreateIndex
 CREATE UNIQUE INDEX "usuarios_email_key" ON "usuarios"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "turmas_codigo_acesso_key" ON "turmas"("codigo_acesso");
 
 -- AddForeignKey
 ALTER TABLE "formandos" ADD CONSTRAINT "formandos_id_fkey" FOREIGN KEY ("id") REFERENCES "usuarios"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -128,6 +166,12 @@ ALTER TABLE "eventos" ADD CONSTRAINT "eventos_turma_id_fkey" FOREIGN KEY ("turma
 
 -- AddForeignKey
 ALTER TABLE "eventos" ADD CONSTRAINT "eventos_equipe_interna_id_fkey" FOREIGN KEY ("equipe_interna_id") REFERENCES "equipe_interna"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "presencas_evento" ADD CONSTRAINT "presencas_evento_formando_id_fkey" FOREIGN KEY ("formando_id") REFERENCES "formandos"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "presencas_evento" ADD CONSTRAINT "presencas_evento_evento_id_fkey" FOREIGN KEY ("evento_id") REFERENCES "eventos"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "midias" ADD CONSTRAINT "midias_equipe_interna_id_fkey" FOREIGN KEY ("equipe_interna_id") REFERENCES "equipe_interna"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

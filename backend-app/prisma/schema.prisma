@@ -14,10 +14,11 @@ datasource db {
 model Usuario {
   id          Int      @id @default(autoincrement())
   nome        String
-  email       String   @unique
-  senha       String
-  tipoUsuario String   @map("tipo_usuario")
-  telefone    String   @map("telefone") // Correção Técnica: alterado de Int para String
+  cpf         String   @unique
+  email       String?  @unique
+  senha       String?
+  tipoUsuario String   @map("tipo_usuario") // Pode ser STUDENT ou ADMIN
+  telefone    String?  @map("telefone")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
@@ -40,6 +41,7 @@ model Formando {
 
   documentos   Documento[]
   pagamentos   Pagamento[]
+  presencasEventos PresencaEvento[]
 
   @@map("formandos")
 }
@@ -63,6 +65,7 @@ model EquipeInterna {
 
 model Turma {
   id           Int    @id @default(autoincrement())
+  codigoAcesso String @unique @map("codigo_acesso")
   nomeTurma    String @map("nome_turma")
   curso        String
   anoFormatura Int    @map("ano_formatura")
@@ -78,12 +81,15 @@ model Turma {
 enum DocumentType {
   FRAME_PHOTO
   CAP_NAME
+  IDENTITY_DOC
+  INVITATION_PHOTO
   OTHER
 }
 
 model Documento {
   id            Int          @id @default(autoincrement())
   nomeArquivo   String       @map("nome_arquivo")
+  valorConteudo String?      @map("valor_conteudo")
   tipoDocumento DocumentType @map("tipo_documento")
   dataEnvio     DateTime     @default(now()) @map("data_envio")
   status        String
@@ -98,7 +104,10 @@ model Pagamento {
   id             Int      @id @default(autoincrement())
   valor          Float    // Equivalente a double
   formaPagamento String   @map("forma_pagamento")
-  dataPagamento  DateTime @map("data_pagamento")
+  dataVencimento DateTime @map("data_vencimento")
+  numeroParcela  Int?     @map("numero_parcela")
+  totalParcelas  Int?     @map("total_parcelas")
+  dataPagamento  DateTime? @map("data_pagamento")
   status         String
 
   formandoId Int      @map("formando_id")
@@ -127,8 +136,21 @@ model Evento {
   equipeInterna   EquipeInterna @relation(fields: [equipeInternaId], references: [id])
 
   midias          Midia[]
+  presencas       PresencaEvento[]
 
   @@map("eventos")
+}
+
+model PresencaEvento {
+  formandoId Int @map("formando_id")
+  eventoId   Int @map("evento_id")
+  status     String // CONFIRMADO, PENDENTE, RECUSADO
+
+  formando   Formando @relation(fields: [formandoId], references: [id], onDelete: Cascade)
+  evento     Evento   @relation(fields: [eventoId], references: [id], onDelete: Cascade)
+
+  @@id([formandoId, eventoId])
+  @@map("presencas_evento")
 }
 
 model Midia {
