@@ -55,8 +55,12 @@ export default function LoginScreen() {
       
       // Navega para a tela principal
       navigation.replace("TelaPrincipal");
-    } catch (err) {
-      setErrorMsg("Código ou CPF incorretos.");
+    } catch (err: any) {
+      if (err.message === 'Credenciais inválidas') {
+        setErrorMsg("Código ou CPF incorretos.");
+      } else {
+        setErrorMsg("Erro de conexão. Verifique se o servidor está ligado.");
+      }
     } finally {
       setLoading(false);
     }
