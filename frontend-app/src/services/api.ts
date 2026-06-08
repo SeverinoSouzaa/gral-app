@@ -9,7 +9,7 @@ const BASE_URL = Platform.OS === 'android'
 export const api = {
   login: async (cpf: string, codigoTurma: string) => {
     try {
-      const response = await fetch(`${BASE_URL}/auth/login`, {
+      const response = await fetch(`${BASE_URL}/auth/login/formando`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
