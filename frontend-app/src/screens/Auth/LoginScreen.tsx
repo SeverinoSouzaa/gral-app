@@ -14,9 +14,41 @@ import { globalStyles } from "../../styles/globalStyles";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import AccessibilityMenu from "../../components/AccessibilityMenu";
+import { api } from "../../services/api";
+import * as SecureStore from 'expo-secure-store';
 
 export default function LoginScreen() {
   const navigation = useNavigation<any>();
+  const [codigoTurma, setCodigoTurma] = React.useState("");
+  const [cpf, setCpf] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+  const [errorMsg, setErrorMsg] = React.useState("");
+
+  const handleLogin = async () => {
+    if (!codigoTurma || !cpf) {
+      setErrorMsg("Preencha ambos os campos.");
+      return;
+    }
+    
+    setLoading(true);
+    setErrorMsg("");
+
+    try {
+      const response = await api.login(cpf, codigoTurma);
+      console.log("Login OK, salvando Token...");
+      
+      // Salva o JWT no SecureStore
+      await SecureStore.setItemAsync('userToken', response.accessToken);
+      
+      // Navega para a tela principal
+      navigation.replace("TelaPrincipal");
+    } catch (err) {
+      setErrorMsg("Código ou CPF incorretos.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <ScrollView
       contentContainerStyle={{ flexGrow: 1 }}
@@ -59,13 +91,17 @@ export default function LoginScreen() {
                 placeholder="12345"
                 placeholderTextColor={COLORS.textLight}
                 keyboardType="numeric"
+                value={codigoTurma}
+                onChangeText={setCodigoTurma}
               />
-              <Feather
-                name="check-circle"
-                size={20}
-                color={COLORS.primary}
-                style={styles.icon}
-              />
+              {codigoTurma.length === 5 && (
+                <Feather
+                  name="check-circle"
+                  size={20}
+                  color={COLORS.primary}
+                  style={styles.icon}
+                />
+              )}
             </View>
           </View>
 
@@ -77,31 +113,31 @@ export default function LoginScreen() {
             <View style={styles.inputWrapper}>
               <TextInput
                 style={styles.input}
-                placeholder="028.447.472-05"
+                placeholder="02844747205"
                 placeholderTextColor={COLORS.textLight}
                 keyboardType="numeric"
+                value={cpf}
+                onChangeText={setCpf}
               />
-              <Feather
-                name="check-circle"
-                size={20}
-                color={COLORS.primary}
-                style={styles.icon}
-              />
-              <Feather
-                name="eye"
-                size={20}
-                color={COLORS.primary}
-                style={styles.icon}
-              />
+              {cpf.length >= 11 && (
+                <Feather
+                  name="check-circle"
+                  size={20}
+                  color={COLORS.primary}
+                  style={styles.icon}
+                />
+              )}
             </View>
           </View>
 
-          <TouchableOpacity onPress={() => navigation.replace("TelaPrincipal")}>
+          {errorMsg ? <Text style={styles.errorText}>{errorMsg}</Text> : null}
+
+          <TouchableOpacity onPress={handleLogin} disabled={loading}>
             <LinearGradient
               colors={COLORS.buttonGradient as [string, string]}
               start={{ x: 0, y: 0 }}
               end={{ x: 0, y: 1 }}
-              style={globalStyles.button}
+              style={[globalStyles.button, loading && { opacity: 0.7 }]}
             >
               <Text
                 style={[
@@ -109,7 +145,7 @@ export default function LoginScreen() {
                   { color: COLORS.backgroundDark },
                 ]}
               >
-                CONFIRMAR LOGIN
+                {loading ? "CARREGANDO..." : "CONFIRMAR LOGIN"}
               </Text>
             </LinearGradient>
           </TouchableOpacity>
@@ -180,6 +216,13 @@ const styles = StyleSheet.create({
     color: COLORS.textLight,
     fontSize: 12,
     marginBottom: 8,
+  },
+  errorText: {
+    fontFamily: "Inter_400Regular",
+    color: "#ff4d4d",
+    fontSize: 14,
+    marginBottom: 16,
+    textAlign: "center",
   },
   inputWrapper: {
     flexDirection: "row",
