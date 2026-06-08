@@ -11,6 +11,7 @@ import { EventsModule } from './modules/events/events.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { TurmasModule } from './modules/turmas/turmas.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     EventsModule,
     NotificationsModule,
     PrismaModule,
+    TurmasModule,
   ],
   controllers: [AppController],
   providers: [AppService],

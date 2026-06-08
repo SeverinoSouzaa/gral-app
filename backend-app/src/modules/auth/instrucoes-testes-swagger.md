@@ -6,6 +6,28 @@ Este guia documenta o fluxo correto para validar a segurança, os métodos HTTP 
 
 ---
 
+## 🧪 Passo Zero: Criando a Turma (Admin)
+
+Para que alunos possam ser cadastrados, precisamos criar a Turma deles primeiro.
+
+1. Faça o Login da Equipe Interna (conforme Teste 1 abaixo) e copie o `accessToken`.
+2. Autorize o Swagger clicando no cadeado verde (Authorize) e colando o Token.
+3. Vá até a seção **Turmas**.
+4. Abra a rota `POST /api/v1/turmas`.
+5. Clique em **Try it out** e insira:
+```json
+{
+  "nomeTurma": "Turma de Medicina 2026",
+  "curso": "Medicina",
+  "anoFormatura": 2026,
+  "codigoAcesso": "MED26"
+}
+```
+6. Clique em **Execute**.
+7. **Resultado Esperado (201 Created):** A Turma será criada e retornará o `id` (ex: `2`). Guarde esse ID!
+
+---
+
 ## 🧪 Teste 1: Login da Equipe Interna (Admin)
 
 A Equipe Interna entra no sistema sem vínculo a turmas, usando apenas E-mail e Senha.
@@ -39,17 +61,17 @@ Pela regra de negócios real, o Admin cria o acesso para os Formandos. Precisamo
 6. Clique em **Try it out** e insira:
 ```json
 {
-  "nome": "Maria Silva",
-  "cpf": "11122233344",
-  "email": "maria@estudante.com",
+  "nome": "Pedro Silva",
+  "cpf": "55566677788",
+  "email": "pedro@estudante.com",
   "telefone": "11911112222",
-  "matricula": "20240001",
-  "curso": "Engenharia de Software",
-  "turmaId": 1
+  "matricula": "20260002",
+  "curso": "Medicina",
+  "turmaId": 2
 }
 ```
 7. Clique em **Execute**.
-8. **Resultado Esperado (201 Created):** O usuário será criado no banco com as relações de Formando feitas.
+8. **Resultado Esperado (201 Created):** O usuário será criado e **automaticamente vinculado ao código "MED26"** porque usamos o `turmaId: 2`!
    * **Cenário de Erro (403 Forbidden):** Tente fazer este request SEM o token do Admin (ou usando o token de um aluno). O *RolesGuard* bloqueará.
    * **Cenário de Erro (409 Conflict):** Tente rodar o comando duas vezes seguidas. O banco avisará que o CPF/E-mail já estão em uso.
 
@@ -64,10 +86,10 @@ Como estipulamos na pivotagem do aplicativo, formandos fazem login usando **CPF*
 3. Clique em **Try it out** e insira os dados do usuário recém criado:
 ```json
 {
-  "cpf": "11122233344",
-  "codigoTurma": "12345"
+  "cpf": "55566677788",
+  "codigoTurma": "MED26"
 }
 ```
 4. Clique em **Execute**.
-5. **Resultado Esperado (200 OK):** A API validará o CPF e se a Turma a qual ele pertence possui o código "12345", liberando o `accessToken`.
-   * **Cenário de Erro (401 Unauthorized):** Se tentar colocar o `codigoTurma: "00000"`, o sistema rejeitará o login do aluno.
+5. **Resultado Esperado (200 OK):** A API validará o CPF e descobrirá que ele pertence à Turma "MED26", liberando o `accessToken`.
+   * **Cenário de Erro (401 Unauthorized):** Se tentar colocar o `codigoTurma: "12345"` (que é de outra turma), o sistema rejeitará o login do aluno.
