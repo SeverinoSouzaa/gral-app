@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, Length, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, MinLength, Matches } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class LoginFormandoDto {
@@ -11,12 +11,12 @@ export class LoginFormandoDto {
   cpf: string;
 
   @ApiProperty({
-    description: 'Código de Acesso da Turma',
+    description: 'Código de Acesso da Turma (5 números)',
     example: '12345',
   })
   @IsString({ message: 'O código da turma deve ser uma string' })
   @IsNotEmpty({ message: 'O código da turma é obrigatório' })
-  @Length(5, 5, { message: 'O código da turma deve ter exatamente 5 caracteres' })
+  @Matches(/^\d{5}$/, { message: 'O código da turma deve conter exatamente 5 números' })
   codigoTurma: string;
 }
 

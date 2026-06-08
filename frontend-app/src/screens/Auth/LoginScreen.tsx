@@ -24,6 +24,18 @@ export default function LoginScreen() {
   const [loading, setLoading] = React.useState(false);
   const [errorMsg, setErrorMsg] = React.useState("");
 
+  const handleCpfChange = (text: string) => {
+    // Máscara de CPF: 000.000.000-00
+    let masked = text.replace(/\D/g, "");
+    if (masked.length > 11) {
+      masked = masked.substring(0, 11);
+    }
+    masked = masked.replace(/(\d{3})(\d)/, "$1.$2");
+    masked = masked.replace(/(\d{3})(\d)/, "$1.$2");
+    masked = masked.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    setCpf(masked);
+  };
+
   const handleLogin = async () => {
     if (!codigoTurma || !cpf) {
       setErrorMsg("Preencha ambos os campos.");
@@ -34,7 +46,8 @@ export default function LoginScreen() {
     setErrorMsg("");
 
     try {
-      const response = await api.login(cpf, codigoTurma);
+      const cpfNumeros = cpf.replace(/\D/g, "");
+      const response = await api.login(cpfNumeros, codigoTurma);
       console.log("Login OK, salvando Token...");
       
       // Salva o JWT no SecureStore
@@ -108,18 +121,19 @@ export default function LoginScreen() {
           <View style={styles.inputGroup}>
             <Text style={styles.label}>CPF</Text>
             <Text style={styles.subLabel}>
-              Informe seu CPF no formato 000.000.000-00
+              Informe seu CPF de 11 dígitos
             </Text>
             <View style={styles.inputWrapper}>
               <TextInput
                 style={styles.input}
-                placeholder="02844747205"
+                placeholder="000.000.000-00"
                 placeholderTextColor={COLORS.textLight}
                 keyboardType="numeric"
                 value={cpf}
-                onChangeText={setCpf}
+                onChangeText={handleCpfChange}
+                maxLength={14}
               />
-              {cpf.length >= 11 && (
+              {cpf.replace(/\D/g, "").length === 11 && (
                 <Feather
                   name="check-circle"
                   size={20}

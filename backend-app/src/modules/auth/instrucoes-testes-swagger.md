@@ -20,7 +20,7 @@ Para que alunos possam ser cadastrados, precisamos criar a Turma deles primeiro.
   "nomeTurma": "Turma de Medicina 2026",
   "curso": "Medicina",
   "anoFormatura": 2026,
-  "codigoAcesso": "MED26"
+  "codigoAcesso": "54321"
 }
 ```
 6. Clique em **Execute**.
@@ -71,7 +71,7 @@ Pela regra de negócios real, o Admin cria o acesso para os Formandos. Precisamo
 }
 ```
 7. Clique em **Execute**.
-8. **Resultado Esperado (201 Created):** O usuário será criado e **automaticamente vinculado ao código "MED26"** porque usamos o `turmaId: 2`!
+8. **Resultado Esperado (201 Created):** O usuário será criado e **automaticamente vinculado ao código "54321"** porque usamos o `turmaId: 2`!
    * **Cenário de Erro (403 Forbidden):** Tente fazer este request SEM o token do Admin (ou usando o token de um aluno). O *RolesGuard* bloqueará.
    * **Cenário de Erro (409 Conflict):** Tente rodar o comando duas vezes seguidas. O banco avisará que o CPF/E-mail já estão em uso.
 
@@ -87,9 +87,9 @@ Como estipulamos na pivotagem do aplicativo, formandos fazem login usando **CPF*
 ```json
 {
   "cpf": "55566677788",
-  "codigoTurma": "MED26"
+  "codigoTurma": "54321"
 }
 ```
 4. Clique em **Execute**.
-5. **Resultado Esperado (200 OK):** A API validará o CPF e descobrirá que ele pertence à Turma "MED26", liberando o `accessToken`.
+5. **Resultado Esperado (200 OK):** A API validará o CPF e descobrirá que ele pertence à Turma "54321", liberando o `accessToken`.
    * **Cenário de Erro (401 Unauthorized):** Se tentar colocar o `codigoTurma: "12345"` (que é de outra turma), o sistema rejeitará o login do aluno.
