@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { LoginDto } from './dto/login.dto';
+import { LoginFormandoDto, LoginEquipeDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -11,7 +11,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(loginDto: LoginDto) {
+  async loginFormando(loginDto: LoginFormandoDto) {
     const cpfLimpo = loginDto.cpf.replace(/\D/g, '');
     const usuario = await this.usersService.findByCpf(cpfLimpo);
 
@@ -38,6 +38,43 @@ export class AuthService {
         nome: usuario.nome,
         cpf: usuario.cpf,
         tipoUsuario: usuario.tipoUsuario,
+      },
+    };
+  }
+
+  async loginEquipe(loginDto: LoginEquipeDto) {
+    const usuario = await this.usersService.findByEmail(loginDto.email);
+
+    if (!usuario || !usuario.equipeInterna) {
+      throw new UnauthorizedException('Credenciais inválidas ou usuário não pertence à Equipe Interna');
+    }
+
+    if (!usuario.senha) {
+      throw new UnauthorizedException('Credenciais inválidas (Usuário sem senha)');
+    }
+
+    const isPasswordValid = await bcrypt.compare(loginDto.senha, usuario.senha);
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Credenciais inválidas');
+    }
+
+    const payload = {
+      sub: usuario.id,
+      email: usuario.email,
+      tipoUsuario: usuario.tipoUsuario,
+      turmaId: null,
+      nivelAcesso: usuario.equipeInterna.nivelAcesso,
+    };
+
+    return {
+      accessToken: this.jwtService.sign(payload),
+      usuario: {
+        id: usuario.id,
+        nome: usuario.nome,
+        email: usuario.email,
+        tipoUsuario: usuario.tipoUsuario,
+        nivelAcesso: usuario.equipeInterna.nivelAcesso,
       },
     };
   }
