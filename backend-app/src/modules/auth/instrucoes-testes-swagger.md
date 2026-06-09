@@ -93,3 +93,28 @@ Como estipulamos na pivotagem do aplicativo, formandos fazem login usando **CPF*
 4. Clique em **Execute**.
 5. **Resultado Esperado (200 OK):** A API validará o CPF e descobrirá que ele pertence à Turma "54321", liberando o `accessToken`.
    * **Cenário de Erro (401 Unauthorized):** Se tentar colocar o `codigoTurma: "12345"` (que é de outra turma), o sistema rejeitará o login do aluno.
+
+---
+
+## 🧪 Seção de Administração (Bônus - Painel Admin)
+
+Com o `accessToken` da **Equipe Interna** (Admin), você pode gerenciar os alunos pelo Swagger nas novas rotas em **Usuários**:
+
+### A) Listar todos os Formandos
+1. Abra `GET /api/v1/users` e clique em **Try it out** -> **Execute**.
+2. Ele retornará uma lista simplificada de todos os alunos, com Nome, CPF e a respectiva Turma.
+
+### B) Buscar usuário específico
+1. Para buscar pelo ID: Abra `GET /api/v1/users/{id}`, insira o ID do usuário (ex: `2`) e execute.
+2. Para buscar pelo CPF: Abra `GET /api/v1/users/cpf/{cpf}`, insira o CPF (ex: `55566677788`) e execute.
+
+### C) Editar um Formando
+1. Abra a rota `PUT /api/v1/users/{id}`.
+2. Insira o `id` do formando (ex: `2`).
+3. No corpo (body), mande apenas os dados que deseja alterar. Exemplo (mudando a Turma dele para a Turma `1`):
+```json
+{
+  "turmaId": 1
+}
+```
+4. Execute e verá o retorno (200 OK) com os dados atualizados! Mudar e-mail, curso, matricula, etc., funciona da mesma forma, passando os campos nesse JSON.
