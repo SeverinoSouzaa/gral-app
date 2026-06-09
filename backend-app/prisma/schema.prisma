@@ -93,6 +93,7 @@ model Documento {
   tipoDocumento DocumentType @map("tipo_documento")
   dataEnvio     DateTime     @default(now()) @map("data_envio")
   status        String
+  motivoRejeicao String?     @map("motivo_rejeicao")
 
   formandoId Int      @map("formando_id")
   formando   Formando @relation(fields: [formandoId], references: [id], onDelete: Cascade)
