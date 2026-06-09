@@ -25,5 +25,49 @@ export const api = {
       console.error("Erro na API Login:", error);
       throw error;
     }
+  },
+  documentos: {
+    me: async (token: string) => {
+      const response = await fetch(`${BASE_URL}/documentos/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error('Erro ao buscar documentos');
+      return response.json();
+    },
+    uploadText: async (token: string, tipoDocumento: string, valorConteudo: string) => {
+      const formData = new FormData();
+      formData.append('tipoDocumento', tipoDocumento);
+      formData.append('valorConteudo', valorConteudo);
+
+      const response = await fetch(`${BASE_URL}/documentos`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }, // fetch lida com o multipart boundary sozinho
+        body: formData,
+      });
+      if (!response.ok) throw new Error('Erro ao enviar documento');
+      return response.json();
+    },
+    uploadFile: async (token: string, tipoDocumento: string, fileUri: string) => {
+      const formData = new FormData();
+      formData.append('tipoDocumento', tipoDocumento);
+      
+      const filename = fileUri.split('/').pop() || 'photo.jpg';
+      const match = /\.(\w+)$/.exec(filename);
+      const type = match ? `image/${match[1]}` : `image`;
+
+      formData.append('file', {
+        uri: Platform.OS === 'ios' ? fileUri.replace('file://', '') : fileUri,
+        name: filename,
+        type,
+      } as any);
+
+      const response = await fetch(`${BASE_URL}/documentos`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+      if (!response.ok) throw new Error('Erro ao fazer upload da imagem');
+      return response.json();
+    }
   }
 };
