@@ -22,8 +22,14 @@ export class DocumentosService {
       throw new ForbiddenException('Apenas formandos podem enviar documentos.');
     }
 
-    if (!file && !dto.valorConteudo) {
-      throw new BadRequestException('Você deve enviar um arquivo ou um valor de conteúdo.');
+    // Validação Estrita de Regra de Negócio (Tipos vs Arquivos)
+    const requiresFile = ['FRAME_PHOTO', 'IDENTITY_DOC', 'INVITATION_PHOTO'].includes(dto.tipoDocumento);
+    if (requiresFile && !file) {
+      throw new BadRequestException(`O tipo de documento ${dto.tipoDocumento} exige o upload de um arquivo (imagem/pdf).`);
+    }
+
+    if (dto.tipoDocumento === 'CAP_NAME' && !dto.valorConteudo) {
+      throw new BadRequestException('O Nome para o Canudo exige que o valor do conteúdo seja preenchido.');
     }
 
     // Se a API for configurada no futuro com AWS S3, a URL virá do S3.
