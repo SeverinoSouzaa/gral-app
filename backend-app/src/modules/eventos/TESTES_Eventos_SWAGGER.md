@@ -53,5 +53,15 @@
     "status": "CONFIRMADO"
   }
   ```
-- **Resultado:** HTTP 201. A tabela `PresencaEvento` foi atualizada com o Upsert.
 - **Prova Real:** Chame `GET /eventos` de novo. O campo `"statusPresencaUsuario"` deve ter mudado de `"PENDENTE"` para `"CONFIRMADO"`. O React Native usará isso para acender o botão verde da tela!
+
+---
+
+## 📋 Bateria 4: A Visão do Administrador (Relatório de Lista de Convidados)
+
+O Admin precisa saber exatamente quem vai e quem não vai para poder fechar o número de convidados com o Buffet ou com o Estúdio Fotográfico.
+
+### 🟢 Teste 4.1: Gerar a "Lista VIP" do Evento
+- **Ação:** Logue novamente como **Equipe Interna** (Admin).
+- **Ação:** Pegue o ID de um evento (ex: 1) e chame `GET /eventos/1/presencas`.
+- **Resultado:** O Swagger retornará a "Lista de Convidados" definitiva, em ordem alfabética. Você verá o nome do Aluno, o e-mail, e o status (`CONFIRMADO` ou `PENDENTE`). O formando que curtiu lá no celular vai aparecer instantaneamente como confirmado aqui!

@@ -139,4 +139,47 @@ export class EventosService {
       }
     });
   }
+
+  async getPresencasAdmin(eventId: number) {
+    const evento = await this.prisma.evento.findUnique({
+      where: { id: eventId },
+      include: {
+        turma: {
+          include: {
+            formandos: {
+              include: {
+                usuario: { select: { nome: true, email: true } },
+                presencasEventos: {
+                  where: { eventoId: eventId },
+                  select: { status: true }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+
+    if (!evento) throw new NotFoundException('Evento não encontrado');
+
+    const lista = evento.turma.formandos.map(f => ({
+      formandoId: f.id,
+      nome: f.usuario.nome,
+      email: f.usuario.email,
+      status: f.presencasEventos.length > 0 ? f.presencasEventos[0].status : 'PENDENTE'
+    }));
+
+    // Ordena alfabeticamente
+    lista.sort((a, b) => a.nome.localeCompare(b.nome));
+
+    return {
+      evento: {
+        id: evento.id,
+        nomeEvento: evento.nomeEvento,
+        dataEvento: evento.dataEvento,
+        local: evento.local,
+      },
+      presencas: lista
+    };
+  }
 }

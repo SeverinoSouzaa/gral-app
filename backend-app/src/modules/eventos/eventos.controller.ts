@@ -52,6 +52,13 @@ export class EventosController {
     return this.eventosService.remove(+id);
   }
 
+  @Get(':id/presencas')
+  @Roles('ADMIN')
+  @ApiOperation({ summary: 'Relatório de presenças dos formandos (Apenas Admin)' })
+  getPresencasAdmin(@Param('id') id: string) {
+    return this.eventosService.getPresencasAdmin(+id);
+  }
+
   @Post(':id/presenca')
   @Roles('STUDENT')
   @ApiOperation({ summary: 'Confirmar/Recusar Presença (Apenas Aluno)' })
