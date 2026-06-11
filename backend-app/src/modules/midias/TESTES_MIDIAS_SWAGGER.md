@@ -4,14 +4,10 @@ Este documento foi criado para registrar a bateria de testes de estresse, segura
 
 ## 🎯 Pré-requisito (Configuração)
 A API exige que a Mídia seja anexada a um Evento existente.
-1. Abra o Prisma Studio (`npx prisma studio`).
-2. Adicione um Evento na tabela `Evento` com:
-   - `nomeEvento`: "Studio Day"
-   - `eventType`: "EVENT"
-   - `turmaId`: 1
-   - `equipeInternaId`: 1
-   - `dataEvento`: Uma data qualquer.
-3. Anote o ID gerado (ex: `1`).
+Em vez de criar no banco de dados manualmente, use a nossa API real de Eventos!
+1. Faça Login como **Equipe Interna** (`POST /auth/login` -> admin@gral.com) e insira o Token.
+2. Vá em `POST /eventos` e crie um evento (ex: `nomeEvento: "Studio Day"`, `turmaId: 1`, `eventType: "EVENT"`, `dataEvento: "2026-10-10T00:00:00Z"`).
+3. Anote o ID gerado no retorno da requisição (ex: ID `1`).
 
 ---
 
