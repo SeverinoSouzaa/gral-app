@@ -90,5 +90,14 @@ export const api = {
       if (!response.ok) throw new Error('Erro ao confirmar presença');
       return response.json();
     }
+  },
+  midias: {
+    getMidias: async (token: string) => {
+      const response = await fetch(`${BASE_URL}/midias`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error('Erro ao buscar mídias');
+      return response.json();
+    }
   }
 };

@@ -132,6 +132,10 @@ export class MidiasService {
     const archive = new ZipArchive({ zlib: { level: 9 } });
 
     midias.forEach((midia) => {
+      // Ignora URLs externas que não são arquivos locais
+      if (midia.arquivo.startsWith('http://') || midia.arquivo.startsWith('https://')) {
+        return;
+      }
       const filePath = path.join(process.cwd(), 'uploads', 'midias', midia.arquivo);
       if (fs.existsSync(filePath)) {
         archive.file(filePath, { name: midia.arquivo });

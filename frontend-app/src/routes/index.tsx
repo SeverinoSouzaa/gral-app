@@ -24,7 +24,7 @@ const Stack = createNativeStackNavigator();
 export default function Routes() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator id={undefined} screenOptions={{ headerShown: false }}>
 
         <Stack.Screen name="Login" component={LoginScreen} />
 
