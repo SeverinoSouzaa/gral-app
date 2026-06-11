@@ -28,6 +28,7 @@ export class DocumentosController {
         cb(null, `doc-${uniqueSuffix}${ext}`);
       },
     }),
+    limits: { fileSize: 5 * 1024 * 1024 }, // Limite rigoroso de 5MB
     fileFilter: (req, file, cb) => {
       if (!file.mimetype.match(/\/(jpg|jpeg|png|pdf)$/)) {
         return cb(new BadRequestException('Apenas arquivos JPG, PNG ou PDF são permitidos!'), false);

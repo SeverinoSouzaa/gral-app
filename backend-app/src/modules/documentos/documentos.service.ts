@@ -32,6 +32,19 @@ export class DocumentosService {
       throw new BadRequestException('O Nome para o Canudo exige que o valor do conteúdo seja preenchido.');
     }
 
+    // Trava Anti-Spam: Impede envio de novo documento se já houver um PENDENTE ou APROVADO
+    const existingDoc = await this.prisma.documento.findFirst({
+      where: {
+        formandoId: usuario.formando.id,
+        tipoDocumento: dto.tipoDocumento,
+        status: { in: ['PENDENTE', 'APROVADO'] },
+      },
+    });
+
+    if (existingDoc) {
+      throw new ConflictException(`Você já enviou um documento deste tipo. Ele está com status ${existingDoc.status}. Aguarde ou veja o retorno da Equipe Interna.`);
+    }
+
     // Se a API for configurada no futuro com AWS S3, a URL virá do S3.
     // Atualmente estamos mockando usando um prefixo local /uploads/documentos/
     const nomeArquivo = file ? file.filename : 'TEXTO_APENAS';
