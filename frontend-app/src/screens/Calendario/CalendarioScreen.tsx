@@ -1,63 +1,105 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as SecureStore from 'expo-secure-store';
 import { COLORS } from '../../constants/colors';
 import { globalStyles } from '../../styles/globalStyles';
 import BackgroundLayout from '../../components/BackgroundLayout';
+import { api } from '../../services/api';
 
-// Interface para garantir que os dados do evento estejam corretos (TypeScript)
-interface Evento {
-  id: string;
-  dia: string;
-  mes: string;
-  titulo: string;
-  icon: keyof typeof Feather.glyphMap;
-  horario: string;
+interface EventoAPI {
+  id: number;
+  nomeEvento: string;
+  dataEvento: string;
   local: string;
-  isOnline?: boolean;
-  statusText: string;
-  statusColor: string;
-  botaoTipo: 'confirmar' | 'confirmado' | 'nenhum';
+  descricao: string;
+  eventType: string;
+  statusPresencaUsuario: string;
 }
-
-// Simulando os dados vindos do Banco de Dados baseados no seu print
-const EVENTOS: Evento[] = [
-  {
-    id: '1', dia: '15', mes: 'NOV', titulo: 'Aula da Saudade', icon: 'calendar',
-    horario: '14h00', local: 'Auditório Principal', statusText: 'Confirmado', statusColor: '#4CAF50',
-    botaoTipo: 'confirmado'
-  },
-  {
-    id: '2', dia: '18', mes: 'NOV', titulo: 'Missa de Formatura', icon: 'users',
-    horario: '19h00', local: 'Capela da Universidade', statusText: 'Confirmado', statusColor: '#4CAF50',
-    botaoTipo: 'confirmar'
-  },
-  {
-    id: '3', dia: '18', mes: 'NOV', titulo: 'Reunião da Comissão', icon: 'video',
-    horario: '19h00', local: 'Google Meet', isOnline: true, statusText: 'Confirmado', statusColor: '#4CAF50',
-    botaoTipo: 'nenhum'
-  },
-  {
-    id: '4', dia: '22', mes: 'NOV', titulo: 'Studio Day - Sessão de Fotos', icon: 'users',
-    horario: '09h00 - 18h00', local: 'Estúdio Momentos', statusText: 'Confirmado', statusColor: '#4CAF50',
-    botaoTipo: 'confirmado'
-  },
-  {
-    id: '5', dia: '15', mes: 'DEZ', titulo: 'Outorga de Grau', icon: 'calendar',
-    horario: '18h00', local: 'Teatro Municipal', statusText: 'Confirmado', statusColor: '#4CAF50',
-    botaoTipo: 'confirmar'
-  },
-  {
-    id: '6', dia: '28', mes: 'NOV', titulo: 'Ensaio Fotográfico - Externa', icon: 'users',
-    horario: '15h00', local: 'Parque das Águas', statusText: 'Pendente', statusColor: COLORS.primary,
-    botaoTipo: 'nenhum'
-  }
-];
 
 export default function CalendarioScreen() {
   const navigation = useNavigation<any>();
+  const [eventos, setEventos] = useState<EventoAPI[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    loadEventos();
+  }, []);
+
+  const loadEventos = async () => {
+    try {
+      setIsLoading(true);
+      const token = await SecureStore.getItemAsync('userToken');
+      if (!token) return;
+      
+      const data = await api.eventos.getEventos(token);
+      setEventos(data);
+    } catch (error) {
+      console.error('Erro ao carregar eventos:', error);
+      Alert.alert('Erro', 'Não foi possível carregar o calendário');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const promptConfirmarPresenca = (evento: EventoAPI) => {
+    Alert.alert(
+      "Confirmar Presença",
+      `Deseja realmente confirmar sua presença em "${evento.nomeEvento}"?`,
+      [
+        { text: "Cancelar", style: "cancel" },
+        { 
+          text: "Confirmar", 
+          onPress: () => confirmarPresenca(evento.id) 
+        }
+      ]
+    );
+  };
+
+  const confirmarPresenca = async (id: number) => {
+    try {
+      const token = await SecureStore.getItemAsync('userToken');
+      if (!token) return;
+
+      // Chama a API com status CONFIRMADO
+      await api.eventos.setPresenca(token, id, 'CONFIRMADO');
+      
+      // Atualização otimista: atualiza a UI instantaneamente para o usuário sem recarregar a lista inteira
+      setEventos(prev => prev.map(ev => ev.id === id ? { ...ev, statusPresencaUsuario: 'CONFIRMADO' } : ev));
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível confirmar sua presença');
+    }
+  };
+
+  // Funções de formatação puras (O frontend cuida da apresentação)
+  const formatDay = (isoDate: string) => {
+    const date = new Date(isoDate);
+    return date.getUTCDate().toString().padStart(2, '0');
+  };
+
+  const formatMonth = (isoDate: string) => {
+    const date = new Date(isoDate);
+    const months = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
+    return months[date.getUTCMonth()];
+  };
+
+  const formatTime = (isoDate: string) => {
+    const date = new Date(isoDate);
+    const hours = date.getUTCHours().toString().padStart(2, '0');
+    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+    return `${hours}h${minutes}`;
+  };
+
+  const getIcon = (eventType: string): keyof typeof Feather.glyphMap => {
+    switch (eventType) {
+      case 'REHEARSAL': return 'users';
+      case 'DEADLINE': return 'clock';
+      case 'EVENT':
+      default: return 'calendar';
+    }
+  };
 
   return (
     <BackgroundLayout>
@@ -73,80 +115,91 @@ export default function CalendarioScreen() {
 
         <Text style={styles.subtitle}>Todos os eventos da sua formatura</Text>
 
-        {/* LISTA DE EVENTOS */}
-        <View style={styles.eventsList}>
-          {EVENTOS.map((evento) => (
-            <View key={evento.id} style={[globalStyles.card, styles.eventCard]}>
-              
-              <View style={styles.cardContent}>
-                {/* Bloco de Data (Esquerda) */}
-                <LinearGradient
-                  colors={COLORS.buttonGradient as [string, string]}
-                  style={styles.dateBlock}
-                >
-                  <Text style={styles.dateNumber}>{evento.dia}</Text>
-                  <Text style={styles.dateMonth}>{evento.mes}</Text>
-                </LinearGradient>
-
-                {/* Informações do Evento (Direita) */}
-                <View style={styles.infoBlock}>
-                  <View style={styles.titleRow}>
-                    <Feather name={evento.icon} size={16} color={COLORS.textLight} style={styles.infoIcon} />
-                    <Text style={styles.eventTitle} numberOfLines={2}>{evento.titulo}</Text>
-                  </View>
-
-                  <View style={styles.detailRow}>
-                    <Feather name="clock" size={14} color={COLORS.textLight} style={styles.infoIcon} />
-                    <Text style={styles.detailText}>{evento.horario}</Text>
-                  </View>
-
-                  <View style={styles.detailRow}>
-                    <Feather name="map-pin" size={14} color={COLORS.textLight} style={styles.infoIcon} />
-                    <Text style={styles.detailText} numberOfLines={1}>{evento.local}</Text>
-                    {evento.isOnline && (
-                      <View style={styles.onlineBadge}>
-                        <Text style={styles.onlineText}>Online</Text>
-                      </View>
-                    )}
-                  </View>
-
-                  <View style={styles.detailRow}>
-                    <Feather 
-                      name={evento.statusText === 'Confirmado' ? 'check-circle' : 'clock'} 
-                      size={14} 
-                      color={evento.statusColor} 
-                      style={styles.infoIcon} 
-                    />
-                    <Text style={[styles.detailText, { color: evento.statusColor }]}>
-                      {evento.statusText}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-
-              {/* RENDERIZAÇÃO CONDICIONAL DOS BOTÕES */}
-              {evento.botaoTipo === 'confirmar' && (
-                <TouchableOpacity activeOpacity={0.8}>
-                  <LinearGradient
-                    colors={COLORS.buttonGradient as [string, string]}
-                    style={styles.primaryButton}
-                  >
-                    <Text style={styles.primaryButtonText}>Confirmar presença</Text>
-                  </LinearGradient>
-                </TouchableOpacity>
-              )}
-
-              {evento.botaoTipo === 'confirmado' && (
-                <View style={styles.successButton}>
-                  <Feather name="check-circle" size={16} color="#4CAF50" style={{ marginRight: 8 }} />
-                  <Text style={styles.successButtonText}>Presença confirmada</Text>
-                </View>
-              )}
-              
+        {isLoading ? (
+          <ActivityIndicator size="large" color={COLORS.primary} style={{ marginTop: 40 }} />
+        ) : eventos.length === 0 ? (
+          <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 60, paddingHorizontal: 32 }}>
+            <View style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)', padding: 24, borderRadius: 60, marginBottom: 24, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.05)' }}>
+              <Feather name="calendar" size={56} color={COLORS.primary} style={{ opacity: 0.8 }} />
             </View>
-          ))}
-        </View>
+            <Text style={{ color: COLORS.white, fontFamily: 'Inter_700Bold', fontSize: 18, marginBottom: 8, textAlign: 'center' }}>
+              Nenhum evento agendado
+            </Text>
+            <Text style={{ color: COLORS.textLight, fontFamily: 'Inter_400Regular', fontSize: 14, textAlign: 'center', lineHeight: 22 }}>
+              A sua turma ainda não possui eventos oficiais cadastrados. Fique de olho, novidades aparecerão aqui!
+            </Text>
+          </View>
+        ) : (
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View style={styles.eventsList}>
+              {eventos.map((evento) => (
+                <View key={evento.id.toString()} style={[globalStyles.card, styles.eventCard]}>
+                  
+                  <View style={styles.cardContent}>
+                    {/* Bloco de Data (Esquerda) */}
+                    <LinearGradient
+                      colors={COLORS.buttonGradient as [string, string]}
+                      style={styles.dateBlock}
+                    >
+                      <Text style={styles.dateNumber}>{formatDay(evento.dataEvento)}</Text>
+                      <Text style={styles.dateMonth}>{formatMonth(evento.dataEvento)}</Text>
+                    </LinearGradient>
 
+                    {/* Informações do Evento (Direita) */}
+                    <View style={styles.infoBlock}>
+                      <View style={styles.titleRow}>
+                        <Feather name={getIcon(evento.eventType)} size={16} color={COLORS.textLight} style={styles.infoIcon} />
+                        <Text style={styles.eventTitle} numberOfLines={2}>{evento.nomeEvento}</Text>
+                      </View>
+
+                      <View style={styles.detailRow}>
+                        <Feather name="clock" size={14} color={COLORS.textLight} style={styles.infoIcon} />
+                        <Text style={styles.detailText}>{formatTime(evento.dataEvento)}</Text>
+                      </View>
+
+                      <View style={styles.detailRow}>
+                        <Feather name="map-pin" size={14} color={COLORS.textLight} style={styles.infoIcon} />
+                        <Text style={styles.detailText} numberOfLines={1}>{evento.local}</Text>
+                      </View>
+
+                      <View style={styles.detailRow}>
+                        <Feather 
+                          name={evento.statusPresencaUsuario === 'CONFIRMADO' ? 'check-circle' : 'clock'} 
+                          size={14} 
+                          color={evento.statusPresencaUsuario === 'CONFIRMADO' ? '#4CAF50' : COLORS.primary} 
+                          style={styles.infoIcon} 
+                        />
+                        <Text style={[styles.detailText, { color: evento.statusPresencaUsuario === 'CONFIRMADO' ? '#4CAF50' : COLORS.primary }]}>
+                          {evento.statusPresencaUsuario === 'CONFIRMADO' ? 'Confirmado' : 'Pendente'}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+
+                  {/* RENDERIZAÇÃO CONDICIONAL DOS BOTÕES */}
+                  {evento.statusPresencaUsuario === 'PENDENTE' && (
+                    <TouchableOpacity activeOpacity={0.8} onPress={() => promptConfirmarPresenca(evento)}>
+                      <LinearGradient
+                        colors={COLORS.buttonGradient as [string, string]}
+                        style={styles.primaryButton}
+                      >
+                        <Text style={styles.primaryButtonText}>Confirmar presença</Text>
+                      </LinearGradient>
+                    </TouchableOpacity>
+                  )}
+
+                  {evento.statusPresencaUsuario === 'CONFIRMADO' && (
+                    <View style={styles.successButton}>
+                      <Feather name="check-circle" size={16} color="#4CAF50" style={{ marginRight: 8 }} />
+                      <Text style={styles.successButtonText}>Presença confirmada</Text>
+                    </View>
+                  )}
+                  
+                </View>
+              ))}
+            </View>
+          </ScrollView>
+        )}
       </View>
     </BackgroundLayout>
   );
@@ -155,7 +208,7 @@ export default function CalendarioScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: -35, // Puxa todo o conteúdo da tela mais para cima
+    marginTop: -35,
     paddingBottom: 40,
   },
   header: {
@@ -187,18 +240,18 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   eventsList: {
-    gap: 16, // Espaçamento entre os cards
+    gap: 16,
   },
   eventCard: {
-    padding: 16, // Sobrescreve o padding do card global para ajustar os botões colados
+    padding: 16,
   },
   cardContent: {
     flexDirection: 'row',
-    marginBottom: 16, // Espaço entre o conteúdo e os botões
+    marginBottom: 16,
   },
   dateBlock: {
     width: 64,
-    height: 100, // Mais alto para acompanhar o conteúdo
+    height: 100,
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
@@ -238,7 +291,7 @@ const styles = StyleSheet.create({
   },
   infoIcon: {
     marginRight: 8,
-    marginTop: 2, // Ajuste fino para alinhar o ícone com o texto
+    marginTop: 2,
   },
   detailText: {
     fontFamily: 'Inter_400Regular',
@@ -264,9 +317,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryButtonText: {
-    fontFamily: 'Inter_700Bold', // Botão laranja costuma ter peso maior
+    fontFamily: 'Inter_700Bold',
     fontSize: 14,
-    color: '#000', // Texto escuro para dar contraste no fundo laranja
+    color: '#000',
   },
   successButton: {
     height: 48,

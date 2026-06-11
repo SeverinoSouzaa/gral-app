@@ -69,5 +69,26 @@ export const api = {
       if (!response.ok) throw new Error('Erro ao fazer upload da imagem');
       return response.json();
     }
+  },
+  eventos: {
+    getEventos: async (token: string) => {
+      const response = await fetch(`${BASE_URL}/eventos`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error('Erro ao buscar eventos');
+      return response.json();
+    },
+    setPresenca: async (token: string, eventoId: number, status: 'CONFIRMADO' | 'RECUSADO') => {
+      const response = await fetch(`${BASE_URL}/eventos/${eventoId}/presenca`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ status })
+      });
+      if (!response.ok) throw new Error('Erro ao confirmar presença');
+      return response.json();
+    }
   }
 };
