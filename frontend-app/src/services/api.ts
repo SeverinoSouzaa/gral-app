@@ -3,7 +3,7 @@ import { Platform } from 'react-native';
 // Detecta automaticamente se o app está rodando no ambiente de desenvolvimento (Expo Go local)
 // ou se foi compilado como APK (Produção).
 const LOCAL_URL = 'http://192.168.80.106:3000/api/v1'; // Sua máquina
-const PROD_URL = 'https://sua-api.onrender.com/api/v1'; // API na nuvem (substituiremos depois)
+const PROD_URL = 'https://gral-api.onrender.com/api/v1'; // API na nuvem oficial
 
 const BASE_URL = __DEV__ ? LOCAL_URL : PROD_URL;
 
