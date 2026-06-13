@@ -1,9 +1,11 @@
 import { Platform } from 'react-native';
 
-// Detecta o IP correto dependendo se é Emulador Android ou iOS/Web
-// Em um app de produção, isso viria de variáveis de ambiente.
-// Atualizado para o IP local da sua máquina para testes em celular físico:
-const BASE_URL = 'http://192.168.80.106:3000/api/v1';
+// Detecta automaticamente se o app está rodando no ambiente de desenvolvimento (Expo Go local)
+// ou se foi compilado como APK (Produção).
+const LOCAL_URL = 'http://192.168.80.106:3000/api/v1'; // Sua máquina
+const PROD_URL = 'https://sua-api.onrender.com/api/v1'; // API na nuvem (substituiremos depois)
+
+const BASE_URL = __DEV__ ? LOCAL_URL : PROD_URL;
 
 export const api = {
   login: async (cpf: string, codigoTurma: string) => {
