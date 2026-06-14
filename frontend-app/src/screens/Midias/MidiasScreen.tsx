@@ -9,7 +9,7 @@ import * as Sharing from 'expo-sharing';
 import { COLORS } from '../../constants/colors';
 import { globalStyles } from '../../styles/globalStyles';
 import BackgroundLayout from '../../components/BackgroundLayout';
-import { api } from '../../services/api';
+import { api, BASE_URL } from '../../services/api';
 
 // Interface do retorno real da API
 interface Evento {
@@ -62,17 +62,16 @@ export default function MidiasScreen() {
   const getImageUrl = (arquivo: string) => {
     // Se o usuário inseriu uma URL completa no banco (ex: via Prisma Studio)
     if (arquivo.startsWith('http')) return arquivo;
-    // Se for arquivo local do servidor
-    return `http://192.168.80.106:3000/uploads/midias/${arquivo}`;
+    // Se for arquivo local do servidor (Trocamos uploads/midias para acessar a API)
+    return `${BASE_URL.replace('/api/v1', '')}/uploads/midias/${arquivo}`;
   };
 
   const handleDownload = async (tipo: 'tudo' | 'videos') => {
     try {
       Alert.alert('Iniciando Download', 'Seu pacote ZIP está sendo gerado. Isso pode demorar alguns segundos...');
       const token = await SecureStore.getItemAsync('userToken');
-      const baseUrl = 'http://192.168.80.106:3000/api/v1';
       
-      const endpoint = tipo === 'tudo' ? `${baseUrl}/midias/download-zip` : `${baseUrl}/midias/download-zip?tipo=video`;
+      const endpoint = tipo === 'tudo' ? `${BASE_URL}/midias/download-zip` : `${BASE_URL}/midias/download-zip?tipo=video`;
       const fileName = tipo === 'tudo' ? 'midias-todas.zip' : 'midias-videos.zip';
       const fileUri = FileSystem.documentDirectory + fileName;
 
