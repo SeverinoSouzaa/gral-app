@@ -89,3 +89,53 @@ Para não causar vazamento de dados ou quebrar o aplicativo da professora, verif
 - [ ] **Eu testei todas as rotas no Swagger local antes de dar o `git push`?** O Render não testa se sua lógica faz sentido, ele só coloca no ar. Se você mandar código quebrado, a API oficial vai ficar fora do ar.
 
 Com esta mentalidade, você é oficialmente um Engenheiro de Software Senior gerenciando ciclos de *Release*! 🚀
+
+---
+
+## 🧭 Guia Definitivo de Acesso e Visualização (Onde Encontrar as Coisas)
+
+Se o professor pedir para ver "onde está rodando" cada parte do seu sistema, use esta lista como seu mapa principal. Nunca mais se perca entre o Local e a Nuvem!
+
+### 1. Documentação da API (Os Dois Swaggers)
+Sim, existem dois Swaggers e ambos podem estar funcionando ao mesmo tempo, mas eles olham para lugares diferentes:
+
+- 🏠 **Swagger Local (Seu Laboratório):**
+  - **Link:** [http://localhost:3000/api/v1/docs](http://localhost:3000/api/v1/docs)
+  - **Quando usar:** Quando você estiver com o `npm run start:dev` rodando no terminal, programando um módulo novo. Tudo o que você criar aqui vai direto para o banco de dados do seu próprio PC. Ninguém de fora consegue acessar esse link.
+
+- ☁️ **Swagger da Nuvem (O Oficial):**
+  - **Link:** [https://gral-api.onrender.com/api/v1/docs](https://gral-api.onrender.com/api/v1/docs)
+  - **Quando usar:** Para testar a API real e para apresentar ao professor. O que você inserir aqui cai no banco de dados da internet e aparece imediatamente no celular de quem tiver o aplicativo. Esse link é público, qualquer um pode ver (mas precisa do login para usar as rotas restritas).
+
+### 2. O Banco de Dados (Os Dois Prismas)
+Existem dois bancos de dados completamente isolados. Como ver cada um com a interface bonita do "Prisma Studio"? A mágica está no arquivo `backend-app/.env`.
+
+- 🏠 **Ver o Banco Local (Postgres no seu PC):**
+  - **Passo 1:** Garanta que a variável `DATABASE_URL` no seu `.env` esteja com a URL de `localhost`.
+  - **Passo 2:** Rode o comando `npx prisma studio` no terminal da pasta do backend.
+  - **Link:** O navegador vai abrir sozinho em [http://localhost:5555](http://localhost:5555).
+
+- ☁️ **Ver o Banco da Nuvem (Supabase Oficial):**
+  - **A Opção Oficial (Pelo Site):**
+    - Acesse [https://supabase.com/](https://supabase.com/), faça login, entre no seu projeto e clique em **Table Editor** no menu esquerdo. Lá você vê as tabelas exatamente como no Prisma Studio.
+  - **A Opção do Prisma Studio (Truque Avançado):**
+    - **Passo 1:** Troque a variável `DATABASE_URL` no seu `.env` temporariamente para a URL do Supabase (aquela gigantesca).
+    - **Passo 2:** Rode o comando `npx prisma studio`.
+    - **Link:** [http://localhost:5555](http://localhost:5555) (Sim, é a mesma porta, mas dessa vez as tabelas que vão aparecer são as da Nuvem!). *Aviso: Lembre-se de voltar a URL para localhost depois!*
+
+### 3. Visualizando a Infraestrutura (Os Painéis da Nuvem)
+Se o professor perguntar: *"Onde seu Backend está hospedado fisicamente e como vejo ele funcionando?"*
+- **O Backend (Render):** Acesse [https://dashboard.render.com/](https://dashboard.render.com/). Faça login e você verá a sua API listada com uma luz verde de `Deploy`. Clicando nela, há a aba `Logs` onde você pode ver o terminal da nuvem em tempo real! Toda vez que alguém abrir o app, os logs aparecerão ali.
+
+### 4. Comandos Essenciais para Atualizar o Aplicativo
+Sempre execute estes comandos no terminal **dentro da pasta `frontend-app`**:
+
+- 📦 **Para gerar um NOVO arquivo `.apk` (Versão definitiva para Android):**
+  - **Quando usar:** Se você alterou códigos das telas, imagens, caminhos, e quer que a professora ou usuários baixem o aplicativo com a nova "cara" e novas funções visuais.
+  - **Comando:** `eas build -p android --profile preview`
+  - **Onde ver:** O terminal vai gerar um link. Clique nele para abrir o site do Expo, ver a barrinha de progresso e baixar o APK no final.
+
+- 📱 **Para atualizar quem usa via Expo Go (A Atualização Invisível/QR Code):**
+  - **Quando usar:** Quando você quiser atualizar as telas para quem usa o iPhone ou que não instalou o APK. Eles não precisam escanear o QR Code de novo!
+  - **Comando:** `eas update --branch preview --message "Descreva o que mudou aqui"`
+  - **Onde ver:** O terminal gera a URL do painel. Mas o principal é que, após o comando terminar, a pessoa só precisa fechar e abrir o Expo Go no celular dela que a tela nova já aparece.
