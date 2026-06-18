@@ -12,7 +12,7 @@ export class LoginFormandoDto {
 
   @ApiProperty({
     description: 'Código de Acesso da Turma (5 números)',
-    example: '12345',
+    example: '00000',
   })
   @IsString({ message: 'O código da turma deve ser uma string' })
   @IsNotEmpty({ message: 'O código da turma é obrigatório' })
@@ -23,7 +23,7 @@ export class LoginFormandoDto {
 export class LoginEquipeDto {
   @ApiProperty({
     description: 'E-mail do administrador (Equipe Interna)',
-    example: 'admin@gral.com.br',
+    example: 'admin@seudominio.com',
   })
   @IsEmail({}, { message: 'O e-mail fornecido é inválido' })
   @IsNotEmpty({ message: 'O e-mail é obrigatório' })
@@ -31,7 +31,7 @@ export class LoginEquipeDto {
 
   @ApiProperty({
     description: 'Senha de acesso',
-    example: '123456',
+    example: '******',
     minLength: 6,
   })
   @MinLength(6, { message: 'A senha deve ter no mínimo 6 caracteres' })
