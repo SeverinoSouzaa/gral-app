@@ -64,7 +64,7 @@ export function Login() {
             <input 
               type="email" 
               className="input-field" 
-              placeholder="admin@gral.com.br"
+              placeholder="exemplo@seudominio.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={loading}

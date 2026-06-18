@@ -17,9 +17,9 @@ async function bootstrap() {
   // Segurança: Helmet
   app.use(helmet());
 
-  // CORS: Habilitar requisições do frontend
+  // CORS: Habilitar requisições do frontend web (Navegadores)
   app.enableCors({
-    origin: '*', // TODO: Ajustar para o domínio correto em produção
+    origin: true, // Isso resolve o bloqueio do navegador quando se usa credentials: true
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });

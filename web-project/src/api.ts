@@ -22,10 +22,10 @@ async function fetchWithTimeout(resource: string, options: RequestInit & { timeo
 export const api = {
   auth: {
     loginAdmin: async (email: string, senha: string) => {
-      const res = await fetchWithTimeout(`${BASE_URL}/auth/login`, {
+      const res = await fetchWithTimeout(`${BASE_URL}/auth/login/equipe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, senha, isEquipe: true }),
+        body: JSON.stringify({ email, senha }),
       });
 
       if (!res.ok) {
