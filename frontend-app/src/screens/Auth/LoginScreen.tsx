@@ -58,6 +58,10 @@ export default function LoginScreen() {
     } catch (err: any) {
       if (err.message === 'Credenciais inválidas') {
         setErrorMsg("Código ou CPF incorretos.");
+      } else if (err.message === 'TIMEOUT_ERROR') {
+        setErrorMsg(__DEV__ 
+          ? "Demora na resposta! Verifique se o IP LOCAL_URL no api.ts está correto." 
+          : "O servidor na nuvem está acordando. Tente novamente em 15 segundos!");
       } else {
         setErrorMsg("Erro de conexão. Verifique se o servidor está ligado.");
       }

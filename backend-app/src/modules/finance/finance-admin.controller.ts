@@ -36,6 +36,14 @@ export class FinanceAdminController {
     return this.financeService.listarInadimplentesPorTurma(turmaId);
   }
 
+  @Get('turmas/:turmaId/visao-geral')
+  @ApiOperation({ summary: 'Visão Geral: Status completo de todos os formandos da turma' })
+  @ApiParam({ name: 'turmaId', description: 'ID da Turma' })
+  @ApiResponse({ status: 200, description: 'Visão geral retornada com sucesso.' })
+  async obterVisaoGeralTurma(@Param('turmaId', ParseIntPipe) turmaId: number) {
+    return this.financeService.obterVisaoGeralPorTurma(turmaId);
+  }
+
   @Get('turmas/:turmaId/resumo')
   @ApiOperation({ summary: 'Painel de Arrecadação: Mostra o total pago pela turma e por cada aluno' })
   @ApiParam({ name: 'turmaId', description: 'ID da Turma' })
@@ -44,16 +52,18 @@ export class FinanceAdminController {
     return this.financeService.obterResumoArrecadacaoPorTurma(turmaId);
   }
 
-  @Patch('pagamentos/:id/baixa-manual')
-  @ApiOperation({ summary: 'Dá baixa manual em um pagamento (ex: dinheiro espécie)' })
-  @ApiParam({ name: 'id', description: 'ID da Parcela' })
+  @Patch('formandos/:formandoId/parcelas/:numeroParcela/baixa-manual')
+  @ApiOperation({ summary: 'Dá baixa manual em um pagamento específico de um formando' })
+  @ApiParam({ name: 'formandoId', description: 'ID do Formando' })
+  @ApiParam({ name: 'numeroParcela', description: 'Número da parcela (ex: 3)' })
   @ApiResponse({ status: 200, description: 'Baixa manual registrada.' })
   @ApiResponse({ status: 400, description: 'Parcela já foi paga.' })
   @ApiResponse({ status: 404, description: 'Parcela não encontrada.' })
   async baixarParcelaManual(
-    @Param('id', ParseIntPipe) parcelaId: number,
+    @Param('formandoId', ParseIntPipe) formandoId: number,
+    @Param('numeroParcela', ParseIntPipe) numeroParcela: number,
     @Body() dto: BaixaManualDto,
   ) {
-    return this.financeService.baixarParcelaManual(parcelaId, dto);
+    return this.financeService.baixarParcelaManual(formandoId, numeroParcela, dto);
   }
 }

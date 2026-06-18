@@ -90,20 +90,18 @@ export class FinanceService {
       throw new BadRequestException(strategyResult.errorMessage || 'Falha no processamento com a instituição financeira.');
     }
 
-    // 3. Atualizar o Banco de Dados simulando o pagamento concluído
-    // Em produção real com webhook, isso ocorreria após o callback do banco. 
-    // Como estamos homologando/simulando, já damos baixa para testes de UI.
+    // 3. Atualizar Forma de Pagamento (Mas manter PENDENTE!)
+    // O status só vira PAGO via Baixa Manual ou Webhook oficial do banco.
     const parcelaAtualizada = await this.prisma.pagamento.update({
       where: { id: parcela.id },
       data: {
-        status: 'PAGO',
         formaPagamento: dto.formaPagamento,
-        dataPagamento: new Date(),
+        // NÃO MUDA O STATUS NEM DATA DE PAGAMENTO
       },
     });
 
     return {
-      mensagem: 'Processamento concluído com sucesso!',
+      mensagem: 'Código de pagamento gerado com sucesso! Aguardando confirmação do banco.',
       transacaoGateway: strategyResult,
       parcelaAtualizada: this.mapToParcelaResponse(parcelaAtualizada),
     };
@@ -213,8 +211,60 @@ export class FinanceService {
   }
 
   /**
+   * Visão Geral da Turma (Dashboard Operacional)
+   * Mostra todos os formandos matriculados, seus status gerais, 
+   * parcelas pagas, pendentes e atrasadas.
+   */
+  async obterVisaoGeralPorTurma(turmaId: number) {
+    const turma = await this.prisma.turma.findUnique({
+      where: { id: turmaId },
+      include: {
+        formandos: {
+          include: {
+            usuario: { select: { nome: true, cpf: true, telefone: true } },
+            pagamentos: true
+          }
+        }
+      }
+    });
+
+    if (!turma) throw new NotFoundException('Turma não encontrada.');
+
+    const agora = new Date();
+
+    const relatorio = turma.formandos.map(f => {
+      const pagamentos = f.pagamentos;
+      const pagos = pagamentos.filter(p => p.status === 'PAGO');
+      const pendentes = pagamentos.filter(p => p.status === 'PENDENTE');
+      const atrasados = pendentes.filter(p => p.dataVencimento < agora);
+
+      const totalPago = pagos.reduce((acc, p) => acc + p.valor, 0);
+      const totalPendente = pendentes.reduce((acc, p) => acc + p.valor, 0);
+
+      return {
+        formandoId: f.id,
+        nome: f.usuario.nome,
+        cpf: f.usuario.cpf,
+        telefone: f.usuario.telefone,
+        statusGeral: atrasados.length > 0 ? 'INADIMPLENTE' : (pendentes.length === 0 && pagos.length > 0 ? 'QUITADO' : 'EM DIA'),
+        parcelasPagas: pagos.length,
+        parcelasPendentes: pendentes.length,
+        parcelasAtrasadas: atrasados.length,
+        valorTotalPago: totalPago,
+        valorTotalPendente: totalPendente,
+      };
+    });
+
+    return {
+      turma: turma.nomeTurma,
+      totalAlunos: relatorio.length,
+      visaoGeral: relatorio
+    };
+  }
+
+  /**
    * Dashboard Geral de Arrecadação de uma Turma
-   * Mostra o total arrecadado pela turma e o breakdown por aluno.
+   * Mostra o total arrecadado detalhado por origem do pagamento.
    */
   async obterResumoArrecadacaoPorTurma(turmaId: number) {
     const turma = await this.prisma.turma.findUnique({
@@ -236,10 +286,20 @@ export class FinanceService {
     }
 
     let arrecadacaoTotalTurma = 0;
+    let totalPix = 0;
+    let totalCartao = 0;
+    let totalManual = 0;
 
     const relatorioAlunos = turma.formandos.map((f) => {
       const totalPagoPeloAluno = f.pagamentos.reduce((acc, p) => acc + p.valor, 0);
       arrecadacaoTotalTurma += totalPagoPeloAluno;
+
+      // Somar por método de pagamento
+      f.pagamentos.forEach(p => {
+        if (p.formaPagamento === 'PIX') totalPix += p.valor;
+        else if (p.formaPagamento === 'CREDIT_CARD') totalCartao += p.valor;
+        else if (p.formaPagamento === 'MANUAL') totalManual += p.valor;
+      });
 
       return {
         formandoId: f.id,
@@ -250,28 +310,37 @@ export class FinanceService {
       };
     });
 
-    // Ordenar do que mais pagou pro que menos pagou
     relatorioAlunos.sort((a, b) => b.totalPago - a.totalPago);
 
     return {
       turma: turma.nomeTurma,
       codigoAcesso: turma.codigoAcesso,
-      arrecadacaoTotalTurma,
+      totais: {
+        arrecadacaoGeral: arrecadacaoTotalTurma,
+        viaPix: totalPix,
+        viaCartao: totalCartao,
+        viaDinheiroManual: totalManual
+      },
       formandos: relatorioAlunos,
     };
   }
 
   /**
-   * Dá Baixa Manual (Pagamento Presencial) em uma Parcela
+   * Dá Baixa Manual (Pagamento Presencial) em uma Parcela, baseado no Formando e no número da Parcela
    */
-  async baixarParcelaManual(parcelaId: number, dto: BaixaManualDto) {
-    const parcela = await this.prisma.pagamento.findUnique({ where: { id: parcelaId } });
+  async baixarParcelaManual(formandoId: number, numeroParcela: number, dto: BaixaManualDto) {
+    const parcela = await this.prisma.pagamento.findFirst({ 
+      where: { 
+        formandoId: formandoId,
+        numeroParcela: numeroParcela
+      } 
+    });
 
-    if (!parcela) throw new NotFoundException('Parcela não encontrada.');
-    if (parcela.status === 'PAGO') throw new BadRequestException('Esta parcela já está marcada como PAGA.');
+    if (!parcela) throw new NotFoundException(`Parcela ${numeroParcela} não encontrada para o formando especificado.`);
+    if (parcela.status === 'PAGO') throw new BadRequestException(`A parcela ${numeroParcela} já está marcada como PAGA.`);
 
     const parcelaAtualizada = await this.prisma.pagamento.update({
-      where: { id: parcelaId },
+      where: { id: parcela.id },
       data: {
         status: 'PAGO',
         formaPagamento: 'MANUAL',
@@ -282,38 +351,11 @@ export class FinanceService {
     });
 
     return {
-      mensagem: `Baixa manual registrada com sucesso. Motivo: ${dto.observacao}`,
+      mensagem: `Baixa manual registrada com sucesso na parcela ${numeroParcela}. Motivo: ${dto.observacao}`,
       parcela: this.mapToParcelaResponse(parcelaAtualizada)
     };
   }
 
-  // ==============================================================
-  //                 WEBHOOKS (NOTIFICAÇÕES ASSÍNCRONAS)
-  // ==============================================================
-
-  /**
-   * Recebe o Callback da EFI Bank confirmando o recebimento de um Pix
-   * Formato padrão da EFI (Array de objetos pix)
-   */
-  async processarWebhookEfi(body: any) {
-    // Validação de segurança primária seria checar mTLS ou Token Header, 
-    // assumindo que a EFI envia um array 'pix' no body contendo os pagamentos efetuados.
-    if (!body || !body.pix) {
-      throw new BadRequestException('Formato de Webhook Inválido');
-    }
-
-    let baixas = 0;
-
-    for (const transacao of body.pix) {
-      // transacao.txid = Identificador que passamos ao criar a cobrança
-      // No nosso MOCK usamos algo como 'mock_txid...', mas em prod teríamos salvo esse txid no Banco.
-      // Como não criamos uma coluna 'txid' no schema de pagamento, usaremos uma busca semântica para homologação,
-      // ou atualizaremos os registros baseados em chaves de conciliação. 
-      // Por enquanto, faremos o mock de recebimento para auditoria:
-      console.log(`[WEBHOOK] Pix recebido! TXID: ${transacao.txid} Valor: ${transacao.valor}`);
-      baixas++;
-    }
-
-    return { mensagem: `Webhook processado. ${baixas} pagamentos conciliados.` };
-  }
+  // Foram removidos os webhooks da EFI, já que estamos utilizando Mercado Pago.
+  // A rota de Webhook para produção no Mercado Pago seria implementada aqui.
 }

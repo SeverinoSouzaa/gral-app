@@ -1,65 +1,62 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PaymentStrategy, PaymentResult } from './payment.strategy.interface';
-const EfiPay = require('sdk-node-apis-efi');
-import * as path from 'path';
+import { MercadoPagoConfig, Payment } from 'mercadopago';
 
 @Injectable()
 export class PixStrategy implements PaymentStrategy {
   async processPayment(amount: number, description: string): Promise<PaymentResult> {
-    const clientId = process.env.EFI_CLIENT_ID;
-    const clientSecret = process.env.EFI_CLIENT_SECRET;
-    const certificateName = process.env.EFI_CERTIFICATE_PATH;
+    const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
 
-    // Fallback: Se o usuário ainda não tiver a conta aprovada, geramos um MOCK para ele não travar o desenvolvimento
-    if (!clientId || clientId.includes('XXXXX')) {
-      console.warn('⚠️ Credenciais da EFI Bank não encontradas. Gerando Pix de mentirinha (MOCK) para continuar os testes!');
+    if (!accessToken || accessToken === 'APP_USR-XXXXX-YYYYY') {
+      console.warn('⚠️ Token do Mercado Pago não configurado. Retornando MOCK temporário!');
       return {
         success: true,
         transactionId: `mock_txid_${Date.now()}`,
-        qrCodeImage: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg', // Imagem fake de QR Code
-        qrCodeText: `00020126580014br.gov.bcb.pix0136mock-chave-aleatoria-efi-bank5204000053039865404${amount.toFixed(2)}5802BR5913MOCK EFI BANK6008BRASILIA62070503***6304A1B2`, // Copia e Cola Fake
+        qrCodeImage: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg', 
+        qrCodeText: `00020126580014br.gov.bcb.pix0136mock-chave-aleatoria-mp5204000053039865404${amount.toFixed(2)}5802BR5913MOCK MERCADO PAGO`,
       };
     }
 
-    const options = {
-      sandbox: process.env.EFI_SANDBOX === 'true',
-      client_id: clientId,
-      client_secret: clientSecret,
-      certificate: path.resolve(__dirname, '../../../../', certificateName || ''),
-    };
-
     try {
-      const efipay = new EfiPay(options);
+      // Inicializa o cliente com o Token do .env
+      const client = new MercadoPagoConfig({ accessToken, options: { timeout: 10000 } });
+      const payment = new Payment(client);
 
-      // 1. Criar a Cobrança (Cob)
-      const body = {
-        calendario: { expiracao: 3600 },
-        valor: { original: amount.toFixed(2) },
-        chave: process.env.EFI_PIX_KEY || 'sua_chave_pix_cadastrada_na_efi@email.com', // A chave Pix cadastrada
-        solicitacaoPagador: description
+      const requestOptions = {
+        idempotencyKey: `pix_gral_${Date.now()}`, // Garante que a transação seja única
       };
 
-      const cobRes = await efipay.pixCreateImmediateCharge([], body);
-      
-      if (!cobRes || !cobRes.loc || !cobRes.loc.id) {
-        throw new Error('Falha ao gerar cobrança Pix.');
-      }
+      const body = {
+        transaction_amount: Number(amount.toFixed(2)),
+        description: description,
+        payment_method_id: 'pix',
+        payer: {
+          email: 'pagador.teste@gral.com', // Obrigatório no Mercado Pago (podemos puxar do usuario no futuro)
+          first_name: 'Formando',
+          last_name: 'GRAL'
+        },
+      };
 
-      // 2. Gerar o QRCode a partir do ID da Cobrança
-      const qrCodeRes = await efipay.pixGenerateQRCode({ id: cobRes.loc.id });
+      // Chama a API de criação de pagamento do Mercado Pago
+      const response = await payment.create({ body, requestOptions });
+
+      if (!response.point_of_interaction?.transaction_data) {
+        throw new Error('Mercado Pago não retornou os dados do QR Code.');
+      }
 
       return {
         success: true,
-        transactionId: cobRes.txid,
-        qrCodeImage: qrCodeRes.imagemQrcode, // Imagem em base64
-        qrCodeText: qrCodeRes.qrcode, // Pix Copia e Cola
+        transactionId: response.id?.toString() || `tx_${Date.now()}`,
+        // O Mercado Pago já manda o Base64 puro, precisamos adicionar o prefixo do Data URI
+        qrCodeImage: `data:image/png;base64,${response.point_of_interaction.transaction_data.qr_code_base64}`,
+        qrCodeText: response.point_of_interaction.transaction_data.qr_code || '',
       };
 
     } catch (error: any) {
-      console.error('Erro na EFI Bank:', error);
+      console.error('❌ Erro no Mercado Pago:', error);
       return {
         success: false,
-        errorMessage: error?.message || 'Erro desconhecido ao processar Pix na EFI Bank.',
+        errorMessage: error?.message || 'Erro ao processar Pix no Mercado Pago.',
       };
     }
   }

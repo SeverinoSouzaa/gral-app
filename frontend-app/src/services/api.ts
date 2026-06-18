@@ -1,16 +1,45 @@
 import { Platform } from 'react-native';
 
-// Detecta automaticamente se o app está rodando no ambiente de desenvolvimento (Expo Go local)
-// ou se foi compilado como APK (Produção).
-const LOCAL_URL = 'http://192.168.80.106:3000/api/v1'; // Sua máquina
-const PROD_URL = 'https://gral-api.onrender.com/api/v1'; // API na nuvem oficial
+// ============================================================================
+// IMPORTANTE: Atualize o LOCAL_URL com o seu IPv4 atual caso mude de Wi-Fi!
+// Para descobrir seu IP no Windows, abra o terminal e digite: ipconfig
+// ============================================================================
+const LOCAL_URL = 'http://192.168.80.109:3000/api/v1'; // <-- Verifique este IP!
+const PROD_URL = 'https://gral-api.onrender.com/api/v1';
 
 export const BASE_URL = __DEV__ ? LOCAL_URL : PROD_URL;
+
+/**
+ * Função utilitária para evitar que o app fique em "Carregando" infinitamente.
+ * Ela estipula um tempo máximo de espera (Timeout) para a nuvem acordar (Render)
+ * ou para detectar rapidamente se o IP local está errado.
+ */
+async function fetchWithTimeout(resource: string, options: RequestInit & { timeout?: number } = {}) {
+  const { timeout = 25000 } = options; // 25 segundos (dá tempo do Render acordar)
+
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+
+  try {
+    const response = await fetch(resource, {
+      ...options,
+      signal: controller.signal
+    });
+    clearTimeout(id);
+    return response;
+  } catch (error: any) {
+    clearTimeout(id);
+    if (error.name === 'AbortError') {
+      throw new Error('TIMEOUT_ERROR');
+    }
+    throw error;
+  }
+}
 
 export const api = {
   login: async (cpf: string, codigoTurma: string) => {
     try {
-      const response = await fetch(`${BASE_URL}/auth/login/formando`, {
+      const response = await fetchWithTimeout(`${BASE_URL}/auth/login/formando`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -30,7 +59,7 @@ export const api = {
   },
   documentos: {
     me: async (token: string) => {
-      const response = await fetch(`${BASE_URL}/documentos/me`, {
+      const response = await fetchWithTimeout(`${BASE_URL}/documentos/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (!response.ok) throw new Error('Erro ao buscar documentos');
@@ -41,7 +70,7 @@ export const api = {
       formData.append('tipoDocumento', tipoDocumento);
       formData.append('valorConteudo', valorConteudo);
 
-      const response = await fetch(`${BASE_URL}/documentos`, {
+      const response = await fetchWithTimeout(`${BASE_URL}/documentos`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }, // fetch lida com o multipart boundary sozinho
         body: formData,
@@ -52,7 +81,7 @@ export const api = {
     uploadFile: async (token: string, tipoDocumento: string, fileUri: string) => {
       const formData = new FormData();
       formData.append('tipoDocumento', tipoDocumento);
-      
+
       const filename = fileUri.split('/').pop() || 'photo.jpg';
       const match = /\.(\w+)$/.exec(filename);
       const type = match ? `image/${match[1]}` : `image`;
@@ -63,7 +92,7 @@ export const api = {
         type,
       } as any);
 
-      const response = await fetch(`${BASE_URL}/documentos`, {
+      const response = await fetchWithTimeout(`${BASE_URL}/documentos`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -74,14 +103,14 @@ export const api = {
   },
   eventos: {
     getEventos: async (token: string) => {
-      const response = await fetch(`${BASE_URL}/eventos`, {
+      const response = await fetchWithTimeout(`${BASE_URL}/eventos`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (!response.ok) throw new Error('Erro ao buscar eventos');
       return response.json();
     },
     setPresenca: async (token: string, eventoId: number, status: 'CONFIRMADO' | 'RECUSADO') => {
-      const response = await fetch(`${BASE_URL}/eventos/${eventoId}/presenca`, {
+      const response = await fetchWithTimeout(`${BASE_URL}/eventos/${eventoId}/presenca`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -95,10 +124,34 @@ export const api = {
   },
   midias: {
     getMidias: async (token: string) => {
-      const response = await fetch(`${BASE_URL}/midias`, {
+      const response = await fetchWithTimeout(`${BASE_URL}/midias`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (!response.ok) throw new Error('Erro ao buscar mídias');
+      return response.json();
+    }
+  },
+  finance: {
+    getResumo: async (token: string) => {
+      const response = await fetchWithTimeout(`${BASE_URL}/finance`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error('Erro ao carregar resumo financeiro');
+      return response.json();
+    },
+    payParcela: async (token: string, parcelaId: number, formaPagamento: 'PIX' | 'CREDIT_CARD', valor: number) => {
+      const response = await fetchWithTimeout(`${BASE_URL}/finance/${parcelaId}/pay`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ formaPagamento, valor })
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erro ao processar pagamento');
+      }
       return response.json();
     }
   }
