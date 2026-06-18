@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PaymentStrategy } from './payment.strategy.interface';
+import { PaymentStrategy, PaymentResult } from './payment.strategy.interface';
 
 /**
  * Padrão Strategy (Estratégia Concreta):
@@ -9,9 +9,13 @@ import { PaymentStrategy } from './payment.strategy.interface';
  */
 @Injectable()
 export class CreditCardStrategy implements PaymentStrategy {
-  async processPayment(_amount: number): Promise<boolean> {
+  async processPayment(amount: number, description: string): Promise<PaymentResult> {
     // TODO: Implementar comunicação com API de adquirente de cartão
+    console.log(`Processando cartão: ${description} no valor de ${amount}`);
     await Promise.resolve();
-    return true;
+    return {
+      success: true,
+      transactionId: `cc_mock_${Date.now()}`
+    };
   }
 }
