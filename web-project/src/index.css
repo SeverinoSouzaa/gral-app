@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --color-background: #0F2D2D;
+  --color-background-dark: #041212;
+  --color-background-darklight: #061a1a;
+  --color-primary: #d35817;
+  --color-secondary: #0E536B;
+  --color-danger: #B73020;
+  --color-text-light: #CBCBCB;
+  --color-white: #FFFFFF;
+  --color-input-bg: rgba(255, 255, 255, 0.05);
+  --color-input-border: #DD8241;
+  --gradient-button: linear-gradient(90deg, #E65C00, #8A2511);
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.05);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--color-background-dark);
+  color: var(--color-white);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-background-darklight);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-input-bg);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+}
+
+.input-field {
+  background: var(--color-input-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: var(--color-white);
+  font-size: 15px;
+  width: 100%;
+  transition: border-color 0.2s;
+  outline: none;
+}
+
+.input-field:focus {
+  border-color: var(--color-input-border);
+}
+
+.primary-button {
+  background: var(--gradient-button);
+  color: #000;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.primary-button:hover {
+  opacity: 0.9;
+}
+
+.primary-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Layout Utilities */
+.min-h-screen { min-height: 100vh; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+.text-center { text-align: center; }
