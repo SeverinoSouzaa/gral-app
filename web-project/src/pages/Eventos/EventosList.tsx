@@ -17,6 +17,7 @@ export function EventosList() {
   const [filtroTurma, setFiltroTurma] = useState('');
 
   const [modalNovoEvento, setModalNovoEvento] = useState(false);
+  const [modalAviso, setModalAviso] = useState({ isOpen: false, titulo: '', mensagem: '', isSuccess: false });
   const [formEvento, setFormEvento] = useState({
     nomeEvento: '', dataEvento: '', local: '', descricao: '', eventType: 'EVENT', turmaId: ''
   });
@@ -44,11 +45,21 @@ export function EventosList() {
   const handleCriarEvento = async () => {
     try {
       if (!formEvento.turmaId) {
-        alert('Selecione uma turma para o evento.');
+        setModalAviso({ isOpen: true, titulo: 'Atenção', mensagem: 'Selecione uma turma para o evento.', isSuccess: false });
+        return;
+      }
+      if (!formEvento.nomeEvento || !formEvento.dataEvento || !formEvento.local || !formEvento.descricao) {
+        setModalAviso({ isOpen: true, titulo: 'Campos Obrigatórios', mensagem: 'Por favor, preencha todos os campos antes de salvar.', isSuccess: false });
         return;
       }
       
-      const dataIso = new Date(formEvento.dataEvento).toISOString();
+      let dataIso = '';
+      try {
+        dataIso = new Date(formEvento.dataEvento).toISOString();
+      } catch (e) {
+        setModalAviso({ isOpen: true, titulo: 'Data Inválida', mensagem: 'Por favor, insira uma data válida.', isSuccess: false });
+        return;
+      }
 
       await api.eventosAdmin.criar({
         nomeEvento: formEvento.nomeEvento,
@@ -59,11 +70,12 @@ export function EventosList() {
         turmaId: Number(formEvento.turmaId)
       });
       setModalNovoEvento(false);
-      setFormEvento({ nomeEvento: '', dataEvento: '', local: '', descricao: '', eventType: 'FESTA', turmaId: '' });
+      setFormEvento({ nomeEvento: '', dataEvento: '', local: '', descricao: '', eventType: 'EVENT', turmaId: '' });
       carregarDados();
-    } catch (err) {
+      setModalAviso({ isOpen: true, titulo: 'Sucesso', mensagem: 'O evento foi cadastrado e já está visível para os alunos!', isSuccess: true });
+    } catch (err: any) {
       console.error(err);
-      alert('Erro ao criar evento. Verifique os dados.');
+      setModalAviso({ isOpen: true, titulo: 'Erro ao Salvar', mensagem: err.message || 'Ocorreu um erro ao criar o evento no servidor.', isSuccess: false });
     }
   };
 
@@ -92,7 +104,7 @@ export function EventosList() {
             onChange={(e) => setBusca(e.target.value)}
           />
             <AppSelect
-              options={[{ value: '', label: 'Todas as Turmas' }, ...turmas.map(t => ({ value: t.id, label: t.nomeTurma || t.nome || `Turma #${t.id}` }))]}
+              options={[{ value: '', label: 'Todas as Turmas' }, ...turmas.map(t => ({ value: String(t.id), label: t.nomeTurma || t.nome || `Turma #${t.id}` }))]}
               value={filtroTurma}
               onChange={(val) => setFiltroTurma(String(val))}
               placeholder="Todas as Turmas"
@@ -128,7 +140,7 @@ export function EventosList() {
                 <div className="evento-meta">
                   <span className="meta-item">
                     <Calendar size={14} /> 
-                    Turma ID: {ev.turmaId}
+                    Turma: {turmas.find(t => t.id === ev.turmaId)?.nomeTurma || turmas.find(t => t.id === ev.turmaId)?.nome || `ID ${ev.turmaId}`}
                   </span>
                   {ev.local && (
                     <span className="meta-item">
@@ -164,7 +176,7 @@ export function EventosList() {
         <div className="modal-form-grid" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <AppSelect
               label="Turma"
-              options={turmas.map(t => ({ value: t.id, label: t.nomeTurma || t.nome || `Turma #${t.id}` }))}
+              options={turmas.map(t => ({ value: String(t.id), label: t.nomeTurma || t.nome || `Turma #${t.id}` }))}
               value={formEvento.turmaId}
               onChange={(val) => setFormEvento({...formEvento, turmaId: String(val)})}
               placeholder="Selecione uma turma..."
@@ -192,6 +204,27 @@ export function EventosList() {
             value={formEvento.descricao} 
             onChange={e => setFormEvento({...formEvento, descricao: e.target.value})} 
           />
+        </div>
+      </AppModal>
+
+      {/* Modal de Aviso / Confirmação */}
+      <AppModal
+        isOpen={modalAviso.isOpen}
+        onClose={() => setModalAviso({ ...modalAviso, isOpen: false })}
+        title={modalAviso.titulo}
+        footer={
+          <AppButton 
+            variant={modalAviso.isSuccess ? 'primary' : 'secondary'} 
+            onClick={() => setModalAviso({ ...modalAviso, isOpen: false })}
+          >
+            {modalAviso.isSuccess ? 'Concluir' : 'Entendi'}
+          </AppButton>
+        }
+      >
+        <div style={{ textAlign: 'center', padding: '16px 0' }}>
+          <p style={{ color: modalAviso.isSuccess ? 'var(--color-success)' : 'var(--color-text-secondary)', fontSize: '16px' }}>
+            {modalAviso.mensagem}
+          </p>
         </div>
       </AppModal>
     </div>

@@ -12,7 +12,7 @@ export class PixStrategy implements PaymentStrategy {
       return {
         success: true,
         transactionId: `mock_txid_${Date.now()}`,
-        qrCodeImage: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg', 
+        qrCodeImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/200px-QR_code_for_mobile_English_Wikipedia.svg.png', 
         qrCodeText: `00020126580014br.gov.bcb.pix0136mock-chave-aleatoria-mp5204000053039865404${amount.toFixed(2)}5802BR5913MOCK MERCADO PAGO`,
       };
     }

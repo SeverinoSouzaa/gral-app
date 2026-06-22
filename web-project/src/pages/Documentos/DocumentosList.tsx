@@ -25,6 +25,7 @@ export function DocumentosList() {
   
   // Modais State
   const [modalVisualizar, setModalVisualizar] = useState(false);
+  const [modalAprovar, setModalAprovar] = useState(false);
   const [modalRejeitar, setModalRejeitar] = useState(false);
   const [docSelecionado, setDocSelecionado] = useState<any>(null);
   const [motivoRejeicao, setMotivoRejeicao] = useState('');
@@ -45,9 +46,17 @@ export function DocumentosList() {
     }
   };
 
-  const handleAprovar = async (id: number) => {
+  const openAprovar = (doc: any) => {
+    setDocSelecionado(doc);
+    setModalAprovar(true);
+  };
+
+  const handleAprovar = async () => {
+    if (!docSelecionado) return;
     try {
-      await api.documentosAdmin.aprovar(id);
+      await api.documentosAdmin.aprovar(docSelecionado.id);
+      setModalAprovar(false);
+      setDocSelecionado(null);
       carregarDocumentos(); // Recarrega lista
     } catch (err) {
       console.error(err);
@@ -172,7 +181,7 @@ export function DocumentosList() {
                       </AppButton>
                       {doc.status === 'PENDENTE' && (
                         <>
-                          <AppButton size="sm" variant="primary" onClick={() => handleAprovar(doc.id)}>
+                          <AppButton size="sm" variant="primary" onClick={() => openAprovar(doc)}>
                             <CheckCircle size={14} />
                           </AppButton>
                           <AppButton size="sm" variant="danger" onClick={() => openRejeitar(doc)}>
@@ -263,6 +272,28 @@ export function DocumentosList() {
             value={motivoRejeicao}
             onChange={(e) => setMotivoRejeicao(e.target.value)}
           />
+        </div>
+      </AppModal>
+
+      {/* Modal Aprovar */}
+      <AppModal
+        isOpen={modalAprovar}
+        onClose={() => setModalAprovar(false)}
+        title="Confirmar Aprovação"
+        footer={
+          <>
+            <AppButton variant="secondary" onClick={() => setModalAprovar(false)}>Cancelar</AppButton>
+            <AppButton variant="primary" onClick={handleAprovar}>Sim, Aprovar Documento</AppButton>
+          </>
+        }
+      >
+        <div className="aprovacao-form">
+          <p style={{marginBottom: 16, fontSize: '15px', color: 'var(--color-text-primary)'}}>
+            Tem certeza que deseja <strong>Aprovar</strong> este documento de {docSelecionado?.formando?.usuario?.nome || 'este aluno'}?
+          </p>
+          <p className="text-muted" style={{fontSize: '13px'}}>
+            Uma vez aprovado, este status será confirmado para o formando e ele não precisará reenviar.
+          </p>
         </div>
       </AppModal>
     </div>

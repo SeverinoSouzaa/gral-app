@@ -1,4 +1,4 @@
-const API_URL = 'https://gral-api.onrender.com/api/v1';
+export const API_URL = import.meta.env.VITE_API_URL || 'https://gral-api.onrender.com/api/v1';
 
 async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
   const token = localStorage.getItem('@GRAL:token_admin');
@@ -38,6 +38,7 @@ async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
 }
 
 export const api = {
+  getBaseUrl: () => API_URL.replace('/api/v1', ''),
   get: (endpoint: string) => fetchWithAuth(endpoint, { method: 'GET' }),
   post: (endpoint: string, body?: any) => 
     fetchWithAuth(endpoint, { 
@@ -74,24 +75,27 @@ export const api = {
     listarPorTurma: (turmaId: number) => fetchWithAuth(`/eventos/turma/${turmaId}`, { method: 'GET' }),
     buscarPorId: (eventoId: number) => fetchWithAuth(`/eventos/${eventoId}`, { method: 'GET' }),
     criar: (data: any) => fetchWithAuth('/eventos', { method: 'POST', body: JSON.stringify(data) }),
-    atualizar: (eventoId: number, data: any) => fetchWithAuth(`/eventos/${eventoId}`, { method: 'PUT', body: JSON.stringify(data) }),
-    remover: (eventoId: number) => fetchWithAuth(`/eventos/${eventoId}`, { method: 'DELETE' })
+    atualizar: (eventoId: number, data: any) => fetchWithAuth(`/eventos/${eventoId}`, { method: 'PATCH', body: JSON.stringify(data) }),
+    remover: (eventoId: number) => fetchWithAuth(`/eventos/${eventoId}`, { method: 'DELETE' }),
+    listarPresencas: (eventoId: number) => fetchWithAuth(`/eventos/${eventoId}/presencas`, { method: 'GET' })
   },
 
   midiasAdmin: {
     listarPorEvento: (eventoId: number) => fetchWithAuth(`/midias/evento/${eventoId}`, { method: 'GET' }),
-    uploadArquivo: (eventoId: number, file: File) => {
+    uploadArquivo: (eventoId: number, tipo: 'foto' | 'video', file: File) => {
       const formData = new FormData();
+      formData.append('eventoId', String(eventoId));
+      formData.append('tipo', tipo);
       formData.append('file', file);
-      return fetchWithAuth(`/midias/evento/${eventoId}/upload`, { method: 'POST', body: formData });
+      return fetchWithAuth(`/midias`, { method: 'POST', body: formData });
     },
     excluir: (id: number) => fetchWithAuth(`/midias/${id}`, { method: 'DELETE' })
   },
 
   documentosAdmin: {
     listarTodos: () => fetchWithAuth('/documentos', { method: 'GET' }),
-    aprovar: (id: number) => fetchWithAuth(`/documentos/${id}/aprovar`, { method: 'PUT' }),
-    rejeitar: (id: number, motivo: string) => fetchWithAuth(`/documentos/${id}/rejeitar`, { method: 'PUT', body: JSON.stringify({ motivo }) })
+    aprovar: (id: number) => fetchWithAuth(`/documentos/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status: 'APROVADO' }) }),
+    rejeitar: (id: number, motivo: string) => fetchWithAuth(`/documentos/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status: 'REJEITADO', motivoRejeicao: motivo }) })
   },
 
   financeiroAdmin: {
