@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { COLORS } from '../../constants/colors';
 import { globalStyles } from '../../styles/globalStyles';
@@ -8,11 +8,51 @@ import { LinearGradient } from 'expo-linear-gradient';
 import AccessibilityMenu from '../../components/AccessibilityMenu';
 import { useNavigation } from '@react-navigation/native';
 import SidebarMenu from './SidebarMenu';
-
+import * as SecureStore from 'expo-secure-store';
+import { api, BASE_URL } from '../../services/api';
 
 export default function TelaPrincipal() {
   const navigation = useNavigation<any>();
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+
+  const [proximoEvento, setProximoEvento] = useState<any>(null);
+  const [resumoFinanceiro, setResumoFinanceiro] = useState<any>(null);
+  const [midias, setMidias] = useState<any[]>([]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const token = await SecureStore.getItemAsync('userToken');
+        if (!token) return;
+
+        // Fetch Eventos
+        const eventosData = await api.eventos.getEventos(token).catch(() => []);
+        if (eventosData.length > 0) {
+          const futuros = eventosData.filter((e: any) => new Date(e.dataEvento).getTime() >= Date.now());
+          const sorted = futuros.sort((a: any, b: any) => new Date(a.dataEvento).getTime() - new Date(b.dataEvento).getTime());
+          setProximoEvento(sorted.length > 0 ? sorted[0] : eventosData[0]);
+        }
+
+        // Fetch Financeiro
+        const financeData = await api.finance.getResumo(token).catch(() => null);
+        if (financeData && financeData.resumo) {
+          setResumoFinanceiro(financeData.resumo);
+        }
+
+        // Fetch Midias
+        const midiasData = await api.midias.getMidias(token).catch(() => []);
+        setMidias(midiasData.slice(0, 3));
+      } catch (err) {
+        console.error('Erro ao carregar dados do dashboard', err);
+      }
+    };
+    loadData();
+  }, []);
+
+  const getImageUrl = (arquivo: string) => {
+    if (arquivo.startsWith('http')) return arquivo;
+    return `${BASE_URL.replace('/api/v1', '')}/uploads/midias/${arquivo}`;
+  };
 
   return (
     <BackgroundLayout hideAccessibility={true}>
@@ -99,12 +139,20 @@ export default function TelaPrincipal() {
               colors={COLORS.buttonGradient as [string, string]}
               style={styles.dateBlock}
             >
-              <Text style={styles.dateNumber}>18</Text>
-              <Text style={styles.dateMonth}>NOV</Text>
+              <Text style={styles.dateNumber}>
+                {proximoEvento?.dataEvento ? new Date(proximoEvento.dataEvento).getDate().toString().padStart(2, '0') : '18'}
+              </Text>
+              <Text style={styles.dateMonth}>
+                {proximoEvento?.dataEvento 
+                  ? new Date(proximoEvento.dataEvento).toLocaleDateString('pt-BR', { month: 'short' }).toUpperCase() 
+                  : 'NOV'}
+              </Text>
             </LinearGradient>
             <View style={styles.eventInfo}>
-              <Text style={styles.eventName}>Reunião da Comissão</Text>
-              <Text style={styles.eventDetails}>Às 19h00 • Online</Text>
+              <Text style={styles.eventName}>{proximoEvento?.nomeEvento || 'Reunião da Comissão'}</Text>
+              <Text style={styles.eventDetails}>
+                {proximoEvento?.local ? proximoEvento.local : 'Às 19h00 • Online'}
+              </Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -121,17 +169,24 @@ export default function TelaPrincipal() {
           <View style={styles.statusRow}>
             <Text style={styles.statusLabel}>Status atual:</Text>
             <View style={styles.statusBadge}>
-              <View style={styles.statusDot} />
-              <Text style={styles.statusText}>Em dia</Text>
+              <View style={[styles.statusDot, { backgroundColor: resumoFinanceiro?.pendente > 0 ? '#F44336' : '#4CAF50' }]} />
+              <Text style={[styles.statusText, { color: resumoFinanceiro?.pendente > 0 ? '#F44336' : '#4CAF50' }]}>
+                {resumoFinanceiro ? (resumoFinanceiro.pendente > 0 ? 'Com pendências' : 'Em dia') : 'Em dia'}
+              </Text>
             </View>
           </View>
 
           <View style={styles.progressHeader}>
             <Text style={styles.progressLabel}>Contribuição</Text>
-            <Text style={styles.progressValue}>7/12 parcelas</Text>
+            <Text style={styles.progressValue}>
+              {resumoFinanceiro ? `${resumoFinanceiro.parcelasPagas?.length || 0}/${resumoFinanceiro.parcelas?.length || 12} parcelas` : '7/12 parcelas'}
+            </Text>
           </View>
           <View style={styles.progressBarBackground}>
-            <View style={[styles.progressBarFill, { width: '58%' }]} />
+            <View style={[
+              styles.progressBarFill, 
+              { width: resumoFinanceiro ? `${((resumoFinanceiro.parcelasPagas?.length || 0) / (resumoFinanceiro.parcelas?.length || 1)) * 100}%` : '58%' }
+            ]} />
           </View>
 
           <TouchableOpacity 
@@ -185,15 +240,23 @@ export default function TelaPrincipal() {
           </View>
 
           <View style={styles.mediaGrid}>
-            <View style={styles.mediaThumbnail}>
-              <Feather name="image" size={24} color={COLORS.primary} />
-            </View>
-            <View style={styles.mediaThumbnail}>
-              <Feather name="play" size={24} color={COLORS.primary} />
-            </View>
-            <View style={styles.mediaThumbnail}>
-              <Feather name="image" size={24} color={COLORS.primary} />
-            </View>
+            {midias.length > 0 ? (
+              midias.map((midia: any, idx: number) => (
+                <View key={idx} style={[styles.mediaThumbnail, { overflow: 'hidden' }]}>
+                  {midia.tipo === 'IMAGE' ? (
+                    <Image source={{ uri: getImageUrl(midia.arquivo) }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
+                  ) : (
+                    <Feather name="play" size={24} color={COLORS.primary} />
+                  )}
+                </View>
+              ))
+            ) : (
+              <>
+                <View style={styles.mediaThumbnail}><Feather name="image" size={24} color={COLORS.primary} /></View>
+                <View style={styles.mediaThumbnail}><Feather name="play" size={24} color={COLORS.primary} /></View>
+                <View style={styles.mediaThumbnail}><Feather name="image" size={24} color={COLORS.primary} /></View>
+              </>
+            )}
           </View>
 
           <TouchableOpacity 
