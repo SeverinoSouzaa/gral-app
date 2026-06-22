@@ -1,58 +1,104 @@
-import React from 'react';
-import { Users, FileText, CheckCircle, AlertTriangle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Users, GraduationCap, Calendar, FileText, ArrowUpRight, Loader2 } from 'lucide-react';
+import { api } from '../../api/client';
 import './Dashboard.css';
 
 export function Dashboard() {
-  // Mock data por enquanto (Fase 2). 
-  // Na próxima fase (3 e 4) conectaremos ao api.ts
-  const stats = [
-    { label: 'Turmas Ativas', value: '4', icon: Users, color: '#4CAF50' },
-    { label: 'Formandos', value: '142', icon: CheckCircle, color: '#d35817' },
-    { label: 'Docs Pendentes', value: '18', icon: FileText, color: '#f39c12' },
-    { label: 'Inadimplentes', value: '7', icon: AlertTriangle, color: '#B73020' },
+  const [loading, setLoading] = useState(false);
+
+  const [stats, setStats] = useState({
+    turmas: 0,
+    formandos: 0,
+    eventos: 0,
+    documentos: 0
+  });
+
+  useEffect(() => {
+    carregarResumo();
+  }, []);
+
+  const carregarResumo = async () => {
+    try {
+      setLoading(true);
+      const [turmasData, usuariosData, eventosData, documentosData] = await Promise.all([
+        api.turmas.listar(),
+        api.usuariosAdmin.listar(),
+        api.eventosAdmin.listarTodos(),
+        api.documentosAdmin.listarTodos()
+      ]);
+
+      const totalFormandos = (usuariosData || []).filter((u: any) => 
+        u.tipoUsuario === 'STUDENT' || u.tipoUsuario === 'FORMANDO' || !u.tipoUsuario
+      ).length;
+
+      setStats({
+        turmas: (turmasData || []).length,
+        formandos: totalFormandos,
+        eventos: (eventosData || []).length,
+        documentos: (documentosData || []).filter((d: any) => d.status === 'PENDENTE').length
+      });
+    } catch (err) {
+      console.error('Erro ao carregar resumo do dashboard:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const statCards = [
+    { label: 'Turmas Ativas', value: stats.turmas.toString(), icon: <Users size={24} />, color: '#d35817' },
+    { label: 'Total de Formandos', value: stats.formandos.toString(), icon: <GraduationCap size={24} />, color: '#4CAF50' },
+    { label: 'Eventos Agendados', value: stats.eventos.toString(), icon: <Calendar size={24} />, color: '#FF9500' },
+    { label: 'Doc. Pendentes', value: stats.documentos.toString(), icon: <FileText size={24} />, color: '#34C759' },
   ];
 
   return (
     <div className="dashboard-container animate-fade-in">
-      <header className="page-header">
-        <h1>Visão Geral</h1>
-        <p>Acompanhe os principais indicadores do sistema.</p>
-      </header>
+      <div className="page-header">
+        <h1>Dashboard</h1>
+        <p>Bem-vindo ao Painel Administrativo da GRAL. Aqui está o resumo atual.</p>
+      </div>
 
-      {/* CARDS DE RESUMO (Glassmorphism) */}
-      <div className="stats-grid">
-        {stats.map((stat, index) => {
-          const Icon = stat.icon;
-          return (
-            <div key={index} className="glass-panel stat-card">
-              <div className="stat-header">
-                <span className="stat-label">{stat.label}</span>
-                <div className="icon-wrapper" style={{ backgroundColor: `${stat.color}20`, color: stat.color }}>
-                  <Icon size={20} />
+      {loading ? (
+        <div className="flex-center" style={{ height: '300px' }}>
+          <Loader2 size={40} className="spinner" color="var(--color-primary)" />
+        </div>
+      ) : (
+        <>
+          <div className="stats-grid">
+            {statCards.map((stat, idx) => (
+              <div key={idx} className="glass-panel stat-card">
+                <div className="stat-header">
+                  <span className="stat-label">{stat.label}</span>
+                  <div className="stat-icon-wrapper" style={{ color: stat.color, backgroundColor: `${stat.color}15` }}>
+                    {stat.icon}
+                  </div>
+                </div>
+                <div className="stat-value">{stat.value}</div>
+                <div className="stat-footer">
+                  <span className="trend positive">
+                    <ArrowUpRight size={14} /> Atualizado agora
+                  </span>
                 </div>
               </div>
-              <div className="stat-value">{stat.value}</div>
+            ))}
+          </div>
+
+          <div className="dashboard-sections">
+            <div className="glass-panel section-card">
+              <h3>Avisos Recentes</h3>
+              <div className="empty-state">
+                <p>Nenhum aviso importante no momento.</p>
+              </div>
             </div>
-          );
-        })}
-      </div>
-
-      <div className="dashboard-content">
-        {/* Placeholder para gráficos ou listas recentes */}
-        <div className="glass-panel widget large-widget">
-          <h3>Arrecadação Recente</h3>
-          <div className="empty-state">
-            <p>O gráfico de fluxo de caixa será conectado ao módulo financeiro.</p>
+            <div className="glass-panel section-card">
+              <h3>Próximos Eventos</h3>
+              <div className="empty-state">
+                <p>Nenhum evento agendado para os próximos 7 dias.</p>
+              </div>
+            </div>
           </div>
-        </div>
-
-        <div className="glass-panel widget small-widget">
-          <h3>Avisos Importantes</h3>
-          <div className="empty-state">
-            <p>Tudo tranquilo por aqui.</p>
-          </div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 }

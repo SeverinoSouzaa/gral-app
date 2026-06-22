@@ -1,38 +1,31 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Login } from './pages/Login';
+import { Login } from './pages/Login/Login';
 import { AdminLayout } from './components/Layout/AdminLayout';
 import { Dashboard } from './pages/Dashboard/Dashboard';
-
-// Protected Route Simples
-function PrivateRoute({ children }: { children: React.ReactNode }) {
-  const token = localStorage.getItem('adminToken');
-  return token ? <>{children}</> : <Navigate to="/" />;
-}
+import { TurmasList } from './pages/Turmas/TurmasList';
+import { TurmaDetalhes } from './pages/Turmas/TurmaDetalhes';
+import { EventosList } from './pages/Eventos/EventosList';
+import { EventoDetalhes } from './pages/Eventos/EventoDetalhes';
+import { DocumentosList } from './pages/Documentos/DocumentosList';
+import { Financeiro } from './pages/Financeiro/Financeiro';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<Login />} />
         
-        {/* Rotas Protegidas que usam o Layout da Equipe */}
-        <Route 
-          path="/dashboard" 
-          element={
-            <PrivateRoute>
-              <AdminLayout />
-            </PrivateRoute>
-          }
-        >
-          {/* Outlet renderizará as subpáginas aqui */}
-          <Route index element={<Dashboard />} />
-          
-          {/* Futuras Rotas (Fase 3 e 4) */}
-          <Route path="turmas" element={<div className="p-4 text-white">Módulo de Turmas (Em breve)</div>} />
-          <Route path="documentos" element={<div className="p-4 text-white">Módulo de Documentos (Em breve)</div>} />
-          <Route path="midias" element={<div className="p-4 text-white">Módulo de Mídias (Em breve)</div>} />
-          <Route path="financeiro" element={<div className="p-4 text-white">Módulo Financeiro (Em breve)</div>} />
+        {/* Rotas Protegidas do Painel */}
+        <Route path="/" element={<AdminLayout />}>
+          <Route path="dashboard" element={<Dashboard />} />
+          {/* As próximas telas entrarão aqui */}
+          <Route path="turmas" element={<TurmasList />} />
+          <Route path="turmas/:id" element={<TurmaDetalhes />} />
+          <Route path="eventos" element={<EventosList />} />
+          <Route path="eventos/:id" element={<EventoDetalhes />} />
+          <Route path="documentos" element={<DocumentosList />} />
+          <Route path="financeiro" element={<Financeiro />} />
         </Route>
       </Routes>
     </Router>

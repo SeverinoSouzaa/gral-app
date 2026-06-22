@@ -23,6 +23,7 @@ export class EventosService {
 
   async findAllAdmin() {
     return this.prisma.evento.findMany({
+      include: { turma: true },
       orderBy: { dataEvento: 'asc' },
     });
   }

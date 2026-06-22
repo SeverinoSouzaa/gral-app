@@ -1,0 +1,227 @@
+.eventos-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.eventos-filters {
+  padding: 16px;
+  position: relative;
+  z-index: 20;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+}
+
+/* Custom Select provisório sem AppSelect para agilizar */
+.custom-select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.app-select {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 12px 16px;
+  color: var(--color-text-primary);
+  font-size: 15px;
+  outline: none;
+  appearance: none;
+}
+
+.app-select option {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+}
+
+/* Eventos List */
+.eventos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.evento-card-horizontal {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  cursor: pointer;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.evento-card-horizontal:hover {
+  transform: translateX(4px);
+  border-color: rgba(211, 88, 23, 0.4);
+}
+
+.evento-date-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+  margin-right: 24px;
+}
+
+.evento-date-box .month {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.evento-date-box .day {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.evento-info-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.evento-info-main h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.evento-meta {
+  display: flex;
+  gap: 16px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.evento-action {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Detalhes */
+.evento-detalhes-header {
+  padding: 32px;
+}
+
+.evento-badge-turma {
+  display: inline-block;
+  background-color: rgba(76, 175, 80, 0.15);
+  color: var(--color-success);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.evento-header-content h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.evento-desc {
+  color: var(--color-text-secondary);
+  font-size: 15px;
+  margin-bottom: 24px;
+  max-width: 800px;
+}
+
+.evento-meta-grid {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.meta-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+}
+
+.eventos-section-title {
+  margin-top: 16px;
+}
+
+.eventos-section-title h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.eventos-section-title p {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+/* Mídias Grid */
+.midias-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.midia-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.midia-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.midia-video-placeholder {
+  width: 100%;
+  height: 180px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-bottom: 1px solid var(--glass-border);
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+.midia-info {
+  padding: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-link.danger {
+  color: var(--color-danger);
+}
+.btn-link.danger:hover {
+  text-decoration: underline;
+}

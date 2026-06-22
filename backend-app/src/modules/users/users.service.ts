@@ -24,6 +24,13 @@ export class UsersService {
       id: u.id,
       nome: u.nome,
       cpf: u.cpf,
+      email: u.email,
+      telefone: u.telefone,
+      tipoUsuario: u.tipoUsuario,
+      matricula: u.formando?.matricula,
+      curso: u.formando?.curso,
+      statusFinanceiro: u.formando?.statusFinanceiro,
+      turmaId: u.formando?.turmaId,
       turma: u.formando?.turma?.nomeTurma,
     }));
   }
