@@ -179,13 +179,13 @@ export default function TelaPrincipal() {
           <View style={styles.progressHeader}>
             <Text style={styles.progressLabel}>Contribuição</Text>
             <Text style={styles.progressValue}>
-              {resumoFinanceiro ? `${resumoFinanceiro.parcelasPagas?.length || 0}/${resumoFinanceiro.parcelas?.length || 12} parcelas` : '7/12 parcelas'}
+              {resumoFinanceiro ? `${resumoFinanceiro.parcelasPagas || 0}/${resumoFinanceiro.totalParcelas || 12} parcelas` : '7/12 parcelas'}
             </Text>
           </View>
           <View style={styles.progressBarBackground}>
             <View style={[
               styles.progressBarFill, 
-              { width: resumoFinanceiro ? `${((resumoFinanceiro.parcelasPagas?.length || 0) / (resumoFinanceiro.parcelas?.length || 1)) * 100}%` : '58%' }
+              { width: resumoFinanceiro ? `${((resumoFinanceiro.parcelasPagas || 0) / (resumoFinanceiro.totalParcelas || 1)) * 100}%` : '58%' }
             ]} />
           </View>
 
