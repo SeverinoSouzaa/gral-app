@@ -1,13 +1,10 @@
 import { Platform } from 'react-native';
 
 // ============================================================================
-// IMPORTANTE: Atualize o LOCAL_URL com o seu IPv4 atual caso mude de Wi-Fi!
-// Para descobrir seu IP no Windows, abra o terminal e digite: ipconfig
+// IMPORTANTE: Para a demonstração oficial, o app está travado na Nuvem (Render).
+// Não é necessário configurar IPv4.
 // ============================================================================
-const LOCAL_URL = 'http://192.168.80.109:3000/api/v1'; // <-- Verifique este IP!
-const PROD_URL = 'https://gral-api.onrender.com/api/v1';
-
-export const BASE_URL = __DEV__ ? LOCAL_URL : PROD_URL;
+export const BASE_URL = 'https://gral-api.onrender.com/api/v1';
 
 /**
  * Função utilitária para evitar que o app fique em "Carregando" infinitamente.
