@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { COLORS } from '../../constants/colors';
@@ -6,7 +6,7 @@ import { globalStyles } from '../../styles/globalStyles';
 import BackgroundLayout from '../../components/BackgroundLayout';
 import { LinearGradient } from 'expo-linear-gradient';
 import AccessibilityMenu from '../../components/AccessibilityMenu';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import SidebarMenu from './SidebarMenu';
 import * as SecureStore from 'expo-secure-store';
 import { api, BASE_URL } from '../../services/api';
@@ -19,35 +19,51 @@ export default function TelaPrincipal() {
   const [resumoFinanceiro, setResumoFinanceiro] = useState<any>(null);
   const [midias, setMidias] = useState<any[]>([]);
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const token = await SecureStore.getItemAsync('userToken');
-        if (!token) return;
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
 
-        // Fetch Eventos
-        const eventosData = await api.eventos.getEventos(token).catch(() => []);
-        if (eventosData.length > 0) {
-          const futuros = eventosData.filter((e: any) => new Date(e.dataEvento).getTime() >= Date.now());
-          const sorted = futuros.sort((a: any, b: any) => new Date(a.dataEvento).getTime() - new Date(b.dataEvento).getTime());
-          setProximoEvento(sorted.length > 0 ? sorted[0] : eventosData[0]);
+      const loadData = async () => {
+        try {
+          const token = await SecureStore.getItemAsync('userToken');
+          if (!token || !isActive) return;
+
+          // Fetch Eventos
+          const eventosData = await api.eventos.getEventos(token).catch(() => []);
+          if (eventosData.length > 0 && isActive) {
+            const futuros = eventosData.filter((e: any) => new Date(e.dataEvento).getTime() >= Date.now());
+            const sorted = futuros.sort((a: any, b: any) => new Date(a.dataEvento).getTime() - new Date(b.dataEvento).getTime());
+            setProximoEvento(sorted.length > 0 ? sorted[0] : eventosData[0]);
+          }
+
+          // Fetch Financeiro
+          const financeData = await api.finance.getResumo(token).catch(() => null);
+          if (financeData && financeData.resumo && isActive) {
+            setResumoFinanceiro(financeData.resumo);
+          }
+
+          // Fetch Midias
+          const midiasData = await api.midias.getMidias(token).catch(() => []);
+          if (isActive) {
+            setMidias(midiasData.slice(0, 3));
+          }
+        } catch (err) {
+          console.error('Erro ao carregar dados do dashboard', err);
         }
+      };
 
-        // Fetch Financeiro
-        const financeData = await api.finance.getResumo(token).catch(() => null);
-        if (financeData && financeData.resumo) {
-          setResumoFinanceiro(financeData.resumo);
-        }
+      loadData();
+      
+      const intervalId = setInterval(() => {
+        if (isActive) loadData();
+      }, 5000);
 
-        // Fetch Midias
-        const midiasData = await api.midias.getMidias(token).catch(() => []);
-        setMidias(midiasData.slice(0, 3));
-      } catch (err) {
-        console.error('Erro ao carregar dados do dashboard', err);
-      }
-    };
-    loadData();
-  }, []);
+      return () => {
+        isActive = false;
+        clearInterval(intervalId);
+      };
+    }, [])
+  );
 
   const getImageUrl = (arquivo: string) => {
     if (arquivo.startsWith('http')) return arquivo;

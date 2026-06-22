@@ -81,7 +81,7 @@ export const api = {
   },
 
   midiasAdmin: {
-    listarPorEvento: (eventoId: number) => fetchWithAuth(`/midias/evento/${eventoId}`, { method: 'GET' }),
+    listarPorEvento: (eventoId: number) => fetchWithAuth(`/midias?eventoId=${eventoId}`, { method: 'GET' }),
     uploadArquivo: (eventoId: number, tipo: 'foto' | 'video', file: File) => {
       const formData = new FormData();
       formData.append('eventoId', String(eventoId));

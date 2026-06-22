@@ -330,7 +330,7 @@ export function Financeiro() {
           <div className="app-input-container" style={{ display: 'flex', flexDirection: 'column', gap: '8px', background: 'transparent', border: 'none' }}>
             <AppSelect 
               label="Selecione o Formando"
-              options={formandosDropdown.map(f => ({ value: f.formandoId, label: f.nome || `Formando #${f.formandoId}` }))}
+              options={formandosDropdown.map(f => ({ value: String(f.formandoId), label: f.nome || `Formando #${f.formandoId}` }))}
               value={formBaixa.formandoId}
               onChange={(val) => setFormBaixa({...formBaixa, formandoId: String(val)})}
               placeholder="Selecione um aluno da lista..."
