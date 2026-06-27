@@ -63,7 +63,11 @@ export class UsersService {
     return this.prisma.usuario.findUnique({
       where: { id },
       include: {
-        formando: true,
+        formando: {
+          include: {
+            turma: true,
+          }
+        },
         equipeInterna: true,
       },
     });

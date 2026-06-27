@@ -30,7 +30,11 @@ export class UsersController {
       id: usuario.id,
       nome: usuario.nome,
       email: usuario.email,
+      cpf: usuario.cpf,
+      telefone: usuario.telefone,
       tipoUsuario: usuario.tipoUsuario,
+      createdAt: usuario.createdAt,
+      turma: usuario.formando?.turma?.nomeTurma || null,
     };
   }
 
