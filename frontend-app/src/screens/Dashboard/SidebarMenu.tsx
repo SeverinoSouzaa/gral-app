@@ -46,7 +46,7 @@ export default function SidebarMenu({ visible, onClose }: SidebarProps) {
     onClose(); // Fecha a sidebar primeiro
     
     // Lista de telas que já existem no nosso arquivo routes/index.tsx
-    const telasProntas = ['TelaPrincipal', 'Pagamentos', 'Documentos', 'Calendario', 'Midias'];
+    const telasProntas = ['TelaPrincipal', 'Pagamentos', 'Documentos', 'Calendario', 'Midias', 'Perfil'];
     
     if (telasProntas.includes(route)) {
       navigation.navigate(route); // Se a tela já existe, navega normalmente
@@ -99,7 +99,7 @@ export default function SidebarMenu({ visible, onClose }: SidebarProps) {
               </View>
             </View>
             
-            <TouchableOpacity style={styles.profileLink} activeOpacity={0.7}>
+            <TouchableOpacity style={styles.profileLink} activeOpacity={0.7} onPress={() => handleNavigate('Perfil')}>
               <Text style={[styles.profileLinkText, { fontSize: 13 * textMultiplier }]}>Ver Perfil</Text>
             </TouchableOpacity>
           </View>
@@ -182,7 +182,7 @@ export default function SidebarMenu({ visible, onClose }: SidebarProps) {
               </View>
             </View>
             
-            <TouchableOpacity style={styles.profileLink} activeOpacity={0.7}>
+            <TouchableOpacity style={styles.profileLink} activeOpacity={0.7} onPress={() => handleNavigate('Perfil')}>
               <Text style={[styles.profileLinkText, { fontSize: 13 * textMultiplier }]}>Ver Perfil</Text>
             </TouchableOpacity>
           </View>
