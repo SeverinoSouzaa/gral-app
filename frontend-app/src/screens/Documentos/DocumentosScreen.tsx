@@ -11,6 +11,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as SecureStore from 'expo-secure-store';
 import { api } from '../../services/api';
 import { useAccessibility } from '../../contexts/AccessibilityContext';
+import ConfirmModal from '../../components/ConfirmModal';
 
 export default function DocumentosScreen() {
   const navigation = useNavigation<any>();
@@ -21,7 +22,20 @@ export default function DocumentosScreen() {
   const [fotoDoc, setFotoDoc] = useState<any>(null);
   const [canudoDoc, setCanudoDoc] = useState<any>(null);
 
+  // States dos modais customizados
+  const [confirmPhotoVisible, setConfirmPhotoVisible] = useState(false);
+  const [selectedFotoUri, setSelectedFotoUri] = useState<string | null>(null);
+  const [confirmNameVisible, setConfirmNameVisible] = useState(false);
+  
+  const [statusModalVisible, setStatusModalVisible] = useState(false);
+  const [statusModalConfig, setStatusModalConfig] = useState({ title: '', desc: '', icon: 'info' as any });
+
   const { textMultiplier, isHighContrast } = useAccessibility();
+
+  const showStatus = (title: string, desc: string, icon: any) => {
+    setStatusModalConfig({ title, desc, icon });
+    setStatusModalVisible(true);
+  };
 
   useEffect(() => {
     fetchDocumentos();
@@ -58,7 +72,7 @@ export default function DocumentosScreen() {
     
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (permissionResult.granted === false) {
-      Alert.alert('Permissão negada', 'Precisamos de acesso às suas fotos!');
+      showStatus('Permissão negada', 'Precisamos de acesso às suas fotos!', 'x-circle');
       return;
     }
 
@@ -70,38 +84,47 @@ export default function DocumentosScreen() {
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
       const uri = result.assets[0].uri;
-      enviarFoto(uri);
+      setSelectedFotoUri(uri);
+      setConfirmPhotoVisible(true);
     }
   };
 
-  const enviarFoto = async (uri: string) => {
+  const confirmarEnviarFoto = async () => {
+    if (!selectedFotoUri) return;
+    setConfirmPhotoVisible(false);
+    
     try {
       setLoading(true);
       const token = await SecureStore.getItemAsync('userToken');
-      await api.documentos.uploadFile(token!, 'FRAME_PHOTO', uri);
-      Alert.alert('Sucesso', 'Sua foto foi enviada e está sob avaliação.');
+      await api.documentos.uploadFile(token!, 'FRAME_PHOTO', selectedFotoUri);
+      showStatus('Sucesso', 'Sua foto foi enviada e está sob avaliação.', 'check-circle');
       fetchDocumentos();
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível enviar a foto.');
+      showStatus('Erro', 'Não foi possível enviar a foto.', 'x-circle');
       setLoading(false);
     }
   };
 
-  const enviarNomeCanudo = async () => {
+  const enviarNomeCanudo = () => {
     if (!nome.trim() || !sobrenome.trim()) {
-      Alert.alert('Atenção', 'Preencha o nome e sobrenome.');
+      showStatus('Atenção', 'Preencha o nome e sobrenome.', 'alert-triangle');
       return;
     }
+    setConfirmNameVisible(true);
+  };
+
+  const confirmarEnviarNomeCanudo = async () => {
+    setConfirmNameVisible(false);
     
     try {
       setLoading(true);
       const token = await SecureStore.getItemAsync('userToken');
       const nomeCompleto = `${nome.trim()} ${sobrenome.trim()}`;
       await api.documentos.uploadText(token!, 'CAP_NAME', nomeCompleto);
-      Alert.alert('Sucesso', 'Seu nome foi enviado para avaliação.');
+      showStatus('Sucesso', 'Seu nome foi enviado para avaliação.', 'check-circle');
       fetchDocumentos();
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível enviar o nome.');
+      showStatus('Erro', 'Não foi possível enviar o nome.', 'x-circle');
       setLoading(false);
     }
   };
@@ -271,6 +294,38 @@ export default function DocumentosScreen() {
 
       </View>
       </View>
+      
+      <ConfirmModal 
+        visible={confirmPhotoVisible}
+        title="Enviar Foto"
+        description="Tem certeza que deseja enviar esta foto para avaliação?"
+        confirmText="Sim, enviar"
+        cancelText="Cancelar"
+        iconName="image"
+        onConfirm={confirmarEnviarFoto}
+        onCancel={() => setConfirmPhotoVisible(false)}
+      />
+
+      <ConfirmModal 
+        visible={confirmNameVisible}
+        title="Confirmar Nome"
+        description={`Seu nome para o canudo será:\n"${nome.trim()} ${sobrenome.trim()}"\n\nDeseja enviar para aprovação?`}
+        confirmText="Sim, confirmar"
+        cancelText="Cancelar"
+        iconName="type"
+        onConfirm={confirmarEnviarNomeCanudo}
+        onCancel={() => setConfirmNameVisible(false)}
+      />
+
+      <ConfirmModal 
+        visible={statusModalVisible}
+        title={statusModalConfig.title}
+        description={statusModalConfig.desc}
+        iconName={statusModalConfig.icon}
+        hideCancel={true}
+        confirmText="Entendido"
+        onConfirm={() => setStatusModalVisible(false)}
+      />
     </View>
   );
 }

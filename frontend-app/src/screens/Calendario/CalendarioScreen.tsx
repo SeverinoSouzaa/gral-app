@@ -7,6 +7,7 @@ import * as SecureStore from 'expo-secure-store';
 import { COLORS } from '../../constants/colors';
 import { globalStyles } from '../../styles/globalStyles';
 import BackgroundLayout from '../../components/BackgroundLayout';
+import ConfirmModal from '../../components/ConfirmModal';
 import { api } from '../../services/api';
 import { useAccessibility } from '../../contexts/AccessibilityContext';
 
@@ -24,6 +25,10 @@ export default function CalendarioScreen() {
   const navigation = useNavigation<any>();
   const [eventos, setEventos] = useState<EventoAPI[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // States do ConfirmModal
+  const [modalVisible, setModalVisible] = useState(false);
+  const [eventoSelecionado, setEventoSelecionado] = useState<EventoAPI | null>(null);
 
   const { textMultiplier, isHighContrast } = useAccessibility();
 
@@ -48,20 +53,15 @@ export default function CalendarioScreen() {
   };
 
   const promptConfirmarPresenca = (evento: EventoAPI) => {
-    Alert.alert(
-      "Confirmar Presença",
-      `Deseja realmente confirmar sua presença em "${evento.nomeEvento}"?`,
-      [
-        { text: "Cancelar", style: "cancel" },
-        { 
-          text: "Confirmar", 
-          onPress: () => confirmarPresenca(evento.id) 
-        }
-      ]
-    );
+    setEventoSelecionado(evento);
+    setModalVisible(true);
   };
 
-  const confirmarPresenca = async (id: number) => {
+  const confirmarPresenca = async () => {
+    if (!eventoSelecionado) return;
+    const id = eventoSelecionado.id;
+    setModalVisible(false);
+
     try {
       const token = await SecureStore.getItemAsync('userToken');
       if (!token) return;
@@ -204,6 +204,17 @@ export default function CalendarioScreen() {
           </ScrollView>
         )}
       </View>
+      
+      <ConfirmModal 
+        visible={modalVisible}
+        title="Confirmar Presença"
+        description={`Deseja realmente confirmar sua presença em "${eventoSelecionado?.nomeEvento}"?`}
+        confirmText="Confirmar"
+        cancelText="Cancelar"
+        iconName="check-circle"
+        onConfirm={confirmarPresenca}
+        onCancel={() => setModalVisible(false)}
+      />
     </BackgroundLayout>
   );
 }
