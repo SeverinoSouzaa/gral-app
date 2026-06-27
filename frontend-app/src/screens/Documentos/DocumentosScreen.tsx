@@ -10,6 +10,7 @@ import PrimaryButton from '../../components/PrimaryButton';
 import * as ImagePicker from 'expo-image-picker';
 import * as SecureStore from 'expo-secure-store';
 import { api } from '../../services/api';
+import { useAccessibility } from '../../contexts/AccessibilityContext';
 
 export default function DocumentosScreen() {
   const navigation = useNavigation<any>();
@@ -19,6 +20,8 @@ export default function DocumentosScreen() {
   const [loading, setLoading] = useState(true);
   const [fotoDoc, setFotoDoc] = useState<any>(null);
   const [canudoDoc, setCanudoDoc] = useState<any>(null);
+
+  const { textMultiplier, isHighContrast } = useAccessibility();
 
   useEffect(() => {
     fetchDocumentos();
@@ -110,8 +113,8 @@ export default function DocumentosScreen() {
           <View style={styles.cameraGlow}>
             <Feather name="camera" size={28} color={COLORS.primary} />
           </View>
-          <Text style={styles.uploadTitle}>Toque para selecionar</Text>
-          <Text style={styles.uploadSubtitle}>Formatos aceitos: JPG, PNG</Text>
+          <Text style={[styles.uploadTitle, { fontSize: 14 * textMultiplier }]}>Toque para selecionar</Text>
+          <Text style={[styles.uploadSubtitle, { fontSize: 12 * textMultiplier }]}>Formatos aceitos: JPG, PNG</Text>
         </>
       );
     }
@@ -122,8 +125,8 @@ export default function DocumentosScreen() {
           <View style={[styles.cameraGlow, { borderColor: '#F59E0B', backgroundColor: 'rgba(245, 158, 11, 0.1)' }]}>
             <Feather name="clock" size={28} color="#F59E0B" />
           </View>
-          <Text style={[styles.uploadTitle, { color: '#F59E0B' }]}>Em Avaliação</Text>
-          <Text style={styles.uploadSubtitle}>Aguarde a Equipe Interna aprovar.</Text>
+          <Text style={[styles.uploadTitle, { color: '#F59E0B', fontSize: 14 * textMultiplier }]}>Em Avaliação</Text>
+          <Text style={[styles.uploadSubtitle, { fontSize: 12 * textMultiplier }]}>Aguarde a Equipe Interna aprovar.</Text>
         </>
       );
     }
@@ -134,8 +137,8 @@ export default function DocumentosScreen() {
           <View style={[styles.cameraGlow, { borderColor: '#10B981', backgroundColor: 'rgba(16, 185, 129, 0.1)' }]}>
             <Feather name="check-circle" size={28} color="#10B981" />
           </View>
-          <Text style={[styles.uploadTitle, { color: '#10B981' }]}>Foto Aprovada!</Text>
-          <Text style={styles.uploadSubtitle}>Tudo certo com a sua foto do quadro.</Text>
+          <Text style={[styles.uploadTitle, { color: '#10B981', fontSize: 14 * textMultiplier }]}>Foto Aprovada!</Text>
+          <Text style={[styles.uploadSubtitle, { fontSize: 12 * textMultiplier }]}>Tudo certo com a sua foto do quadro.</Text>
         </>
       );
     }
@@ -146,11 +149,11 @@ export default function DocumentosScreen() {
           <View style={[styles.cameraGlow, { borderColor: '#EF4444', backgroundColor: 'rgba(239, 68, 68, 0.1)' }]}>
             <Feather name="alert-circle" size={28} color="#EF4444" />
           </View>
-          <Text style={[styles.uploadTitle, { color: '#EF4444' }]}>Foto Rejeitada</Text>
-          <Text style={[styles.uploadSubtitle, { color: '#FCA5A5', textAlign: 'center', marginHorizontal: 20 }]}>
+          <Text style={[styles.uploadTitle, { color: '#EF4444', fontSize: 14 * textMultiplier }]}>Foto Rejeitada</Text>
+          <Text style={[styles.uploadSubtitle, { color: '#FCA5A5', textAlign: 'center', marginHorizontal: 20, fontSize: 12 * textMultiplier }]}>
             {fotoDoc.motivoRejeicao || 'Sua foto não atendeu aos critérios.'}
           </Text>
-          <Text style={[styles.uploadSubtitle, { color: COLORS.white, marginTop: 8, textDecorationLine: 'underline' }]}>
+          <Text style={[styles.uploadSubtitle, { color: COLORS.white, marginTop: 8, textDecorationLine: 'underline', fontSize: 12 * textMultiplier }]}>
             Toque para enviar outra foto
           </Text>
         </>
@@ -163,7 +166,7 @@ export default function DocumentosScreen() {
     const isLocked = canudoDoc && (canudoDoc.status === 'PENDENTE' || canudoDoc.status === 'APROVADO');
     
     return (
-      <View style={[globalStyles.card, styles.glowCard, isLocked && { opacity: 0.8 }]} pointerEvents={isLocked ? 'none' : 'auto'}>
+      <View style={[globalStyles.card, styles.glowCard, isLocked && { opacity: 0.8 }, isHighContrast && { backgroundColor: '#111', borderColor: COLORS.primary }]} pointerEvents={isLocked ? 'none' : 'auto'}>
         {canudoDoc && canudoDoc.status === 'REJEITADO' && (
            <View style={styles.rejectAlertBox}>
              <Feather name="alert-triangle" size={16} color="#EF4444" style={{marginRight: 6}} />
@@ -216,11 +219,15 @@ export default function DocumentosScreen() {
   };
 
   return (
-    <LinearGradient 
-      colors={[COLORS.backgroundDark, COLORS.background, COLORS.backgroundDark]}
-      locations={[0.15, 0.5, 0.85]} 
-      style={globalStyles.container}
-    >
+    <View style={[{ flex: 1 }, isHighContrast ? { backgroundColor: '#000000' } : {}]}>
+      {!isHighContrast && (
+        <LinearGradient 
+          colors={[COLORS.backgroundDark, COLORS.background, COLORS.backgroundDark]}
+          locations={[0.15, 0.5, 0.85]} 
+          style={StyleSheet.absoluteFillObject}
+        />
+      )}
+      <View style={[globalStyles.container, { backgroundColor: 'transparent' }]}>
       {loading && (
         <View style={styles.loadingOverlay}>
           <ActivityIndicator size="large" color={COLORS.primary} />
@@ -235,19 +242,19 @@ export default function DocumentosScreen() {
           </TouchableOpacity>
         </View>
 
-        <Text style={[globalStyles.title, { textAlign: 'left', marginTop: 16 }]}>
+        <Text style={[globalStyles.title, { textAlign: 'left', marginTop: 16, fontSize: 28 * textMultiplier }]}>
           Documentos
         </Text>
-        <Text style={[globalStyles.subtitle, { textAlign: 'left', marginBottom: 32 }]}>
+        <Text style={[globalStyles.subtitle, { textAlign: 'left', marginBottom: 32, fontSize: 16 * textMultiplier }]}>
           Acompanhe seus documentos obrigatórios
         </Text>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>1. Foto do Quadro</Text>
-          <Text style={styles.sectionSubtitle}>Envie uma foto de rosto.</Text>
+          <Text style={[styles.sectionTitle, { fontSize: 14 * textMultiplier }]}>1. Foto do Quadro</Text>
+          <Text style={[styles.sectionSubtitle, { fontSize: 12 * textMultiplier }]}>Envie uma foto de rosto.</Text>
         
           <TouchableOpacity 
-            style={[globalStyles.card, styles.uploadCard, styles.glowCard]} 
+            style={[globalStyles.card, styles.uploadCard, styles.glowCard, isHighContrast && { backgroundColor: '#111', borderColor: COLORS.primary }]} 
             activeOpacity={0.8}
             onPress={handlePickImage}
           >
@@ -256,14 +263,14 @@ export default function DocumentosScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>2. Nome para o canudo</Text>
-          <Text style={styles.sectionSubtitle}>Como você quer ser chamado?</Text>
+          <Text style={[styles.sectionTitle, { fontSize: 14 * textMultiplier }]}>2. Nome para o canudo</Text>
+          <Text style={[styles.sectionSubtitle, { fontSize: 12 * textMultiplier }]}>Como você quer ser chamado?</Text>
         
           {renderCanudoFields()}
         </View>
 
       </View>
-    </LinearGradient>
+    </View>
   );
 }
 

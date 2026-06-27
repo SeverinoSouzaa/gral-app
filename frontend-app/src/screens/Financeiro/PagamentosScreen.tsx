@@ -8,6 +8,7 @@ import { api } from '../../services/api';
 import { COLORS } from '../../constants/colors';
 import { globalStyles } from '../../styles/globalStyles';
 import BackgroundLayout from '../../components/BackgroundLayout';
+import { useAccessibility } from '../../contexts/AccessibilityContext';
 
 interface Parcela {
   id: string;
@@ -38,6 +39,8 @@ export default function PagamentosScreen() {
   const [abaAtiva, setAbaAtiva] = useState<'pendentes' | 'historico'>('pendentes');
   const [dados, setDados] = useState<DadosFinanceiros | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const { textMultiplier, isHighContrast } = useAccessibility();
 
   useEffect(() => {
     if (isFocused) {
@@ -79,7 +82,7 @@ export default function PagamentosScreen() {
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
             <Feather name="arrow-left" size={20} color={COLORS.primary} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Pagamentos</Text>
+          <Text style={[styles.headerTitle, { fontSize: 16 * textMultiplier }]}>Pagamentos</Text>
         </View>
 
         {loading ? (
@@ -87,12 +90,12 @@ export default function PagamentosScreen() {
         ) : (
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
             {/* CARD RESUMO */}
-            <View style={[globalStyles.card, styles.summaryCard]}>
+            <View style={[globalStyles.card, styles.summaryCard, isHighContrast && { backgroundColor: '#111', borderColor: COLORS.primary }]}>
               <View style={styles.statusRow}>
-                <Text style={styles.summaryLabel}>Status atual:</Text>
+                <Text style={[styles.summaryLabel, { fontSize: 13 * textMultiplier }]}>Status atual:</Text>
                 <View style={styles.statusBadge}>
                   <View style={styles.statusDot} />
-                  <Text style={styles.statusText}>
+                  <Text style={[styles.statusText, { fontSize: 14 * textMultiplier }]}>
                     {resumo ? resumo.statusAtual : 'Carregando...'}
                   </Text>
                 </View>
@@ -111,12 +114,12 @@ export default function PagamentosScreen() {
 
               <View style={styles.totalsRow}>
                 <View>
-                  <Text style={styles.summaryLabel}>Total pago</Text>
-                  <Text style={styles.totalsValue}>R$ {resumo ? resumo.totalPago.toFixed(2) : '0.00'}</Text>
+                  <Text style={[styles.summaryLabel, { fontSize: 13 * textMultiplier }]}>Total pago</Text>
+                  <Text style={[styles.totalsValue, { fontSize: 16 * textMultiplier }]}>R$ {resumo ? resumo.totalPago.toFixed(2) : '0.00'}</Text>
                 </View>
                 <View>
-                  <Text style={styles.summaryLabel}>Pendente</Text>
-                  <Text style={styles.totalsValue}>R$ {resumo ? resumo.totalPendente.toFixed(2) : '0.00'}</Text>
+                  <Text style={[styles.summaryLabel, { fontSize: 13 * textMultiplier }]}>Pendente</Text>
+                  <Text style={[styles.totalsValue, { fontSize: 16 * textMultiplier }]}>R$ {resumo ? resumo.totalPendente.toFixed(2) : '0.00'}</Text>
                 </View>
               </View>
             </View>
@@ -130,10 +133,10 @@ export default function PagamentosScreen() {
               >
                 {abaAtiva === 'pendentes' ? (
                   <LinearGradient colors={COLORS.buttonGradient as [string, string]} style={styles.activeTabBg}>
-                    <Text style={styles.activeTabText}>Pendentes ({parcelasPendentes.length})</Text>
+                    <Text style={[styles.activeTabText, { fontSize: 14 * textMultiplier }]}>Pendentes ({parcelasPendentes.length})</Text>
                   </LinearGradient>
                 ) : (
-                  <Text style={styles.inactiveTabText}>Pendentes</Text>
+                  <Text style={[styles.inactiveTabText, { fontSize: 14 * textMultiplier }]}>Pendentes</Text>
                 )}
               </TouchableOpacity>
 
@@ -144,10 +147,10 @@ export default function PagamentosScreen() {
               >
                 {abaAtiva === 'historico' ? (
                   <LinearGradient colors={COLORS.buttonGradient as [string, string]} style={styles.activeTabBg}>
-                    <Text style={styles.activeTabText}>Histórico ({parcelasPagas.length})</Text>
+                    <Text style={[styles.activeTabText, { fontSize: 14 * textMultiplier }]}>Histórico ({parcelasPagas.length})</Text>
                   </LinearGradient>
                 ) : (
-                  <Text style={styles.inactiveTabText}>Histórico</Text>
+                  <Text style={[styles.inactiveTabText, { fontSize: 14 * textMultiplier }]}>Histórico</Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -159,21 +162,21 @@ export default function PagamentosScreen() {
                   <Text style={{color: COLORS.textLight, textAlign: 'center'}}>Nenhuma parcela pendente.</Text>
                 ) : (
                   parcelasPendentes.map((parcela) => (
-                    <View key={parcela.id} style={[globalStyles.card, styles.parcelaCard]}>
+                    <View key={parcela.id} style={[globalStyles.card, styles.parcelaCard, isHighContrast && { backgroundColor: '#111', borderColor: COLORS.primary }]}>
                       <View style={styles.parcelaHeader}>
                         <View>
-                          <Text style={styles.parcelaTitle}>
+                          <Text style={[styles.parcelaTitle, { fontSize: 14 * textMultiplier }]}>
                             Parcela {parcela.numero}/{parcela.totalParcelas}
                           </Text>
-                          <Text style={styles.parcelaSubtitle}>
+                          <Text style={[styles.parcelaSubtitle, { fontSize: 12 * textMultiplier }]}>
                             Vencimento: {parcela.vencimento}
                           </Text>
                         </View>
                         <View style={{ alignItems: 'flex-end' }}>
-                          <Text style={styles.parcelaValor}>R$ {parcela.valor.toFixed(2)}</Text>
+                          <Text style={[styles.parcelaValor, { fontSize: 14 * textMultiplier }]}>R$ {parcela.valor.toFixed(2)}</Text>
                           <View style={styles.statusBadgeRow}>
                             <Feather name="clock" size={12} color={COLORS.primary} style={{ marginRight: 4 }} />
-                            <Text style={styles.statusPendenteText}>Pendente</Text>
+                            <Text style={[styles.statusPendenteText, { fontSize: 12 * textMultiplier }]}>Pendente</Text>
                           </View>
                         </View>
                       </View>
@@ -197,21 +200,21 @@ export default function PagamentosScreen() {
                   <Text style={{color: COLORS.textLight, textAlign: 'center'}}>Nenhuma parcela paga ainda.</Text>
                 ) : (
                   parcelasPagas.map((parcela) => (
-                    <View key={parcela.id} style={[globalStyles.card, styles.parcelaCard]}>
+                    <View key={parcela.id} style={[globalStyles.card, styles.parcelaCard, isHighContrast && { backgroundColor: '#111', borderColor: COLORS.primary }]}>
                       <View style={styles.parcelaHeader}>
                         <View>
-                          <Text style={styles.parcelaTitle}>
+                          <Text style={[styles.parcelaTitle, { fontSize: 14 * textMultiplier }]}>
                             Parcela {parcela.numero}/{parcela.totalParcelas}
                           </Text>
-                          <Text style={styles.parcelaSubtitle}>
+                          <Text style={[styles.parcelaSubtitle, { fontSize: 12 * textMultiplier }]}>
                             Pago em: {parcela.dataPagamento}
                           </Text>
                         </View>
                         <View style={{ alignItems: 'flex-end' }}>
-                          <Text style={styles.parcelaValor}>R$ {parcela.valor.toFixed(2)}</Text>
+                          <Text style={[styles.parcelaValor, { fontSize: 14 * textMultiplier }]}>R$ {parcela.valor.toFixed(2)}</Text>
                           <View style={styles.statusBadgeRow}>
                             <Feather name="check-circle" size={12} color="#4CAF50" style={{ marginRight: 4 }} />
-                            <Text style={styles.statusPagoText}>Pago</Text>
+                            <Text style={[styles.statusPagoText, { fontSize: 12 * textMultiplier }]}>Pago</Text>
                           </View>
                         </View>
                       </View>

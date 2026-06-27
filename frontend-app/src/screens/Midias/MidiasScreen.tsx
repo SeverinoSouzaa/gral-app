@@ -10,6 +10,7 @@ import { COLORS } from '../../constants/colors';
 import { globalStyles } from '../../styles/globalStyles';
 import BackgroundLayout from '../../components/BackgroundLayout';
 import { api, BASE_URL } from '../../services/api';
+import { useAccessibility } from '../../contexts/AccessibilityContext';
 
 // Interface do retorno real da API
 interface Evento {
@@ -32,8 +33,9 @@ export default function MidiasScreen() {
   
   // Estado para controlar o filtro ativo ('todas' ou nome do evento)
   const [filtroAtivo, setFiltroAtivo] = useState<string>('todas');
-  // Estado para alternar entre os tipos de mídia
   const [abaAtiva, setAbaAtiva] = useState<'tudo' | 'videos'>('tudo');
+
+  const { textMultiplier, isHighContrast } = useAccessibility();
 
   useEffect(() => {
     loadMidias();
@@ -114,10 +116,10 @@ export default function MidiasScreen() {
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
             <Feather name="arrow-left" size={20} color={COLORS.primary} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Mídias</Text>
+          <Text style={[styles.headerTitle, { fontSize: 16 * textMultiplier }]}>Mídias</Text>
         </View>
 
-        <Text style={styles.subtitle}>Fotos e vídeos da sua formatura</Text>
+        <Text style={[styles.subtitle, { fontSize: 14 * textMultiplier }]}>Fotos e vídeos da sua formatura</Text>
 
         {/* BOTÕES DE AÇÃO PRINCIPAIS */}
         <View style={styles.mainActionsContainer}>
@@ -129,12 +131,12 @@ export default function MidiasScreen() {
             {abaAtiva === 'tudo' ? (
               <LinearGradient colors={COLORS.buttonGradient as [string, string]} style={styles.actionButtonPrimary}>
                 <Feather name="download" size={16} color="#000" style={styles.actionIcon} />
-                <Text style={styles.actionButtonTextPrimary}>Baixar tudo (ZIP)</Text>
+                <Text style={[styles.actionButtonTextPrimary, { fontSize: 14 * textMultiplier }]}>Baixar tudo (ZIP)</Text>
               </LinearGradient>
             ) : (
               <View style={styles.actionButtonSecondary}>
                 <Feather name="download" size={16} color={COLORS.primary} style={styles.actionIcon} />
-                <Text style={styles.actionButtonTextSecondary}>Baixar tudo (ZIP)</Text>
+                <Text style={[styles.actionButtonTextSecondary, { fontSize: 14 * textMultiplier }]}>Baixar tudo (ZIP)</Text>
               </View>
             )}
           </TouchableOpacity>
@@ -147,12 +149,12 @@ export default function MidiasScreen() {
             {abaAtiva === 'videos' ? (
               <LinearGradient colors={COLORS.buttonGradient as [string, string]} style={styles.actionButtonPrimary}>
                 <Feather name="film" size={16} color="#000" style={styles.actionIcon} />
-                <Text style={styles.actionButtonTextPrimary}>Vídeos (ZIP)</Text>
+                <Text style={[styles.actionButtonTextPrimary, { fontSize: 14 * textMultiplier }]}>Vídeos (ZIP)</Text>
               </LinearGradient>
             ) : (
               <View style={styles.actionButtonSecondary}>
                 <Feather name="film" size={16} color={COLORS.primary} style={styles.actionIcon} />
-                <Text style={styles.actionButtonTextSecondary}>Vídeos (ZIP)</Text>
+                <Text style={[styles.actionButtonTextSecondary, { fontSize: 14 * textMultiplier }]}>Vídeos (ZIP)</Text>
               </View>
             )}
           </TouchableOpacity>
@@ -165,8 +167,8 @@ export default function MidiasScreen() {
             <View style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)', padding: 24, borderRadius: 60, marginBottom: 24, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.05)' }}>
               <Feather name="image" size={56} color={COLORS.primary} style={{ opacity: 0.8 }} />
             </View>
-            <Text style={styles.emptyStateTitle}>Ainda sem memórias</Text>
-            <Text style={styles.emptyStateDesc}>Nenhuma foto ou vídeo foi disponibilizado para a sua turma ainda.</Text>
+            <Text style={[styles.emptyStateTitle, { fontSize: 18 * textMultiplier }]}>Ainda sem memórias</Text>
+            <Text style={[styles.emptyStateDesc, { fontSize: 14 * textMultiplier }]}>Nenhuma foto ou vídeo foi disponibilizado para a sua turma ainda.</Text>
           </View>
         ) : (
           <>
@@ -183,12 +185,12 @@ export default function MidiasScreen() {
                   {filtroAtivo === 'todas' ? (
                     <LinearGradient colors={COLORS.buttonGradient as [string, string]} style={styles.filterPillActive}>
                       <Feather name="camera" size={14} color="#000" style={styles.filterIcon} />
-                      <Text style={styles.filterTextActive}>Todas</Text>
+                      <Text style={[styles.filterTextActive, { fontSize: 13 * textMultiplier }]}>Todas</Text>
                     </LinearGradient>
                   ) : (
                     <View style={styles.filterPillInactive}>
                       <Feather name="camera" size={14} color={COLORS.textLight} style={styles.filterIcon} />
-                      <Text style={styles.filterTextInactive}>Todas</Text>
+                      <Text style={[styles.filterTextInactive, { fontSize: 13 * textMultiplier }]}>Todas</Text>
                     </View>
                   )}
                 </TouchableOpacity>
@@ -199,12 +201,12 @@ export default function MidiasScreen() {
                     {filtroAtivo === categoria ? (
                       <LinearGradient colors={COLORS.buttonGradient as [string, string]} style={styles.filterPillActive}>
                         <Feather name="image" size={14} color="#000" style={styles.filterIcon} />
-                        <Text style={styles.filterTextActive}>{categoria}</Text>
+                        <Text style={[styles.filterTextActive, { fontSize: 13 * textMultiplier }]}>{categoria}</Text>
                       </LinearGradient>
                     ) : (
                       <View style={styles.filterPillInactive}>
                         <Feather name="image" size={14} color={COLORS.textLight} style={styles.filterIcon} />
-                        <Text style={styles.filterTextInactive}>{categoria}</Text>
+                        <Text style={[styles.filterTextInactive, { fontSize: 13 * textMultiplier }]}>{categoria}</Text>
                       </View>
                     )}
                   </TouchableOpacity>
@@ -216,8 +218,8 @@ export default function MidiasScreen() {
             {midiasFiltradas.length === 0 ? (
                <View style={styles.emptyStateContainer}>
                  <Feather name="video-off" size={48} color={COLORS.textLight} style={{ marginBottom: 16, opacity: 0.4 }} />
-                 <Text style={styles.emptyStateTitle}>Nenhum resultado</Text>
-                 <Text style={styles.emptyStateDesc}>Nenhuma mídia encontrada para este filtro.</Text>
+                 <Text style={[styles.emptyStateTitle, { fontSize: 18 * textMultiplier }]}>Nenhum resultado</Text>
+                 <Text style={[styles.emptyStateDesc, { fontSize: 14 * textMultiplier }]}>Nenhuma mídia encontrada para este filtro.</Text>
                </View>
             ) : (
               <ScrollView showsVerticalScrollIndicator={false}>
@@ -228,7 +230,7 @@ export default function MidiasScreen() {
                       style={styles.thumbnailContainer}
                       activeOpacity={0.7}
                     >
-                      <View style={[globalStyles.card, styles.thumbnailCard]}>
+                      <View style={[globalStyles.card, styles.thumbnailCard, isHighContrast && { backgroundColor: '#111', borderColor: COLORS.primary }]}>
                         {media.tipo === 'IMAGE' ? (
                           <Image 
                             source={{ uri: getImageUrl(media.arquivo) }} 

@@ -8,6 +8,7 @@ import { COLORS } from '../../constants/colors';
 import { globalStyles } from '../../styles/globalStyles';
 import BackgroundLayout from '../../components/BackgroundLayout';
 import { api } from '../../services/api';
+import { useAccessibility } from '../../contexts/AccessibilityContext';
 
 interface EventoAPI {
   id: number;
@@ -23,6 +24,8 @@ export default function CalendarioScreen() {
   const navigation = useNavigation<any>();
   const [eventos, setEventos] = useState<EventoAPI[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const { textMultiplier, isHighContrast } = useAccessibility();
 
   useEffect(() => {
     loadEventos();
@@ -110,10 +113,10 @@ export default function CalendarioScreen() {
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
             <Feather name="arrow-left" size={20} color={COLORS.primary} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Calendário</Text>
+          <Text style={[styles.headerTitle, { fontSize: 16 * textMultiplier }]}>Calendário</Text>
         </View>
 
-        <Text style={styles.subtitle}>Todos os eventos da sua formatura</Text>
+        <Text style={[styles.subtitle, { fontSize: 14 * textMultiplier }]}>Todos os eventos da sua formatura</Text>
 
         {isLoading ? (
           <ActivityIndicator size="large" color={COLORS.primary} style={{ marginTop: 40 }} />
@@ -122,10 +125,10 @@ export default function CalendarioScreen() {
             <View style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)', padding: 24, borderRadius: 60, marginBottom: 24, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.05)' }}>
               <Feather name="calendar" size={56} color={COLORS.primary} style={{ opacity: 0.8 }} />
             </View>
-            <Text style={{ color: COLORS.white, fontFamily: 'Inter_700Bold', fontSize: 18, marginBottom: 8, textAlign: 'center' }}>
+            <Text style={{ color: COLORS.white, fontFamily: 'Inter_700Bold', fontSize: 18 * textMultiplier, marginBottom: 8, textAlign: 'center' }}>
               Nenhum evento agendado
             </Text>
-            <Text style={{ color: COLORS.textLight, fontFamily: 'Inter_400Regular', fontSize: 14, textAlign: 'center', lineHeight: 22 }}>
+            <Text style={{ color: COLORS.textLight, fontFamily: 'Inter_400Regular', fontSize: 14 * textMultiplier, textAlign: 'center', lineHeight: 22 }}>
               A sua turma ainda não possui eventos oficiais cadastrados. Fique de olho, novidades aparecerão aqui!
             </Text>
           </View>
@@ -133,7 +136,7 @@ export default function CalendarioScreen() {
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.eventsList}>
               {eventos.map((evento) => (
-                <View key={evento.id.toString()} style={[globalStyles.card, styles.eventCard]}>
+                <View key={evento.id.toString()} style={[globalStyles.card, styles.eventCard, isHighContrast && { backgroundColor: '#111', borderColor: COLORS.primary }]}>
                   
                   <View style={styles.cardContent}>
                     {/* Bloco de Data (Esquerda) */}
@@ -141,25 +144,25 @@ export default function CalendarioScreen() {
                       colors={COLORS.buttonGradient as [string, string]}
                       style={styles.dateBlock}
                     >
-                      <Text style={styles.dateNumber}>{formatDay(evento.dataEvento)}</Text>
-                      <Text style={styles.dateMonth}>{formatMonth(evento.dataEvento)}</Text>
+                      <Text style={[styles.dateNumber, { fontSize: 20 * textMultiplier }]}>{formatDay(evento.dataEvento)}</Text>
+                      <Text style={[styles.dateMonth, { fontSize: 12 * textMultiplier }]}>{formatMonth(evento.dataEvento)}</Text>
                     </LinearGradient>
 
                     {/* Informações do Evento (Direita) */}
                     <View style={styles.infoBlock}>
                       <View style={styles.titleRow}>
                         <Feather name={getIcon(evento.eventType)} size={16} color={COLORS.textLight} style={styles.infoIcon} />
-                        <Text style={styles.eventTitle} numberOfLines={2}>{evento.nomeEvento}</Text>
+                        <Text style={[styles.eventTitle, { fontSize: 15 * textMultiplier }]} numberOfLines={2}>{evento.nomeEvento}</Text>
                       </View>
 
                       <View style={styles.detailRow}>
                         <Feather name="clock" size={14} color={COLORS.textLight} style={styles.infoIcon} />
-                        <Text style={styles.detailText}>{formatTime(evento.dataEvento)}</Text>
+                        <Text style={[styles.detailText, { fontSize: 12 * textMultiplier }]}>{formatTime(evento.dataEvento)}</Text>
                       </View>
 
                       <View style={styles.detailRow}>
                         <Feather name="map-pin" size={14} color={COLORS.textLight} style={styles.infoIcon} />
-                        <Text style={styles.detailText} numberOfLines={1}>{evento.local}</Text>
+                        <Text style={[styles.detailText, { fontSize: 12 * textMultiplier }]} numberOfLines={1}>{evento.local}</Text>
                       </View>
 
                       <View style={styles.detailRow}>
@@ -169,7 +172,7 @@ export default function CalendarioScreen() {
                           color={evento.statusPresencaUsuario === 'CONFIRMADO' ? '#4CAF50' : COLORS.primary} 
                           style={styles.infoIcon} 
                         />
-                        <Text style={[styles.detailText, { color: evento.statusPresencaUsuario === 'CONFIRMADO' ? '#4CAF50' : COLORS.primary }]}>
+                        <Text style={[styles.detailText, { fontSize: 12 * textMultiplier, color: evento.statusPresencaUsuario === 'CONFIRMADO' ? '#4CAF50' : COLORS.primary }]}>
                           {evento.statusPresencaUsuario === 'CONFIRMADO' ? 'Confirmado' : 'Pendente'}
                         </Text>
                       </View>
@@ -183,7 +186,7 @@ export default function CalendarioScreen() {
                         colors={COLORS.buttonGradient as [string, string]}
                         style={styles.primaryButton}
                       >
-                        <Text style={styles.primaryButtonText}>Confirmar presença</Text>
+                        <Text style={[styles.primaryButtonText, { fontSize: 14 * textMultiplier }]}>Confirmar presença</Text>
                       </LinearGradient>
                     </TouchableOpacity>
                   )}
@@ -191,7 +194,7 @@ export default function CalendarioScreen() {
                   {evento.statusPresencaUsuario === 'CONFIRMADO' && (
                     <View style={styles.successButton}>
                       <Feather name="check-circle" size={16} color="#4CAF50" style={{ marginRight: 8 }} />
-                      <Text style={styles.successButtonText}>Presença confirmada</Text>
+                      <Text style={[styles.successButtonText, { fontSize: 14 * textMultiplier }]}>Presença confirmada</Text>
                     </View>
                   )}
                   

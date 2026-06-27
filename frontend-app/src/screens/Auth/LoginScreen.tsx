@@ -103,13 +103,13 @@ export default function LoginScreen() {
 
         <View style={styles.formContainer}>
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Código da Turma</Text>
-            <Text style={styles.subLabel}>
+            <Text style={[styles.label, { fontSize: 14 * textMultiplier }]}>Código da Turma</Text>
+            <Text style={[styles.subLabel, { fontSize: 12 * textMultiplier }]}>
               Digite o código de 5 dígitos da sua turma
             </Text>
             <View style={styles.inputWrapper}>
               <TextInput
-                style={styles.input}
+                style={[styles.input, { fontSize: 14 * textMultiplier }]}
                 placeholder="12345"
                 placeholderTextColor={COLORS.textLight}
                 keyboardType="numeric"
@@ -128,13 +128,13 @@ export default function LoginScreen() {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>CPF</Text>
-            <Text style={styles.subLabel}>
+            <Text style={[styles.label, { fontSize: 14 * textMultiplier }]}>CPF</Text>
+            <Text style={[styles.subLabel, { fontSize: 12 * textMultiplier }]}>
               Informe seu CPF de 11 dígitos
             </Text>
             <View style={styles.inputWrapper}>
               <TextInput
-                style={styles.input}
+                style={[styles.input, { fontSize: 14 * textMultiplier }]}
                 placeholder="000.000.000-00"
                 placeholderTextColor={COLORS.textLight}
                 keyboardType="numeric"
@@ -165,7 +165,7 @@ export default function LoginScreen() {
               <Text
                 style={[
                   globalStyles.buttonText,
-                  { color: COLORS.backgroundDark },
+                  { color: COLORS.backgroundDark, fontSize: 16 * textMultiplier },
                 ]}
               >
                 {loading ? "CARREGANDO..." : "CONFIRMAR LOGIN"}
@@ -177,11 +177,11 @@ export default function LoginScreen() {
             style={styles.forgotPassword}
             onPress={() => navigation.navigate("RecuperarAcesso")}
           >
-            <Text style={styles.forgotPasswordText}>Esqueceu seu acesso?</Text>
+            <Text style={[styles.forgotPasswordText, { fontSize: 14 * textMultiplier }]}>Esqueceu seu acesso?</Text>
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.footerText}>Sistema seguro • Dados protegidos</Text>
+        <Text style={[styles.footerText, { fontSize: 12 * textMultiplier }]}>Sistema seguro • Dados protegidos</Text>
 
         <AccessibilityMenu />
       </LinearGradient>

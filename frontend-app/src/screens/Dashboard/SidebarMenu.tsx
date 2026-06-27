@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, Dimensions, Image, Alert, Platform } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS } from '../../constants/colors';
+import { useAccessibility } from '../../contexts/AccessibilityContext';
 
 const { width, height } = Dimensions.get('window');
 const SIDEBAR_WIDTH = width * 0.85; // A sidebar ocupa 85% da tela
@@ -39,6 +39,7 @@ const MENU_ITEMS: MenuItem[] = [
 
 export default function SidebarMenu({ visible, onClose }: SidebarProps) {
   const navigation = useNavigation<any>();
+  const { textMultiplier, isHighContrast } = useAccessibility();
 
   const handleNavigate = (route: string) => {
     onClose(); // Fecha a sidebar primeiro
@@ -66,11 +67,9 @@ export default function SidebarMenu({ visible, onClose }: SidebarProps) {
         <TouchableOpacity style={styles.closeArea} activeOpacity={1} onPress={onClose} />
 
         {/* ================= CONTEÚDO DA SIDEBAR ================= */}
-        <LinearGradient
-          colors={[COLORS.backgroundDark, COLORS.background, COLORS.backgroundDark]}
-          locations={Platform.OS === "android" ? [0.0, 0.48, 1.0] : [0.15, 0.5, 0.85]}
-          style={styles.sidebarContainer}
-        >
+        {isHighContrast ? (
+          <View style={[styles.sidebarContainer, { backgroundColor: '#000000', borderColor: COLORS.primary }]}>
+            {/* O conteúdo vai dentro, repetiremos abaixo */}
           
           {/* HEADER: LOGO E BOTÃO FECHAR */}
           <View style={styles.header}>
@@ -94,13 +93,13 @@ export default function SidebarMenu({ visible, onClose }: SidebarProps) {
                 <Feather name="user" size={20} color={COLORS.primary} />
               </View>
               <View style={styles.profileInfo}>
-                <Text style={styles.profileName}>Formando(a)</Text>
-                <Text style={styles.profileClass}>Turma 2024</Text>
+                <Text style={[styles.profileName, { fontSize: 15 * textMultiplier }]}>Formando(a)</Text>
+                <Text style={[styles.profileClass, { fontSize: 12 * textMultiplier }]}>Turma 2024</Text>
               </View>
             </View>
             
             <TouchableOpacity style={styles.profileLink} activeOpacity={0.7}>
-              <Text style={styles.profileLinkText}>Ver Perfil</Text>
+              <Text style={[styles.profileLinkText, { fontSize: 13 * textMultiplier }]}>Ver Perfil</Text>
             </TouchableOpacity>
           </View>
 
@@ -122,14 +121,14 @@ export default function SidebarMenu({ visible, onClose }: SidebarProps) {
                   color={item.isActive ? COLORS.primary : COLORS.textLight} 
                   style={styles.menuIcon} 
                 />
-                <Text style={[styles.menuText, item.isActive && styles.menuTextActive]}>
+                <Text style={[styles.menuText, item.isActive && styles.menuTextActive, { fontSize: 14 * textMultiplier }]}>
                   {item.label}
                 </Text>
 
                 {/* Badge Laranja de Notificação */}
                 {item.badge && (
                   <View style={styles.badge}>
-                    <Text style={styles.badgeText}>{item.badge}</Text>
+                    <Text style={[styles.badgeText, { fontSize: 10 * textMultiplier }]}>{item.badge}</Text>
                   </View>
                 )}
               </TouchableOpacity>
@@ -144,12 +143,95 @@ export default function SidebarMenu({ visible, onClose }: SidebarProps) {
               onPress={() => { onClose(); navigation.replace('Login'); }}
             >
               <Feather name="log-out" size={20} color="#E57373" style={styles.menuIcon} />
-              <Text style={styles.logoutText}>Sair da conta</Text>
+              <Text style={[styles.logoutText, { fontSize: 14 * textMultiplier }]}>Sair da conta</Text>
             </TouchableOpacity>
-            <Text style={styles.versionText}>GRAL v1.0.0</Text>
+            <Text style={[styles.versionText, { fontSize: 10 * textMultiplier }]}>GRAL v1.0.0</Text>
+          </View>
+        </View>
+        ) : (
+          <LinearGradient
+            colors={[COLORS.backgroundDark, COLORS.background, COLORS.backgroundDark]}
+            locations={Platform.OS === "android" ? [0.0, 0.48, 1.0] : [0.15, 0.5, 0.85]}
+            style={styles.sidebarContainer}
+          >
+          {/* HEADER: LOGO E BOTÃO FECHAR */}
+          <View style={styles.header}>
+            <View style={styles.logoPlaceholder}>
+              <Image 
+                source={require('../../../assets/GRAL_logo.png')} 
+                style={styles.logoImage} 
+                resizeMode="contain" 
+              />
+            </View>
+
+            <TouchableOpacity style={styles.closeButton} onPress={onClose} activeOpacity={0.7}>
+              <Feather name="x" size={20} color={COLORS.primary} />
+            </TouchableOpacity>
           </View>
 
-        </LinearGradient>
+          {/* PERFIL DO USUÁRIO */}
+          <View style={styles.profileCard}>
+            <View style={styles.profileTopRow}>
+              <View style={styles.avatarBox}>
+                <Feather name="user" size={20} color={COLORS.primary} />
+              </View>
+              <View style={styles.profileInfo}>
+                <Text style={[styles.profileName, { fontSize: 15 * textMultiplier }]}>Formando(a)</Text>
+                <Text style={[styles.profileClass, { fontSize: 12 * textMultiplier }]}>Turma 2024</Text>
+              </View>
+            </View>
+            
+            <TouchableOpacity style={styles.profileLink} activeOpacity={0.7}>
+              <Text style={[styles.profileLinkText, { fontSize: 13 * textMultiplier }]}>Ver Perfil</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* LISTA DE MENU ROLÁVEL */}
+          <ScrollView 
+            showsVerticalScrollIndicator={false} 
+            contentContainerStyle={styles.menuScroll}
+          >
+            {MENU_ITEMS.map((item) => (
+              <TouchableOpacity 
+                key={item.id} 
+                style={[styles.menuItem, item.isActive && styles.menuItemActive]}
+                activeOpacity={0.7}
+                onPress={() => handleNavigate(item.route)}
+              >
+                <Feather 
+                  name={item.icon} 
+                  size={20} 
+                  color={item.isActive ? COLORS.primary : COLORS.textLight} 
+                  style={styles.menuIcon} 
+                />
+                <Text style={[styles.menuText, item.isActive && styles.menuTextActive, { fontSize: 14 * textMultiplier }]}>
+                  {item.label}
+                </Text>
+
+                {/* Badge Laranja de Notificação */}
+                {item.badge && (
+                  <View style={styles.badge}>
+                    <Text style={[styles.badgeText, { fontSize: 10 * textMultiplier }]}>{item.badge}</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
+          {/* FOOTER: SAIR E VERSÃO */}
+          <View style={styles.footer}>
+            <TouchableOpacity 
+              style={styles.logoutButton} 
+              activeOpacity={0.7}
+              onPress={() => { onClose(); navigation.replace('Login'); }}
+            >
+              <Feather name="log-out" size={20} color="#E57373" style={styles.menuIcon} />
+              <Text style={[styles.logoutText, { fontSize: 14 * textMultiplier }]}>Sair da conta</Text>
+            </TouchableOpacity>
+            <Text style={[styles.versionText, { fontSize: 10 * textMultiplier }]}>GRAL v1.0.0</Text>
+          </View>
+          </LinearGradient>
+        )}
       </View>
     </Modal>
   );
