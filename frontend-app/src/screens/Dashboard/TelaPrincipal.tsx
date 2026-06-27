@@ -108,34 +108,29 @@ export default function TelaPrincipal() {
           </Text>
         </View>
 
-        {/* 3. QUICK ACTIONS (Rolagem Horizontal) */}
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false} 
-          style={styles.quickActionsContainer}
-          contentContainerStyle={{ paddingRight: 24 }}
-        >
+        {/* 3. QUICK ACTIONS */}
+        <View style={styles.quickActionsContainer}>
           <TouchableOpacity 
             style={styles.actionPill} 
             onPress={() => navigation.navigate('Documentos')}
           >
-            <Feather name="file-text" size={16} color={COLORS.primary} style={styles.pillIcon} />
-            <Text style={styles.pillText}>Documentos</Text>
+            <Feather name="file-text" size={14} color={COLORS.primary} style={styles.pillIcon} />
+            <Text style={styles.pillText} numberOfLines={1}>Documentos</Text>
           </TouchableOpacity>
           
-          <TouchableOpacity style={styles.actionPill}>
-            <Feather name="bell" size={16} color={COLORS.primary} style={styles.pillIcon} />
-            <Text style={styles.pillText}>Avisos</Text>
+          <TouchableOpacity style={[styles.actionPill, { marginHorizontal: 8 }]}>
+            <Feather name="bell" size={14} color={COLORS.primary} style={styles.pillIcon} />
+            <Text style={styles.pillText} numberOfLines={1}>Avisos</Text>
           </TouchableOpacity>
 
           <TouchableOpacity 
             style={styles.actionPill}
             onPress={() => navigation.navigate('Pagamentos')}
           >
-            <Feather name="credit-card" size={16} color={COLORS.primary} style={styles.pillIcon} />
-            <Text style={styles.pillText}>Pagamentos</Text>
+            <Feather name="credit-card" size={14} color={COLORS.primary} style={styles.pillIcon} />
+            <Text style={styles.pillText} numberOfLines={1}>Pagamentos</Text>
           </TouchableOpacity>
-        </ScrollView>
+        </View>
 
         {/* 4. CARDS DE INFORMAÇÃO */}
         
@@ -368,27 +363,26 @@ const styles = StyleSheet.create({
   },
   quickActionsContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: 32,
-    marginLeft: -24, // Compensa o padding do container global para a rolagem ir até a borda
-    paddingLeft: 24,
   },
   actionPill: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.03)',
-    paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 20,
-    marginRight: 12,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.05)',
   },
   pillIcon: {
-    marginRight: 8,
+    marginRight: 6,
   },
   pillText: {
     fontFamily: 'Inter_400Regular',
-    fontSize: 14,
+    fontSize: 12,
     color: COLORS.white,
   },
   cardSpacing: {
