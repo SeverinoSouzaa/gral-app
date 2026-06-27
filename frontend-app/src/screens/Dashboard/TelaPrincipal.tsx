@@ -10,6 +10,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import SidebarMenu from './SidebarMenu';
 import * as SecureStore from 'expo-secure-store';
 import { api, BASE_URL } from '../../services/api';
+import { useAccessibility } from '../../contexts/AccessibilityContext';
 
 export default function TelaPrincipal() {
   const navigation = useNavigation<any>();
@@ -18,6 +19,8 @@ export default function TelaPrincipal() {
   const [proximoEvento, setProximoEvento] = useState<any>(null);
   const [resumoFinanceiro, setResumoFinanceiro] = useState<any>(null);
   const [midias, setMidias] = useState<any[]>([]);
+
+  const { textMultiplier, isHighContrast } = useAccessibility();
 
   useFocusEffect(
     useCallback(() => {
@@ -100,10 +103,10 @@ export default function TelaPrincipal() {
 
         {/* 2. HEADER: SAUDAÇÃO */}
         <View style={styles.headerArea}>
-          <Text style={styles.greetingTitle}>
+          <Text style={[styles.greetingTitle, { fontSize: 24 * textMultiplier }]}>
             Olá, <Text style={styles.greetingHighlight}>formando(a)!</Text>
           </Text>
-          <Text style={styles.greetingSubtitle}>
+          <Text style={[styles.greetingSubtitle, { fontSize: 14 * textMultiplier }]}>
             Aqui está sua formatura organizada em um só lugar.
           </Text>
         </View>
@@ -136,12 +139,12 @@ export default function TelaPrincipal() {
         
         {/* CARD: PRÓXIMOS EVENTOS */}
         <TouchableOpacity 
-          style={[globalStyles.card, styles.cardSpacing]}
+          style={[globalStyles.card, styles.cardSpacing, isHighContrast && { backgroundColor: '#111', borderColor: COLORS.primary }]}
           activeOpacity={0.8}
           onPress={() => navigation.navigate('Calendario')}
         >
           <View style={styles.cardHeader}>
-            <Text style={styles.cardTitle}>Próximos Eventos</Text>
+            <Text style={[styles.cardTitle, { fontSize: 14 * textMultiplier }]}>Próximos Eventos</Text>
             <Feather name="chevron-right" size={20} color={COLORS.primary} />
           </View>
           
@@ -174,10 +177,10 @@ export default function TelaPrincipal() {
         </TouchableOpacity>
 
         {/* CARD: PAGAMENTOS */}
-        <View style={[globalStyles.card, styles.cardSpacing]}>
+        <View style={[globalStyles.card, styles.cardSpacing, isHighContrast && { backgroundColor: '#111', borderColor: COLORS.primary }]}>
           <View style={styles.cardHeader}>
             <View style={styles.titleWithIcon}>
-              <Text style={styles.cardTitle}>Pagamentos</Text>
+              <Text style={[styles.cardTitle, { fontSize: 14 * textMultiplier }]}>Pagamentos</Text>
               <Feather name="info" size={14} color={COLORS.textLight} style={{ marginLeft: 8 }} />
             </View>
           </View>
@@ -223,13 +226,13 @@ export default function TelaPrincipal() {
         </View>
 
         {/* CARD: CHECKLIST */}
-        <View style={[globalStyles.card, styles.cardSpacing]}>
+        <View style={[globalStyles.card, styles.cardSpacing, isHighContrast && { backgroundColor: '#111', borderColor: COLORS.primary }]}>
           <View style={styles.cardHeader}>
             <View style={styles.titleWithIcon}>
-              <Text style={styles.cardTitle}>Checklist</Text>
+              <Text style={[styles.cardTitle, { fontSize: 14 * textMultiplier }]}>Checklist</Text>
               <Feather name="info" size={14} color={COLORS.textLight} style={{ marginLeft: 8 }} />
             </View>
-            <Text style={styles.progressValue}>2/3</Text>
+            <Text style={[styles.progressValue, { fontSize: 12 * textMultiplier }]}>2/3</Text>
           </View>
 
           <View style={[styles.progressBarBackground, { marginBottom: 20 }]}>
@@ -256,10 +259,10 @@ export default function TelaPrincipal() {
         </View>
 
         {/* CARD: MÍDIAS */}
-        <View style={[globalStyles.card, styles.cardSpacing, { marginBottom: 40 }]}>
+        <View style={[globalStyles.card, styles.cardSpacing, { marginBottom: 40 }, isHighContrast && { backgroundColor: '#111', borderColor: COLORS.primary }]}>
           <View style={styles.cardHeader}>
             <View style={styles.titleWithIcon}>
-              <Text style={styles.cardTitle}>Mídias</Text>
+              <Text style={[styles.cardTitle, { fontSize: 14 * textMultiplier }]}>Mídias</Text>
               <Feather name="info" size={14} color={COLORS.textLight} style={{ marginLeft: 8 }} />
             </View>
           </View>

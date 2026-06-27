@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { COLORS } from '../constants/colors';
 import { globalStyles } from '../styles/globalStyles';
+import { useAccessibility } from '../contexts/AccessibilityContext';
 
 interface Props {
   position?: 'top' | 'bottom';
@@ -14,9 +15,7 @@ export default function AccessibilityMenu({ position = 'bottom', renderTrigger }
   const [triggerLayout, setTriggerLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const triggerRef = useRef<View>(null);
   
-  const [highContrast, setHighContrast] = useState(false);
-  const [largeText, setLargeText] = useState(false);
-  const [mediaAccess, setMediaAccess] = useState(false);
+  const { isHighContrast, toggleHighContrast, isLargeText, toggleLargeText } = useAccessibility();
 
   const handleOpen = () => {
     if (renderTrigger) {
@@ -74,44 +73,30 @@ export default function AccessibilityMenu({ position = 'bottom', renderTrigger }
             </View>
 
             <TouchableOpacity 
-              style={[styles.optionCard, highContrast && styles.optionCardActive]}
-              onPress={() => setHighContrast(!highContrast)}
+              style={[styles.optionCard, isHighContrast && styles.optionCardActive]}
+              onPress={toggleHighContrast}
               activeOpacity={0.7}
             >
-              <View style={[styles.iconBox, highContrast && styles.iconBoxActive]}>
-                <Feather name="eye" size={20} color={highContrast ? COLORS.white : COLORS.textLight} />
+              <View style={[styles.iconBox, isHighContrast && styles.iconBoxActive]}>
+                <Feather name="eye" size={20} color={isHighContrast ? COLORS.white : COLORS.textLight} />
               </View>
               <View style={styles.textWrapper}>
                 <Text style={styles.optionTitle}>Aumentar contraste</Text>
-                <Text style={styles.optionStatus}>{highContrast ? 'Ativado' : 'Desativado'}</Text>
+                <Text style={styles.optionStatus}>{isHighContrast ? 'Ativado' : 'Desativado'}</Text>
               </View>
             </TouchableOpacity>
 
             <TouchableOpacity 
-              style={[styles.optionCard, largeText && styles.optionCardActive]}
-              onPress={() => setLargeText(!largeText)}
+              style={[styles.optionCard, isLargeText && styles.optionCardActive]}
+              onPress={toggleLargeText}
               activeOpacity={0.7}
             >
-              <View style={[styles.iconBox, largeText && styles.iconBoxActive]}>
-                <Feather name="type" size={20} color={largeText ? COLORS.white : COLORS.textLight} />
+              <View style={[styles.iconBox, isLargeText && styles.iconBoxActive]}>
+                <Feather name="type" size={20} color={isLargeText ? COLORS.white : COLORS.textLight} />
               </View>
               <View style={styles.textWrapper}>
                 <Text style={styles.optionTitle}>Aumentar tamanho do texto</Text>
-                <Text style={styles.optionStatus}>{largeText ? 'Aumentado' : 'Normal'}</Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              style={[styles.optionCard, mediaAccess && styles.optionCardActive]}
-              onPress={() => setMediaAccess(!mediaAccess)}
-              activeOpacity={0.7}
-            >
-              <View style={[styles.iconBox, mediaAccess && styles.iconBoxActive]}>
-                <Feather name="volume-2" size={20} color={mediaAccess ? COLORS.white : COLORS.textLight} />
-              </View>
-              <View style={styles.textWrapper}>
-                <Text style={styles.optionTitle}>Acessibilidade de mídia</Text>
-                <Text style={styles.optionStatus}>{mediaAccess ? 'Ativado' : 'Desativado'}</Text>
+                <Text style={styles.optionStatus}>{isLargeText ? 'Aumentado' : 'Normal'}</Text>
               </View>
             </TouchableOpacity>
 

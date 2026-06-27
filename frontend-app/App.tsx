@@ -2,6 +2,7 @@ import React from 'react';
 import { StatusBar, View } from 'react-native';
 import { useFonts, Inter_400Regular, Inter_700Bold } from '@expo-google-fonts/inter';
 import * as SplashScreen from 'expo-splash-screen';
+import { AccessibilityProvider } from './src/contexts/AccessibilityContext';
 
 // Importando o nosso mapa de rotas
 import Routes from './src/routes';
@@ -26,11 +27,11 @@ export default function App() {
   }
 
   return (
-    /* A View principal agora tem o onLayout acoplado. 
-       Assim que a View renderizar, ela avisa o celular para baixar a tela branca. */
-    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent={true} />
-      <Routes />
-    </View>
+    <AccessibilityProvider>
+      <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+        <StatusBar barStyle="light-content" backgroundColor="transparent" translucent={true} />
+        <Routes />
+      </View>
+    </AccessibilityProvider>
   );
 }

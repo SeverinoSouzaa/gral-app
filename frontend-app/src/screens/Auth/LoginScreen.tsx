@@ -16,6 +16,8 @@ import { useNavigation } from "@react-navigation/native";
 import AccessibilityMenu from "../../components/AccessibilityMenu";
 import { api } from "../../services/api";
 import * as SecureStore from 'expo-secure-store';
+import BackgroundLayout from '../../components/BackgroundLayout';
+import { useAccessibility } from '../../contexts/AccessibilityContext';
 
 export default function LoginScreen() {
   const navigation = useNavigation<any>();
@@ -23,6 +25,17 @@ export default function LoginScreen() {
   const [cpf, setCpf] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [errorMsg, setErrorMsg] = React.useState("");
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const { textMultiplier } = useAccessibility();
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => setKeyboardVisible(true));
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => setKeyboardVisible(false));
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   const handleCpfChange = (text: string) => {
     // Máscara de CPF: 000.000.000-00
@@ -94,10 +107,8 @@ export default function LoginScreen() {
               resizeMode="contain"
             />
           </View>
-          <Text style={globalStyles.title}>
-            Bem-vindo a <Text style={styles.highlightText}>GRAL</Text>
-          </Text>
-          <Text style={globalStyles.subtitle}>Faça login para continuar</Text>
+          <Text style={[globalStyles.title, { fontSize: 28 * textMultiplier }]}>Bem-vindo</Text>
+          <Text style={[globalStyles.subtitle, { fontSize: 16 * textMultiplier }]}>Acesse sua conta para organizar tudo sobre sua formatura!</Text>
         </View>
 
         <View style={styles.formContainer}>
