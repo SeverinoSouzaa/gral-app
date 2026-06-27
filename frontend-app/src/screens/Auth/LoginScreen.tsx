@@ -101,8 +101,8 @@ export default function LoginScreen() {
               resizeMode="contain"
             />
           </View>
-          <Text style={[globalStyles.title, { fontSize: 28 * textMultiplier }]}>Bem-vindo</Text>
-          <Text style={[globalStyles.subtitle, { fontSize: 16 * textMultiplier }]}>Acesse sua conta para organizar tudo sobre sua formatura!</Text>
+          <Text style={[globalStyles.title, { fontSize: 28 * textMultiplier }]}>Bem-vindo a <Text style={{ color: COLORS.primary }}>GRAL</Text></Text>
+          <Text style={[globalStyles.subtitle, { fontSize: 16 * textMultiplier }]}>Faça login para continuar</Text>
         </View>
 
         <View style={styles.formContainer}>
@@ -114,7 +114,7 @@ export default function LoginScreen() {
             <View style={[styles.inputWrapper, isHighContrast && { backgroundColor: '#111', borderColor: COLORS.primary, borderWidth: 1 }]}>
               <TextInput
                 style={[styles.input, { fontSize: 14 * textMultiplier }]}
-                placeholder="12345"
+                placeholder="00000"
                 placeholderTextColor={COLORS.textLight}
                 keyboardType="numeric"
                 value={codigoTurma}
