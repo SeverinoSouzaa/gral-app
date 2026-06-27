@@ -270,6 +270,7 @@ export default function DocumentosScreen() {
         </View>
 
       </View>
+      </View>
     </View>
   );
 }
