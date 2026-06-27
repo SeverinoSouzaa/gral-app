@@ -54,6 +54,15 @@ export const api = {
       throw error;
     }
   },
+  auth: {
+    me: async (token: string) => {
+      const response = await fetchWithTimeout(`${BASE_URL}/users/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error('Erro ao buscar dados do perfil');
+      return response.json();
+    }
+  },
   documentos: {
     me: async (token: string) => {
       const response = await fetchWithTimeout(`${BASE_URL}/documentos/me`, {
