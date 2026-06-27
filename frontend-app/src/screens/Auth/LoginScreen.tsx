@@ -25,17 +25,7 @@ export default function LoginScreen() {
   const [cpf, setCpf] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [errorMsg, setErrorMsg] = React.useState("");
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const { textMultiplier } = useAccessibility();
-
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => setKeyboardVisible(true));
-    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => setKeyboardVisible(false));
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
 
   const handleCpfChange = (text: string) => {
     // Máscara de CPF: 000.000.000-00
