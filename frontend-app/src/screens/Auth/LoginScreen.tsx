@@ -25,7 +25,7 @@ export default function LoginScreen() {
   const [cpf, setCpf] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [errorMsg, setErrorMsg] = React.useState("");
-  const { textMultiplier } = useAccessibility();
+  const { textMultiplier, isHighContrast } = useAccessibility();
 
   const handleCpfChange = (text: string) => {
     // Máscara de CPF: 000.000.000-00
@@ -80,15 +80,19 @@ export default function LoginScreen() {
       bounces={false}
       overScrollMode="never"
     >
-      <LinearGradient
-        colors={[
-          COLORS.backgroundDark,
-          COLORS.background,
-          COLORS.backgroundDark,
-        ]}
-        locations={[0.15, 0.5, 0.85]}
-        style={[globalStyles.container, { backgroundColor: "transparent" }]}
-      >
+      <View style={[{ flex: 1 }, isHighContrast ? { backgroundColor: '#000000' } : {}]}>
+        {!isHighContrast && (
+          <LinearGradient
+            colors={[
+              COLORS.backgroundDark,
+              COLORS.background,
+              COLORS.backgroundDark,
+            ]}
+            locations={[0.15, 0.5, 0.85]}
+            style={StyleSheet.absoluteFillObject}
+          />
+        )}
+        <View style={[globalStyles.container, { backgroundColor: "transparent" }]}>
         <View style={styles.header}>
           <View style={styles.logoContainer}>
             <Image
@@ -107,7 +111,7 @@ export default function LoginScreen() {
             <Text style={[styles.subLabel, { fontSize: 12 * textMultiplier }]}>
               Digite o código de 5 dígitos da sua turma
             </Text>
-            <View style={styles.inputWrapper}>
+            <View style={[styles.inputWrapper, isHighContrast && { backgroundColor: '#111', borderColor: COLORS.primary, borderWidth: 1 }]}>
               <TextInput
                 style={[styles.input, { fontSize: 14 * textMultiplier }]}
                 placeholder="12345"
@@ -132,7 +136,7 @@ export default function LoginScreen() {
             <Text style={[styles.subLabel, { fontSize: 12 * textMultiplier }]}>
               Informe seu CPF de 11 dígitos
             </Text>
-            <View style={styles.inputWrapper}>
+            <View style={[styles.inputWrapper, isHighContrast && { backgroundColor: '#111', borderColor: COLORS.primary, borderWidth: 1 }]}>
               <TextInput
                 style={[styles.input, { fontSize: 14 * textMultiplier }]}
                 placeholder="000.000.000-00"
@@ -184,7 +188,8 @@ export default function LoginScreen() {
         <Text style={[styles.footerText, { fontSize: 12 * textMultiplier }]}>Sistema seguro • Dados protegidos</Text>
 
         <AccessibilityMenu />
-      </LinearGradient>
+        </View>
+      </View>
     </ScrollView>
   );
 }
