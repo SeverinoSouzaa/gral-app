@@ -150,27 +150,32 @@ export default function TelaPrincipal() {
             <Feather name="chevron-right" size={20} color={COLORS.primary} />
           </View>
           
-          <View style={styles.eventBody}>
-            <LinearGradient
-              colors={COLORS.buttonGradient as [string, string]}
-              style={styles.dateBlock}
-            >
-              <Text style={styles.dateNumber}>
-                {proximoEvento?.dataEvento ? new Date(proximoEvento.dataEvento).getDate().toString().padStart(2, '0') : '18'}
-              </Text>
-              <Text style={styles.dateMonth}>
-                {proximoEvento?.dataEvento 
-                  ? new Date(proximoEvento.dataEvento).toLocaleDateString('pt-BR', { month: 'short' }).toUpperCase() 
-                  : 'NOV'}
-              </Text>
-            </LinearGradient>
-            <View style={styles.eventInfo}>
-              <Text style={styles.eventName}>{proximoEvento?.nomeEvento || 'Reunião da Comissão'}</Text>
-              <Text style={styles.eventDetails}>
-                {proximoEvento?.local ? proximoEvento.local : 'Às 19h00 • Online'}
-              </Text>
+          {proximoEvento ? (
+            <View style={styles.eventBody}>
+              <LinearGradient
+                colors={COLORS.buttonGradient as [string, string]}
+                style={styles.dateBlock}
+              >
+                <Text style={styles.dateNumber}>
+                  {new Date(proximoEvento.dataEvento).getDate().toString().padStart(2, '0')}
+                </Text>
+                <Text style={styles.dateMonth}>
+                  {new Date(proximoEvento.dataEvento).toLocaleDateString('pt-BR', { month: 'short' }).toUpperCase()}
+                </Text>
+              </LinearGradient>
+              <View style={styles.eventInfo}>
+                <Text style={styles.eventName}>{proximoEvento.nomeEvento}</Text>
+                <Text style={styles.eventDetails}>
+                  {proximoEvento.local || 'Sem local definido'}
+                </Text>
+              </View>
             </View>
-          </View>
+          ) : (
+            <View style={styles.emptyStateSimple}>
+              <Feather name="calendar" size={24} color={COLORS.textLight} style={{ marginRight: 12 }} />
+              <Text style={styles.emptyStateText}>Nenhum evento agendado</Text>
+            </View>
+          )}
         </TouchableOpacity>
 
         {/* CARD: PAGAMENTOS */}
@@ -182,28 +187,37 @@ export default function TelaPrincipal() {
             </View>
           </View>
 
-          <View style={styles.statusRow}>
-            <Text style={styles.statusLabel}>Status atual:</Text>
-            <View style={styles.statusBadge}>
-              <View style={[styles.statusDot, { backgroundColor: resumoFinanceiro?.pendente > 0 ? '#F44336' : '#4CAF50' }]} />
-              <Text style={[styles.statusText, { color: resumoFinanceiro?.pendente > 0 ? '#F44336' : '#4CAF50' }]}>
-                {resumoFinanceiro ? (resumoFinanceiro.pendente > 0 ? 'Com pendências' : 'Em dia') : 'Em dia'}
-              </Text>
-            </View>
-          </View>
+          {resumoFinanceiro ? (
+            <>
+              <View style={styles.statusRow}>
+                <Text style={styles.statusLabel}>Status atual:</Text>
+                <View style={styles.statusBadge}>
+                  <View style={[styles.statusDot, { backgroundColor: resumoFinanceiro.pendente > 0 ? '#F44336' : '#4CAF50' }]} />
+                  <Text style={[styles.statusText, { color: resumoFinanceiro.pendente > 0 ? '#F44336' : '#4CAF50' }]}>
+                    {resumoFinanceiro.pendente > 0 ? 'Com pendências' : 'Em dia'}
+                  </Text>
+                </View>
+              </View>
 
-          <View style={styles.progressHeader}>
-            <Text style={styles.progressLabel}>Contribuição</Text>
-            <Text style={styles.progressValue}>
-              {resumoFinanceiro ? `${resumoFinanceiro.parcelasPagas || 0}/${resumoFinanceiro.totalParcelas || 12} parcelas` : '7/12 parcelas'}
-            </Text>
-          </View>
-          <View style={styles.progressBarBackground}>
-            <View style={[
-              styles.progressBarFill, 
-              { width: resumoFinanceiro ? `${((resumoFinanceiro.parcelasPagas || 0) / (resumoFinanceiro.totalParcelas || 1)) * 100}%` : '58%' }
-            ]} />
-          </View>
+              <View style={styles.progressHeader}>
+                <Text style={styles.progressLabel}>Contribuição</Text>
+                <Text style={styles.progressValue}>
+                  {`${resumoFinanceiro.parcelasPagas || 0}/${resumoFinanceiro.totalParcelas || 1} parcelas`}
+                </Text>
+              </View>
+              <View style={styles.progressBarBackground}>
+                <View style={[
+                  styles.progressBarFill, 
+                  { width: `${((resumoFinanceiro.parcelasPagas || 0) / (resumoFinanceiro.totalParcelas || 1)) * 100}%` }
+                ]} />
+              </View>
+            </>
+          ) : (
+            <View style={styles.emptyStateSimple}>
+              <Feather name="dollar-sign" size={24} color={COLORS.textLight} style={{ marginRight: 12 }} />
+              <Text style={styles.emptyStateText}>Nenhum plano financeiro gerado</Text>
+            </View>
+          )}
 
           <TouchableOpacity 
             style={styles.cardButtonOutline}
@@ -255,9 +269,9 @@ export default function TelaPrincipal() {
             </View>
           </View>
 
-          <View style={styles.mediaGrid}>
-            {midias.length > 0 ? (
-              midias.map((midia: any, idx: number) => (
+          {midias.length > 0 ? (
+            <View style={styles.mediaGrid}>
+              {midias.map((midia: any, idx: number) => (
                 <View key={idx} style={[styles.mediaThumbnail, { overflow: 'hidden' }]}>
                   {midia.tipo === 'IMAGE' ? (
                     <Image source={{ uri: getImageUrl(midia.arquivo) }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
@@ -265,15 +279,14 @@ export default function TelaPrincipal() {
                     <Feather name="play" size={24} color={COLORS.primary} />
                   )}
                 </View>
-              ))
-            ) : (
-              <>
-                <View style={styles.mediaThumbnail}><Feather name="image" size={24} color={COLORS.primary} /></View>
-                <View style={styles.mediaThumbnail}><Feather name="play" size={24} color={COLORS.primary} /></View>
-                <View style={styles.mediaThumbnail}><Feather name="image" size={24} color={COLORS.primary} /></View>
-              </>
-            )}
-          </View>
+              ))}
+            </View>
+          ) : (
+            <View style={styles.emptyStateSimple}>
+              <Feather name="image" size={24} color={COLORS.textLight} style={{ marginRight: 12 }} />
+              <Text style={styles.emptyStateText}>Nenhuma mídia publicada</Text>
+            </View>
+          )}
 
           <TouchableOpacity 
             style={styles.textButton}
@@ -551,5 +564,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.05)',
+  },
+  emptyStateSimple: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 16,
+  },
+  emptyStateText: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 14,
+    color: COLORS.textLight,
   },
 });
