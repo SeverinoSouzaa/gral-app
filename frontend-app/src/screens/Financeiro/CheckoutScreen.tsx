@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, TouchableOpacity, Animated, Dimensions, Image, 
 import { Feather } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import * as SecureStore from 'expo-secure-store';
 import * as Clipboard from 'expo-clipboard';
 import { api } from '../../services/api';
 import { COLORS } from '../../constants/colors';
@@ -18,17 +17,13 @@ export default function CheckoutScreen() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   
-  const { parcela } = route.params || {};
+  const { parcela, token } = route.params || {};
 
   const slideAnim = useRef(new Animated.Value(Dimensions.get('window').height)).current;
   const [loadingPix, setLoadingPix] = useState(false);
   const [pixData, setPixData] = useState<PixData | null>(null);
-  const [userToken, setUserToken] = useState<string | null>(null);
 
   useEffect(() => {
-    // Buscar token no carregamento da tela previne erro de policy no Keystore do Android no onPress
-    SecureStore.getItemAsync('userToken').then(setUserToken).catch(console.error);
-
     Animated.timing(slideAnim, {
       toValue: 0,
       duration: 300,
@@ -48,7 +43,6 @@ export default function CheckoutScreen() {
     if (!parcela) return;
     try {
       setLoadingPix(true);
-      const token = userToken || await SecureStore.getItemAsync('userToken');
       if (!token) throw new Error('Usuário não autenticado');
 
       const response = await api.finance.payParcela(token, Number(parcela.id), 'PIX', parcela.valor);

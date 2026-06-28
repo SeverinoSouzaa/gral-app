@@ -39,6 +39,7 @@ export default function PagamentosScreen() {
   const [abaAtiva, setAbaAtiva] = useState<'pendentes' | 'historico'>('pendentes');
   const [dados, setDados] = useState<DadosFinanceiros | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userToken, setUserToken] = useState<string | null>(null);
 
   const { textMultiplier, isHighContrast } = useAccessibility();
 
@@ -53,6 +54,8 @@ export default function PagamentosScreen() {
       setLoading(true);
       const token = await SecureStore.getItemAsync('userToken');
       if (!token) return;
+      
+      setUserToken(token);
 
       const data = await api.finance.getResumo(token);
       setDados(data);
@@ -185,7 +188,7 @@ export default function PagamentosScreen() {
                         <TouchableOpacity 
                           style={{ flex: 1, marginRight: 12 }} 
                           activeOpacity={0.8}
-                          onPress={() => navigation.navigate('Checkout', { parcela })}
+                          onPress={() => navigation.navigate('Checkout', { parcela, token: userToken })}
                         >
                           <LinearGradient colors={COLORS.buttonGradient as [string, string]} style={styles.payButton}>
                             <Text style={styles.payButtonText}>Pagar agora</Text>
