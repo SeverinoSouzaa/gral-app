@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, ScrollView, Platform } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '../../constants/colors';
@@ -78,7 +78,7 @@ export default function DocumentosScreen() {
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: 'images',
-      allowsEditing: true,
+      allowsEditing: Platform.OS === 'ios',
       quality: 0.8,
     });
 
@@ -281,7 +281,9 @@ export default function DocumentosScreen() {
             activeOpacity={0.8}
             onPress={handlePickImage}
           >
-            {renderFotoStatus()}
+            <View style={[Platform.OS === 'android' && { elevation: 0 }]}>
+              {renderFotoStatus()}
+            </View>
           </TouchableOpacity>
         </View>
 
@@ -292,7 +294,8 @@ export default function DocumentosScreen() {
           {renderCanudoFields()}
         </View>
 
-      </View>
+        </View>
+      </ScrollView>
       </View>
       
       <ConfirmModal 
@@ -391,7 +394,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.4,
     shadowRadius: 20,
-    elevation: 8,
+    elevation: 0, // Zera elevation para evitar sombra bugada no Android
   },
   uploadTitle: {
     fontFamily: 'Inter_400Regular',

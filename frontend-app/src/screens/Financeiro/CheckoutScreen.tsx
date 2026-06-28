@@ -23,8 +23,12 @@ export default function CheckoutScreen() {
   const slideAnim = useRef(new Animated.Value(Dimensions.get('window').height)).current;
   const [loadingPix, setLoadingPix] = useState(false);
   const [pixData, setPixData] = useState<PixData | null>(null);
+  const [userToken, setUserToken] = useState<string | null>(null);
 
   useEffect(() => {
+    // Buscar token no carregamento da tela previne erro de policy no Keystore do Android no onPress
+    SecureStore.getItemAsync('userToken').then(setUserToken).catch(console.error);
+
     Animated.timing(slideAnim, {
       toValue: 0,
       duration: 300,
@@ -44,7 +48,7 @@ export default function CheckoutScreen() {
     if (!parcela) return;
     try {
       setLoadingPix(true);
-      const token = await SecureStore.getItemAsync('userToken');
+      const token = userToken || await SecureStore.getItemAsync('userToken');
       if (!token) throw new Error('Usuário não autenticado');
 
       const response = await api.finance.payParcela(token, Number(parcela.id), 'PIX', parcela.valor);
