@@ -29,8 +29,7 @@ export const globalStyles = StyleSheet.create({
       shadowRadius: 20,   // Menos espalhado para ficar em volta do botão
     },
     android: {
-      elevation: 10, // Ajustado para não criar uma sombra preta excessiva e focar no brilho
-      shadowColor: COLORS.primary, // Define a cor do esfumaçado no Android
+      elevation: 0, // Removido no Android para evitar os glitches e sombras duplicadas relatadas
     }
   }) as any,
 

@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { COLORS } from '../constants/colors';
 import { globalStyles } from '../styles/globalStyles';
@@ -14,8 +15,13 @@ export default function AccessibilityMenu({ position = 'bottom', renderTrigger }
   const [modalVisible, setModalVisible] = useState(false);
   const [triggerLayout, setTriggerLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const triggerRef = useRef<View>(null);
+  const insets = useSafeAreaInsets();
   
   const { isHighContrast, toggleHighContrast, isLargeText, toggleLargeText } = useAccessibility();
+
+  // Garante que no Android com navegação por gestos ou antiga, o botão não fique colado ou coberto
+  const androidBottom = Math.max(32, insets.bottom + 16);
+  const bottomMargin = Platform.OS === 'android' ? androidBottom : 32;
 
   const handleOpen = () => {
     if (renderTrigger) {
@@ -37,7 +43,7 @@ export default function AccessibilityMenu({ position = 'bottom', renderTrigger }
         </View>
       ) : (
         <TouchableOpacity 
-          style={[styles.fab, globalStyles.glowEffect, globalStyles.glassBorder]} 
+          style={[styles.fab, globalStyles.glowEffect, globalStyles.glassBorder, { bottom: bottomMargin }]} 
           onPress={() => setModalVisible(true)}
         >
           <MaterialIcons name="accessibility-new" size={28} color={COLORS.primary} />
@@ -48,6 +54,7 @@ export default function AccessibilityMenu({ position = 'bottom', renderTrigger }
         animationType="fade"
         transparent={true}
         visible={modalVisible}
+        statusBarTranslucent={Platform.OS === 'android'}
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
@@ -102,17 +109,17 @@ export default function AccessibilityMenu({ position = 'bottom', renderTrigger }
 
           </View>
 
-          {renderTrigger && triggerLayout.height > 0 && (
-            /* Clone dinâmico do botão do topo posicionado perfeitamente acima do fundo escurecido */
+          {/* Clone dinâmico do botão do topo posicionado perfeitamente acima do fundo escurecido (apenas iOS para evitar duplicação no Android) */}
+          {Platform.OS === 'ios' && renderTrigger && triggerLayout.height > 0 && (
             <View style={{ position: 'absolute', top: triggerLayout.y, left: triggerLayout.x }} pointerEvents="box-none">
               {renderTrigger(() => setModalVisible(false))}
             </View>
           )}
 
-          {!renderTrigger && (
-            /* Clone do botão de acessibilidade que ficará acima do fundo escurecido */
+          {/* Clone do botão de acessibilidade que ficará acima do fundo escurecido (apenas iOS) */}
+          {Platform.OS === 'ios' && !renderTrigger && (
             <TouchableOpacity 
-              style={[styles.fab, globalStyles.glowEffect, globalStyles.glassBorder]} 
+              style={[styles.fab, globalStyles.glowEffect, globalStyles.glassBorder, { bottom: 32 }]} 
               onPress={() => setModalVisible(false)}
               activeOpacity={0.8}
             >
