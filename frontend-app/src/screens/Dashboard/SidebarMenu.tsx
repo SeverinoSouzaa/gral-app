@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, Dimensions, Image, Alert, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, Dimensions, Image, Alert, Platform, ActivityIndicator } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -43,12 +43,14 @@ const MENU_ITEMS: MenuItem[] = [
 export default function SidebarMenu({ visible, onClose }: SidebarProps) {
   const navigation = useNavigation<any>();
   const { textMultiplier, isHighContrast } = useAccessibility();
-  const [userName, setUserName] = React.useState('Formando(a)');
-  const [userClass, setUserClass] = React.useState('Turma');
+  const [userName, setUserName] = React.useState('');
+  const [userClass, setUserClass] = React.useState('');
+  const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
     async function fetchUser() {
       if (visible) {
+        setIsLoading(true);
         try {
           const token = await SecureStore.getItemAsync('userToken');
           if (token) {
@@ -58,6 +60,10 @@ export default function SidebarMenu({ visible, onClose }: SidebarProps) {
           }
         } catch (error) {
           console.error("Erro ao carregar dados do usuário na Sidebar:", error);
+          setUserName('Formando(a)');
+          setUserClass('Sua Turma');
+        } finally {
+          setIsLoading(false);
         }
       }
     }
@@ -116,8 +122,14 @@ export default function SidebarMenu({ visible, onClose }: SidebarProps) {
                 <Feather name="user" size={20} color={COLORS.primary} />
               </View>
               <View style={styles.profileInfo}>
-                <Text style={[styles.profileName, { fontSize: 15 * textMultiplier }]} numberOfLines={1}>{userName}</Text>
-                <Text style={[styles.profileClass, { fontSize: 12 * textMultiplier }]} numberOfLines={1}>{userClass}</Text>
+                {isLoading ? (
+                  <ActivityIndicator size="small" color={COLORS.primary} style={{ alignSelf: 'flex-start' }} />
+                ) : (
+                  <>
+                    <Text style={[styles.profileName, { fontSize: 15 * textMultiplier }]} numberOfLines={1}>{userName}</Text>
+                    <Text style={[styles.profileClass, { fontSize: 12 * textMultiplier }]} numberOfLines={1}>{userClass}</Text>
+                  </>
+                )}
               </View>
             </View>
             
@@ -199,8 +211,14 @@ export default function SidebarMenu({ visible, onClose }: SidebarProps) {
                 <Feather name="user" size={20} color={COLORS.primary} />
               </View>
               <View style={styles.profileInfo}>
-                <Text style={[styles.profileName, { fontSize: 15 * textMultiplier }]} numberOfLines={1}>{userName}</Text>
-                <Text style={[styles.profileClass, { fontSize: 12 * textMultiplier }]} numberOfLines={1}>{userClass}</Text>
+                {isLoading ? (
+                  <ActivityIndicator size="small" color={COLORS.primary} style={{ alignSelf: 'flex-start' }} />
+                ) : (
+                  <>
+                    <Text style={[styles.profileName, { fontSize: 15 * textMultiplier }]} numberOfLines={1}>{userName}</Text>
+                    <Text style={[styles.profileClass, { fontSize: 12 * textMultiplier }]} numberOfLines={1}>{userClass}</Text>
+                  </>
+                )}
               </View>
             </View>
             
