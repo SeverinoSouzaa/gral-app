@@ -5,6 +5,8 @@ import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS } from '../../constants/colors';
 import { useAccessibility } from '../../contexts/AccessibilityContext';
+import * as SecureStore from 'expo-secure-store';
+import { api } from '../../services/api';
 
 const { width, height } = Dimensions.get('window');
 const SIDEBAR_WIDTH = width * 0.85; // A sidebar ocupa 85% da tela
@@ -41,12 +43,32 @@ const MENU_ITEMS: MenuItem[] = [
 export default function SidebarMenu({ visible, onClose }: SidebarProps) {
   const navigation = useNavigation<any>();
   const { textMultiplier, isHighContrast } = useAccessibility();
+  const [userName, setUserName] = React.useState('Formando(a)');
+  const [userClass, setUserClass] = React.useState('Turma');
+
+  React.useEffect(() => {
+    async function fetchUser() {
+      if (visible) {
+        try {
+          const token = await SecureStore.getItemAsync('userToken');
+          if (token) {
+            const data = await api.auth.me(token);
+            setUserName(data.nome || 'Formando(a)');
+            setUserClass(data.turma || 'Sua Turma');
+          }
+        } catch (error) {
+          console.error("Erro ao carregar dados do usuário na Sidebar:", error);
+        }
+      }
+    }
+    fetchUser();
+  }, [visible]);
 
   const handleNavigate = (route: string) => {
     onClose(); // Fecha a sidebar primeiro
     
     // Lista de telas que já existem no nosso arquivo routes/index.tsx
-    const telasProntas = ['TelaPrincipal', 'Pagamentos', 'Documentos', 'Calendario', 'Midias', 'Perfil'];
+    const telasProntas = ['TelaPrincipal', 'Pagamentos', 'Documentos', 'Calendario', 'Midias', 'Perfil', 'Checklist'];
     
     if (telasProntas.includes(route)) {
       navigation.navigate(route); // Se a tela já existe, navega normalmente
@@ -94,8 +116,8 @@ export default function SidebarMenu({ visible, onClose }: SidebarProps) {
                 <Feather name="user" size={20} color={COLORS.primary} />
               </View>
               <View style={styles.profileInfo}>
-                <Text style={[styles.profileName, { fontSize: 15 * textMultiplier }]}>Formando(a)</Text>
-                <Text style={[styles.profileClass, { fontSize: 12 * textMultiplier }]}>Turma 2024</Text>
+                <Text style={[styles.profileName, { fontSize: 15 * textMultiplier }]} numberOfLines={1}>{userName}</Text>
+                <Text style={[styles.profileClass, { fontSize: 12 * textMultiplier }]} numberOfLines={1}>{userClass}</Text>
               </View>
             </View>
             

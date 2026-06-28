@@ -21,6 +21,8 @@ import MidiasScreen from '../screens/Midias/MidiasScreen';
 
 import PerfilScreen from '../screens/Perfil/PerfilScreen';
 
+import ChecklistScreen from '../screens/Checklist/ChecklistScreen';
+
 const Stack = createNativeStackNavigator();
 
 export default function Routes() {
@@ -45,6 +47,8 @@ export default function Routes() {
         <Stack.Screen name="Midias" component={MidiasScreen} />
 
         <Stack.Screen name="Perfil" component={PerfilScreen} />
+
+        <Stack.Screen name="Checklist" component={ChecklistScreen} />
 
         <Stack.Screen
           name="Checkout"

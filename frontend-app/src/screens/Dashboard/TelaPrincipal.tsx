@@ -11,16 +11,19 @@ import SidebarMenu from './SidebarMenu';
 import * as SecureStore from 'expo-secure-store';
 import { api, BASE_URL } from '../../services/api';
 import { useAccessibility } from '../../contexts/AccessibilityContext';
+import { useChecklist } from '../../hooks/useChecklist';
 
 export default function TelaPrincipal() {
   const navigation = useNavigation<any>();
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+  const [userName, setUserName] = useState('formando(a)');
 
   const [proximoEvento, setProximoEvento] = useState<any>(null);
   const [resumoFinanceiro, setResumoFinanceiro] = useState<any>(null);
   const [midias, setMidias] = useState<any[]>([]);
 
   const { textMultiplier, isHighContrast } = useAccessibility();
+  const { items: checklistItems, progress: checklistProgress, loading: checklistLoading, refresh: refreshChecklist } = useChecklist();
 
   useFocusEffect(
     useCallback(() => {
@@ -30,6 +33,11 @@ export default function TelaPrincipal() {
         try {
           const token = await SecureStore.getItemAsync('userToken');
           if (!token || !isActive) return;
+
+          const authData = await api.auth.me(token).catch(() => null);
+          if (authData && authData.nome) {
+            setUserName(authData.nome.split(' ')[0]);
+          }
 
           // Fetch Eventos
           const eventosData = await api.eventos.getEventos(token).catch(() => []);
@@ -50,6 +58,8 @@ export default function TelaPrincipal() {
           if (isActive) {
             setMidias(midiasData.slice(0, 3));
           }
+          
+          refreshChecklist();
         } catch (err) {
           console.error('Erro ao carregar dados do dashboard', err);
         }
@@ -104,7 +114,7 @@ export default function TelaPrincipal() {
         {/* 2. HEADER: SAUDAÇÃO */}
         <View style={styles.headerArea}>
           <Text style={[styles.greetingTitle, { fontSize: 24 * textMultiplier }]}>
-            Olá, <Text style={styles.greetingHighlight}>formando(a)!</Text>
+            Olá, <Text style={styles.greetingHighlight}>{userName}!</Text>
           </Text>
           <Text style={[styles.greetingSubtitle, { fontSize: 14 * textMultiplier }]}>
             Aqui está sua formatura organizada em um só lugar.
@@ -226,37 +236,52 @@ export default function TelaPrincipal() {
         </View>
 
         {/* CARD: CHECKLIST */}
-        <View style={[globalStyles.card, styles.cardSpacing, isHighContrast && { backgroundColor: '#111', borderColor: COLORS.primary }]}>
+        <TouchableOpacity 
+          style={[globalStyles.card, styles.cardSpacing, isHighContrast && { backgroundColor: '#111', borderColor: COLORS.primary }]}
+          activeOpacity={0.8}
+          onPress={() => navigation.navigate('Checklist')}
+        >
           <View style={styles.cardHeader}>
             <View style={styles.titleWithIcon}>
               <Text style={[styles.cardTitle, { fontSize: 14 * textMultiplier }]}>Checklist</Text>
               <Feather name="info" size={14} color={COLORS.textLight} style={{ marginLeft: 8 }} />
             </View>
-            <Text style={[styles.progressValue, { fontSize: 12 * textMultiplier }]}>2/3</Text>
+            <Text style={[styles.progressValue, { fontSize: 12 * textMultiplier }]}>
+              {checklistItems.filter(i => i.done).length}/{checklistItems.length}
+            </Text>
           </View>
 
           <View style={[styles.progressBarBackground, { marginBottom: 20 }]}>
-            <View style={[styles.progressBarFill, { width: '66%' }]} />
+            <View style={[styles.progressBarFill, { width: `${checklistProgress}%` }]} />
           </View>
 
-          <View style={styles.checklistItem}>
-            <Feather name="check-circle" size={20} color={COLORS.primary} />
-            <Text style={styles.checklistItemTextDone}>Enviar documento de identidade</Text>
-          </View>
-          <View style={styles.checklistItem}>
-            <Feather name="check-circle" size={20} color={COLORS.primary} />
-            <Text style={styles.checklistItemTextDone}>Escolher foto do convite</Text>
-          </View>
-          <View style={styles.checklistItem}>
-            <Feather name="circle" size={20} color={COLORS.textLight} />
-            <Text style={styles.checklistItemTextPending}>Confirmar presença na reunião</Text>
-          </View>
+          {checklistItems.slice(0, 3).map((item) => (
+            <View key={item.id} style={styles.checklistItem}>
+              {item.done ? (
+                <Feather name="check-circle" size={20} color={COLORS.primary} />
+              ) : (
+                <Feather name="circle" size={20} color={COLORS.textLight} />
+              )}
+              <Text 
+                style={[
+                  item.done ? styles.checklistItemTextDone : styles.checklistItemTextPending, 
+                  { flex: 1, marginLeft: 8 }
+                ]}
+                numberOfLines={1}
+              >
+                {item.title}
+              </Text>
+            </View>
+          ))}
+          
+          {checklistItems.length === 0 && !checklistLoading && (
+            <Text style={{ color: COLORS.textLight, textAlign: 'center', marginVertical: 8 }}>Nenhuma pendência encontrada</Text>
+          )}
 
-          <TouchableOpacity style={styles.textButton}>
-            <Text style={styles.textButtonLabel}>Abrir Checklist completo</Text>
-            <Feather name="chevron-right" size={16} color={COLORS.primary} style={{ marginLeft: 4 }} />
-          </TouchableOpacity>
-        </View>
+          <View style={styles.cardButtonOutline}>
+            <Text style={styles.cardButtonOutlineText}>Ver todas as tarefas</Text>
+          </View>
+        </TouchableOpacity>
 
         {/* CARD: MÍDIAS */}
         <View style={[globalStyles.card, styles.cardSpacing, { marginBottom: 40 }, isHighContrast && { backgroundColor: '#111', borderColor: COLORS.primary }]}>

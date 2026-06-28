@@ -141,16 +141,6 @@ export default function CheckoutScreen() {
               <Feather name="chevron-right" size={20} color={COLORS.primary} />
             </TouchableOpacity>
 
-            <TouchableOpacity style={[styles.methodCard, { opacity: 0.5 }]} activeOpacity={0.7} disabled>
-              <LinearGradient colors={COLORS.buttonGradient as [string, string]} style={styles.methodIconBg}>
-                <Feather name="credit-card" size={20} color="#000" />
-              </LinearGradient>
-              <View style={styles.methodTextContainer}>
-                <Text style={styles.methodTitle}>Pagar via Cartão (Em Breve)</Text>
-                <Text style={styles.methodDesc}>Crédito ou débito</Text>
-              </View>
-              <Feather name="chevron-right" size={20} color={COLORS.primary} />
-            </TouchableOpacity>
 
             <TouchableOpacity 
               style={styles.cancelButton} 
