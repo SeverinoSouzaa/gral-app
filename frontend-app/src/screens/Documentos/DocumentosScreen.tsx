@@ -256,9 +256,11 @@ export default function DocumentosScreen() {
           <ActivityIndicator size="large" color={COLORS.primary} />
         </View>
       )}
-
+      <ScrollView 
+        contentContainerStyle={{ paddingBottom: 40, flexGrow: 1 }}
+        showsVerticalScrollIndicator={false}
+      >
       <View style={styles.container}>
-      
         <View style={styles.topBar}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
             <Feather name="arrow-left" size={20} color={COLORS.primary} />
