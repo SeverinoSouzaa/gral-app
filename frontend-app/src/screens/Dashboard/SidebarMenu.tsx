@@ -199,8 +199,8 @@ export default function SidebarMenu({ visible, onClose }: SidebarProps) {
                 <Feather name="user" size={20} color={COLORS.primary} />
               </View>
               <View style={styles.profileInfo}>
-                <Text style={[styles.profileName, { fontSize: 15 * textMultiplier }]}>Formando(a)</Text>
-                <Text style={[styles.profileClass, { fontSize: 12 * textMultiplier }]}>Turma 2024</Text>
+                <Text style={[styles.profileName, { fontSize: 15 * textMultiplier }]} numberOfLines={1}>{userName}</Text>
+                <Text style={[styles.profileClass, { fontSize: 12 * textMultiplier }]} numberOfLines={1}>{userClass}</Text>
               </View>
             </View>
             
