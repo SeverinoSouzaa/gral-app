@@ -33,7 +33,6 @@ export function useChecklist() {
       // 1. Verificar Documentos
       // Tipos esperados que precisam ser preenchidos
       const requiredDocs = [
-        { type: 'IDENTITY_DOC', title: 'Enviar documento de identidade' },
         { type: 'FRAME_PHOTO', title: 'Enviar foto para o quadro' },
         { type: 'CAP_NAME', title: 'Preencher nome para o canudo' }
       ];
