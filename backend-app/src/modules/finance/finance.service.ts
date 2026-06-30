@@ -142,6 +142,18 @@ export class FinanceService {
       throw new BadRequestException('A turma não possui nenhum formando matriculado.');
     }
 
+    // Trava para evitar geração infinita de parcelas
+    const formandoIds = turma.formandos.map(f => f.id);
+    const parcelasJaGeradas = await this.prisma.pagamento.findFirst({
+      where: {
+        formandoId: { in: formandoIds }
+      }
+    });
+
+    if (parcelasJaGeradas) {
+      throw new BadRequestException('Esta turma já possui contratos financeiros (parcelas) gerados para seus alunos. A geração em lote só pode ser feita uma vez.');
+    }
+
     const valorPorParcela = dto.valorTotalPorAluno / dto.quantidadeDeParcelas;
     const [ano, mes, dia] = dto.dataVencimentoInicial.split('-').map(Number);
     let pagamentosCriados = 0;
