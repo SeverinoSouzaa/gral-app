@@ -79,19 +79,19 @@ export default function CalendarioScreen() {
   // Funções de formatação puras (O frontend cuida da apresentação)
   const formatDay = (isoDate: string) => {
     const date = new Date(isoDate);
-    return date.getUTCDate().toString().padStart(2, '0');
+    return date.getDate().toString().padStart(2, '0');
   };
 
   const formatMonth = (isoDate: string) => {
     const date = new Date(isoDate);
     const months = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
-    return months[date.getUTCMonth()];
+    return months[date.getMonth()];
   };
 
   const formatTime = (isoDate: string) => {
     const date = new Date(isoDate);
-    const hours = date.getUTCHours().toString().padStart(2, '0');
-    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
     return `${hours}h${minutes}`;
   };
 
